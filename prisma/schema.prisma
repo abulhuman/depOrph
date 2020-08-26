@@ -1,0 +1,12 @@
+// PROVIDE THE DATASOURCE
+datasource db {
+    provider = "mysql"
+    url      = "DATABASE_URL"
+}
+
+// GENERATE PRISMA CLIENT
+generator client {
+    provider = "prisma-client-js"
+}
+
+// MODELS
