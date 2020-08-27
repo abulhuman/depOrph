@@ -6,8 +6,79 @@ type Mutation {
     createOrphan()
 }
 
+type Iga_property {
+    id: ID!
+    ownershipStaus: String!
+    otherProperty: String
+    orphan: Orphan!
+}
+
+type Education {
+    id: ID!
+    enrollmentStatus: education_enrollmentStatus!
+    schoolName: String
+    typeOfSchool: education_typeOfSchool
+    grade: String
+    reason: String
+    hobbies: String
+    orphans: [Orphan]!
+}
+
+type Father {
+    id: ID!
+    dateOfDeath: DateTime
+    causeOfDeath: String
+    job: String
+    monthlyIncome: Int
+    dateOfBirth: DateTime
+    orphans: [Orphan!]!
+}
+
+type GroupOfOrphans {
+    id: ID!
+registrationDate: DateTime 
+site_groupoforphansTosite: Site!
+donatesto: [DonatesTo!]!
+orphans:    [Orphan!]!
+    responsiblefor: 
+}
+
 type Orphan {
     id: ID!
     firstName: String!
-    middleName:  
+    fatherName: String!
+    grandFatherName: String!
+    greatGrandFatherName: String!
+    gender: orphan_gender!
+    placeOfBirth: String!
+    dateOfBirth: DateTime!
+    numberOfSponserdSiblings: Int!
+    physicalHealthStatus: String!
+    psychologicalHealthStatus: String!
+    otherHealthIssues: String!
+    photoPortraitUrl: String!
+    photoLongUrl: String!
+    iga_property: [Iga_property!]!
+    education_educationToorphan: [Education!]!
+    father_fatherToorphan: Father!
+    groupoforphans: GroupOfOrphans!
+    guardian_guardianToorphan: Guardian!
+    mother_motherToorphan: Mother!
+    sibling_orphan_siblingTosibling: [Sibling!]!
+}
+
+enum orphan_gender {
+   M
+   F 
+}
+
+enum education_enrollmentStatus {
+    enrolled
+    unenrolled
+    droppedout
+}
+
+enum education_typeOfSchool {
+    private
+    public
 }
