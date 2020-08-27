@@ -8,27 +8,26 @@ datasource db {
 }
 
 model Address {
-    state    String  @id
-    zone     String?
-    district String?
-    kebele   String?
+    state    String @id
+    zone     String
+    district String
+    kebele   String
     site     Site
 }
 
-model Donates_to {
-    donor                   Int
-    group                   Int
-    donor_donates_toTodonor Donor          @relation(fields: [donor], references: [id])
-    groupoforphans          Groupoforphans @relation(fields: [group], references: [id])
+model DonatesTo {
+    donor                  Int
+    group                  Int
+    donor_donatestoTodonor Donor          @relation(fields: [donor], references: [id])
+    groupoforphans         GroupOfOrphans @relation(fields: [group], references: [id])
 
     @@id([group, donor])
     @@index([donor], name: "donor")
-    @@map("donates to")
 }
 
 model Donor {
-    id                           Int          @id
-    companyName                  String?
+    id                           Int         @id
+    companyName                  String
     typeOfsupport                String?
     initialDonationAmount        Float?
     initialReportPreparationDate DateTime?
@@ -36,120 +35,128 @@ model Donor {
     initialDataCollectionDate    DateTime?
     finalDataCollectionDate      DateTime?
     reportDueDate                DateTime?
-    donates_to                   Donates_to[]
+    donatesto                    DonatesTo[]
+    @@map("donor")
 }
 
 model Education {
-    id                Int                         @id
-    enrollment_status education_enrollment_status
-    school_name       String?
-    type_of_school    education_type_of_school?
-    grade             String?
-    reason            String?
-    hobbies           String?
-    orphans           Orphan[]
+    id               Int                        @id
+    enrollmentStatus education_enrollmentStatus
+    schoolName       String?
+    typeOfSchool     education_typeOfSchool?
+    grade            String?
+    reason           String?
+    hobbies          String?
+    orphans          Orphan[]
+    @@map("education")
 }
 
 model Father {
-    id             Int       @id
-    date_of_death  DateTime?
-    cause_of_death String?
-    job            String?
-    monthlyIncome  Int?
-    dateOfBirth    DateTime?
-    orphans        Orphan[]
+    id            Int      @id
+    dateOfDeath   DateTime
+    causeOfDeath  String
+    job           String?
+    monthlyIncome Int
+    dateOfBirth   DateTime
+    orphans       Orphan[]
+    @@map("father")
 }
 
-model Groupoforphans {
+model GroupOfOrphans {
     id                        Int              @id
-    registration_date         DateTime?
+    registrationDate          DateTime
     site                      Int
     site_groupoforphansTosite Site             @relation(fields: [site], references: [id])
-    donates_to                Donates_to[]
+    donatesto                 DonatesTo[]
     orphans                   Orphan[]
-    responsiblefor            responsiblefor[]
+    responsiblefor            ResponsibleFor[]
 
     @@index([site], name: "site")
+    @@map("groupoforphans")
 }
 
 model Guardian {
-    id                 Int      @id
-    first_name         String?
-    middle_name        String?
-    last_name          String?
-    gender             String?
-    nationality        String?
-    state              String?
-    zone               String?
-    district           String?
-    kebele             String?
-    relation_to_orphan String?
-    email              String?
-    job                String?
-    age                Int?
-    orphans            Orphan[]
+    id               Int      @id
+    firstName        String
+    middleName       String
+    lastName         String
+    gender           String
+    nationality      String
+    state            String
+    zone             String
+    district         String
+    kebele           String
+    relationToOrphan String
+    email            String
+    job              String?
+    age              Int
+    orphans          Orphan[]
+    @@map("guardian")
 }
 
 model Iga_property {
-    id               Int     @id
-    ownership_status String?
-    otherProperty    String?
-    orphan           Orphan
+    id              Int     @id
+    ownershipStatus String
+    otherProperty   String?
+    orphan          Orphan
+    @@map("iga_property")
 }
 
 model Mother {
-    id              Int        @id
-    first_name      String?
-    middle_name     String?
-    last_name       String?
-    date_of_birth   DateTime?
-    phone_number    Int?
-    job             Int?
-    marital_status  String?
-    vital_status    String?
-    monthly_expense Float?
-    motherjob       motherjob? @relation(fields: [job], references: [id])
-    orphans         Orphan[]
+    id             Int       @id
+    firstName      String
+    middleName     String
+    lastName       String
+    dateOfBirth    DateTime
+    phoneNumber    Int
+    job            Int
+    maritalStatus  String
+    vitalStatus    String
+    monthlyExpense Float
+    motherjob      Motherjob @relation(fields: [job], references: [id])
+    orphans        Orphan[]
 
     @@index([job], name: "job")
+    @@map("mother")
 }
 
-model motherjob {
-    id                    Int     @id
-    current_job_title     String?
-    monthly_income        Float?
-    mother_current_jobcol String?
-    mother                Mother
+model Motherjob {
+    id              Int     @id
+    currentJobTitle String?
+    monthlyIncome   Float?
+    mother          Mother
+    @@map("motherjob")
 }
 
 model Orphan {
-    id                          Int            @id
-    first_name                  String?
-    middle_name                 String?
-    last_name                   String?
-    gender                      orphan_gender?
-    placeofbirth                String?
-    DoB                         DateTime?
-    number_of_sponserd_siblings Int?
-    physicalHealthStatus        String?
-    psychologicalHealthStatus   String?
-    otherHealthIssues           String?
-    photo_portrait_url          String?
-    photo_long_url              String?
-    father                      Int
-    mother                      Int
-    guardian                    Int
-    group                       Int
-    sibling                     Int?
-    IGA_Property                Int?
-    education                   Int?
-    iga_property                Iga_property?  @relation(fields: [IGA_Property], references: [id])
-    education_educationToorphan Education?     @relation(fields: [education], references: [id])
-    father_fatherToorphan       Father         @relation(fields: [father], references: [id])
-    groupoforphans              Groupoforphans @relation(fields: [group], references: [id])
-    guardian_guardianToorphan   Guardian       @relation(fields: [guardian], references: [id])
-    mother_motherToorphan       Mother         @relation(fields: [mother], references: [id])
-    sibling_orphanTosibling     Sibling?       @relation(fields: [sibling], references: [id])
+    id                              Int            @id
+    firstName                       String
+    fatherName                      String
+    grandFatherName                 String
+    greatGrandFatherName            String
+    gender                          orphan_gender
+    placeOfBirth                    String
+    dateOfBirth                     DateTime
+    numberOfSponserdSiblings        Int
+    physicalHealthStatus            String
+    psychologicalHealthStatus       String
+    otherHealthIssues               String
+    photoPortraitUrl                String
+    photoLongUrl                    String
+    father                          Int
+    mother                          Int
+    guardian                        Int
+    group                           Int
+    sibling                         Int
+    IGA_Property                    Int
+    education                       Int
+    iga_property                    Iga_property   @relation(fields: [IGA_Property], references: [id])
+    education_educationToorphan     Education      @relation(fields: [education], references: [id])
+    father_fatherToorphan           Father         @relation(fields: [father], references: [id])
+    groupoforphans                  GroupOfOrphans @relation(fields: [group], references: [id])
+    guardian_guardianToorphan       Guardian       @relation(fields: [guardian], references: [id])
+    mother_motherToorphan           Mother         @relation(fields: [mother], references: [id])
+    sibling_orphan_siblingTosibling Sibling        @relation("orphan_siblingTosibling", fields: [sibling], references: [id])
 
     @@index([IGA_Property], name: "IGA_Property")
     @@index([education], name: "education")
@@ -158,59 +165,63 @@ model Orphan {
     @@index([guardian], name: "guardian")
     @@index([mother], name: "mother")
     @@index([sibling], name: "sibling")
+    @@map("orphan")
 }
 
-model responsiblefor {
+model ResponsibleFor {
     GroupOfOrphans Int
     SocialWorker   Int
-    groupoforphans Groupoforphans @relation(fields: [GroupOfOrphans], references: [id])
-    socialworker   Socialworker   @relation(fields: [SocialWorker], references: [id])
+    groupoforphans GroupOfOrphans @relation(fields: [GroupOfOrphans], references: [id])
+    socialworker   SocialWorker   @relation(fields: [SocialWorker], references: [id])
 
     @@id([GroupOfOrphans, SocialWorker])
     @@index([SocialWorker], name: "SocialWorker")
+    @@map("responsiblefor")
 }
 
 model Sibling {
-    id            Int      @id
-    fullname      String?
-    gender        String?
-    age           Int?
-    schoolgrade   String?
+    id            Int     @id
+    fullName      String
+    gender        String
+    age           Int
+    schoolGrade   String?
     job           String?
-    maritalStatus String?
-    orphan        Orphan[]
+    maritalStatus String
+    orphan        Orphan  @relation("orphan_siblingTosibling")
+    @@map("sibling")
 }
 
 model Site {
     id                    Int              @id
-    siteName              String?
-    donationAmount        Int?
-    address               String?
-    address_addressTosite Address?         @relation(fields: [address], references: [state])
-    groupoforphans        Groupoforphans[]
-    socialworkers         Socialworker[]
+    siteName              String
+    donationAmount        Int
+    Address               String
+    Address_AddressTosite Address          @relation(fields: [Address], references: [state])
+    groupsoforphans       GroupOfOrphans[]
+    socialworkers         SocialWorker[]
 
-    @@index([address], name: "address")
+    @@index([Address], name: "Address")
 }
 
-model Socialworker {
+model SocialWorker {
     id                      Int              @id
-    fullName                String?
-    phoneNumber             Int?
+    fullName                String
+    phoneNumber             Int
     site                    Int
     site_siteTosocialworker Site             @relation(fields: [site], references: [id])
-    responsiblefor          responsiblefor[]
+    responsiblefor          ResponsibleFor[]
 
     @@index([site], name: "site")
+    @@map("socialworker")
 }
 
-enum education_enrollment_status {
+enum education_enrollmentStatus {
     enrolled
     unenrolled
     droppedout
 }
 
-enum education_type_of_school {
+enum education_typeOfSchool {
     private
     public
 }

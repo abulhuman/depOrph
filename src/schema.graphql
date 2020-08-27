@@ -1,0 +1,13 @@
+type Query {
+    orphan: Orphan!
+}
+
+type Mutation {
+    createOrphan()
+}
+
+type Orphan {
+    id: ID!
+    firstName: String!
+    middleName:  
+}
