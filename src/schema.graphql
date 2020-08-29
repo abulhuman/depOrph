@@ -1,89 +1,70 @@
+scalar DateTime
+
 type Query {
-    orphan: Orphan!
+  orphan(id: ID!): Orphan!
+  iga_property(id: ID!): Iga_property!
+  education(id: ID!): Education!
+  father(id: ID!): Father!
+  sibling(id: ID!): Sibling!
+  guardian(id: ID!): Guardian!
+  motherJob(id: ID!): MotherJob!
+  mother(id: ID!): Mother!
+  donor(id: ID!): Donor!
+  address(state: String!): Address!
+  site(id: ID!): Site!
+  socialWorker(id: ID!): SocialWorker!
+  groupOfOrphans(id: ID!): GroupOfOrphans!
 }
 
 type Mutation {
-    createOrphan()
-}
-
-type Iga_property {
-    id: ID!
-    ownershipStaus: String!
+  createOrphan(
+    firstName: String!
+    fatherName: String!
+    grandFatherName: String!
+    greatGrandFatherName: String!
+    gender: orphanGender!
+    placeOfBirth: String!
+    dateOfBirth: DateTime!
+    numberOfSponserdSiblings: Int!
+    physicalHealthStatus: String!
+    psychologicalHealthStatus: String!
+    otherHealthIssues: String
+    photoPortraitUrl: String!
+    photoLongUrl: String!
+  ): Orphan!
+  
+  createIga_property(
+    ownershipStatus: String!
     otherProperty: String
-    orphan: Orphan!
-}
-
-type Education {
-    id: ID!
+  ): Iga_property!
+  
+  createEducation(
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
     typeOfSchool: educationTypeOfSchool
     grade: String
     reason: String
     hobbies: String
-    orphans: [Orphan]!
-}
+  ): Education!
 
-type Father {
-    id: ID!
-    dateOfDeath: DateTime
+  createFather(
+    dateOfDeath: DateTime!
     causeOfDeath: String
     job: String
     monthlyIncome: Int
-    dateOfBirth: DateTime
-    orphans: [Orphan!]!
-}
-
-type SocialWorker {
-    id: ID!
+    dateOfBirth: DateTime!
+  ): Father!
+  
+  createSibling(
     fullName: String!
-    phoneNumber: Int!
-    email: String!
-    site: Site!
-    groupOfOrphans: GroupOfOrphans!
-}
+    gender: String!
+    age: Int!
+    schoolGrade: String
+    job: String
+    maritalStatus: String!
+  ): Sibling!
 
-type Address {
-    state: Sibling!
-    zone: String!
-    district: String!
-    kebele: String!
-    site: Site! 
-}
-
-type Site {
-    id: ID!
-    siteName: String!
-    donationAmount: Int!
-    address: Address!
-    groupsOfOrphans: [GroupOfOrphans!]!
-    socialWorkers:   [SocialWorker!]!
-}
-
-type Donor {
-    id: ID
-    companyName: String
-    typeOfsupport: String
-    initialDonationAmount: Float
-    initialReportPreparationDate: DateTime
-    finalReportPreparationDate: DateTime
-    initialDataCollectionDate: DateTime
-    finalDataCollectionDate: DateTime
-    reportDueDate: DateTime
-    groupsOfOrphans: [GroupOfOrphans!]!
-}
-
-type GroupOfOrphans {
-    id: ID!
-    registrationDate: DateTime! 
-    site: Site!
-    socialWorker: [SocialWorker!]!
-    orphans:    [Orphan!]!
-    donor: Donor! 
-}
-
-type Guardian {
-    id: ID!  
+  createGuardian(
     firstName: String!
     middleName: String!
     lastName: String!
@@ -95,20 +76,16 @@ type Guardian {
     kebele: String!
     relationToOrphan: String!
     email: String!
-    job: String?
+    job: String
     age: Int
-    orphans: [Orphan!]!
-}
+  ): Guardian!
 
-type MotherJob {
-    id: ID!
+  createMotherJob(
     currentJobTitle: String
     monthlyIncome: String
-    mother: Mother!
-}
+  ): MotherJob!
 
-type Mother {
-    id: ID!
+  createMother(
     firstName: String!
     middleName: String!
     lastName: String!
@@ -118,56 +95,205 @@ type Mother {
     maritalStatus: String!
     vitalStatus: String!
     monthlyExpense: Float!
-    motherjob: MotherJob!
-    orphans: [Orphan!]!
+  ): Mother!
+
+  createDonor(
+    companyName: String
+    typeOfsupport: String
+    initialDonationAmount: Float
+    initialReportPreparationDate: DateTime
+    finalReportPreparationDate: DateTime
+    initialDataCollectionDate: DateTime
+    finalDataCollectionDate: DateTime
+    reportDueDate: DateTime
+  ): Donor!
+
+  createAddress(
+    state: String!
+    zone: String!
+    district: String!
+    kebele: String
+  ): Address!
+
+  createSite(
+    siteName: String!
+    donationAmount: Int!
+  ): Site!
+
+  createSocialWorker(
+    fullName: String!
+    phoneNumber: Int!
+    email: String!
+  ): SocialWorker!
+
+  createGroupOfOrphans(
+    registrationDate: DateTime!
+  ): GroupOfOrphans!
+}
+
+type Iga_property {
+  id: ID!
+  ownershipStatus: String!
+  otherProperty: String
+  orphan: Orphan!
+}
+
+type Education {
+  id: ID!
+  enrollmentStatus: educationEnrollmentStatus!
+  schoolName: String
+  typeOfSchool: educationTypeOfSchool
+  grade: String
+  reason: String
+  hobbies: String
+  orphans: [Orphan]!
+}
+
+type Father {
+  id: ID!
+  dateOfDeath: DateTime
+  causeOfDeath: String
+  job: String
+  monthlyIncome: Int
+  dateOfBirth: DateTime
+  orphans: [Orphan!]!
+}
+
+type SocialWorker {
+  id: ID!
+  fullName: String!
+  phoneNumber: Int!
+  email: String!
+  site: Site!
+  groupOfOrphans: GroupOfOrphans!
+}
+
+type Address {
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String!
+  site: Site!
+}
+
+type Site {
+  id: ID!
+  siteName: String!
+  donationAmount: Int!
+  address: Address!
+  groupsOfOrphans: [GroupOfOrphans!]!
+  socialWorkers: [SocialWorker!]!
+}
+
+type Donor {
+  id: ID!
+  companyName: String
+  typeOfsupport: String
+  initialDonationAmount: Float
+  initialReportPreparationDate: DateTime
+  finalReportPreparationDate: DateTime
+  initialDataCollectionDate: DateTime
+  finalDataCollectionDate: DateTime
+  reportDueDate: DateTime
+  groupsOfOrphans: [GroupOfOrphans!]!
+}
+
+type GroupOfOrphans {
+  id: ID!
+  registrationDate: DateTime!
+  site: Site!
+  socialWorker: [SocialWorker!]!
+  orphans: [Orphan!]!
+  donor: Donor!
+}
+
+type Guardian {
+  id: ID!
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  gender: String!
+  nationality: String!
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String!
+  relationToOrphan: String!
+  email: String!
+  job: String
+  age: Int
+  orphans: [Orphan!]!
+}
+
+type MotherJob {
+  id: ID!
+  currentJobTitle: String
+  monthlyIncome: String
+  mother: Mother!
+}
+
+type Mother {
+  id: ID!
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  dateOfBirth: DateTime!
+  phoneNumber: Int!
+  job: Int!
+  maritalStatus: String!
+  vitalStatus: String!
+  monthlyExpense: Float!
+  motherjob: MotherJob!
+  orphans: [Orphan!]!
 }
 
 type Sibling {
-    id: ID!
-    fullName: String!
-    gender: String!
-    age: Int!
-    schoolGrade: String
-    job: String
-    orphan: Orphan!
+  id: ID!
+  fullName: String!
+  gender: String!
+  age: Int!
+  schoolGrade: String
+  job: String
+  maritalStatus: String
+  orphan: Orphan!
 }
 
 type Orphan {
-    id: ID!
-    firstName: String!
-    fatherName: String!
-    grandFatherName: String!
-    greatGrandFatherName: String!
-    gender: orphan_gender!
-    placeOfBirth: String!
-    dateOfBirth: DateTime!
-    numberOfSponserdSiblings: Int!
-    physicalHealthStatus: String!
-    psychologicalHealthStatus: String!
-    otherHealthIssues: String!
-    photoPortraitUrl: String!
-    photoLongUrl: String!
-    iga_property: Iga_property!
-    education: Education!
-    father: Father!
-    groupoforphans: GroupOfOrphans!
-    guardian: Guardian!
-    mother: Mother!
-    siblings: [Sibling!]!
+  id: ID!
+  firstName: String!
+  fatherName: String!
+  grandFatherName: String!
+  greatGrandFatherName: String!
+  gender: orphanGender!
+  placeOfBirth: String!
+  dateOfBirth: DateTime!
+  numberOfSponserdSiblings: Int!
+  physicalHealthStatus: String!
+  psychologicalHealthStatus: String!
+  otherHealthIssues: String!
+  photoPortraitUrl: String!
+  photoLongUrl: String!
+  iga_property: Iga_property!
+  education: Education!
+  father: Father!
+  groupoforphans: GroupOfOrphans!
+  guardian: Guardian!
+  mother: Mother!
+  siblings: [Sibling!]!
 }
 
 enum orphanGender {
-   M
-   F 
+  M
+  F
 }
 
 enum educationEnrollmentStatus {
-    enrolled
-    unenrolled
-    droppedout
+  enrolled
+  unenrolled
+  droppedout
 }
 
 enum educationTypeOfSchool {
-    private
-    public
+  private
+  public
 }

@@ -3,7 +3,9 @@ const { GraphQLServer } = require('graphql-yoga');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  errorFormat: 'pretty',
+});
 
 const resolvers = {
   Query,
@@ -21,4 +23,6 @@ const server = new GraphQLServer({
   },
 });
 
-server.start();
+server.start({ port: 5005 }, ({ port }) => {
+  console.log(`\n\nServer is running on port ${port} ... \n\n`);
+});
