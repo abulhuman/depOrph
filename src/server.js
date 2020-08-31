@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const { GraphQLServer } = require('graphql-yoga');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
+const Orphan = require('./resolvers/Orphan');
 
 const prisma = new PrismaClient({
   errorFormat: 'pretty',
@@ -10,6 +11,7 @@ const prisma = new PrismaClient({
 const resolvers = {
   Query,
   Mutation,
+  Orphan,
 };
 
 const server = new GraphQLServer({

@@ -56,10 +56,10 @@ model Father {
 model GroupOfOrphans {
     id               Int          @id @default(autoincrement())
     registrationDate DateTime
-    donorId          Int
+    donorId          Int?
     socialWorkerId   Int
     siteId           Int
-    donor            Donor        @relation(fields: [donorId], references: [id])
+    donor            Donor?       @relation(fields: [donorId], references: [id])
     site             Site         @relation(fields: [siteId], references: [id])
     socialworker     SocialWorker @relation(fields: [socialWorkerId], references: [id])
     orphans          Orphan[]
@@ -118,7 +118,7 @@ model Mother {
 model MotherJob {
     id              Int     @id @default(autoincrement())
     currentJobTitle String?
-    monthlyIncome   Float?
+    monthlyIncome   String?
     mother          Mother
     @@map("motherjob")
 }

@@ -17,7 +17,7 @@ type Query {
 }
 
 type Mutation {
-  createOrphan(
+  createOrphanOnly(
     firstName: String!
     fatherName: String!
     grandFatherName: String!
@@ -32,7 +32,32 @@ type Mutation {
     photoPortraitUrl: String!
     photoLongUrl: String!
   ): Orphan!
-  
+  createSiteWithAddress(
+    siteName: String
+    donationAmount: Int
+    address: AddressInput
+  ):Site!
+  createOrphanWithAllDetails(
+    firstName: String!
+    fatherName: String!
+    grandFatherName: String!
+    greatGrandFatherName: String!
+    gender: orphanGender!
+    placeOfBirth: String!
+    dateOfBirth: DateTime!
+    numberOfSponserdSiblings: Int!
+    physicalHealthStatus: String!
+    psychologicalHealthStatus: String!
+    otherHealthIssues: String
+    photoPortraitUrl: String!
+    photoLongUrl: String!
+    iga_property: Iga_propertyInput!
+    education: EducationInput!
+    father: FatherInput!
+    groupoforphans: GroupOfOrphansInput!
+    guardian: GuardianInput!
+    mother: MotherInput!
+  ): Orphan!
   createIga_property(
     ownershipStatus: String!
     otherProperty: String
@@ -297,3 +322,96 @@ enum educationTypeOfSchool {
   private
   public
 }
+
+input Iga_propertyInput {
+  ownershipStatus: String!
+  otherProperty: String
+}
+
+input EducationInput {
+  enrollmentStatus: educationEnrollmentStatus!
+  schoolName: String
+  typeOfSchool: educationTypeOfSchool
+  grade: String
+  reason: String
+  hobbies: String
+}
+
+input FatherInput {
+  dateOfDeath: DateTime!
+  causeOfDeath: String
+  job: String
+  monthlyIncome: Int
+  dateOfBirth: DateTime!
+}
+
+input GroupOfOrphansInput {
+  registrationDate: DateTime!
+  donor: DonorInput!
+  site: SiteInput!
+  socialWorker: SocialWorkerInput!
+}
+
+input DonorInput {
+  companyName: String
+  typeOfsupport: String
+  initialDonationAmount: Float
+  initialReportPreparationDate: DateTime
+  finalReportPreparationDate: DateTime
+  initialDataCollectionDate: DateTime
+  finalDataCollectionDate: DateTime
+  reportDueDate: DateTime
+}
+
+input SiteInput {
+  siteName: String!
+  donationAmount: Int!
+  address: AddressInput!
+}
+
+input AddressInput {
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String!
+}
+
+input SocialWorkerInput {
+  fullName: String!
+  phoneNumber: Int!
+  email: String!
+}
+
+input GuardianInput {
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  gender: String!
+  nationality: String!
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String!
+  relationToOrphan: String!
+  email: String!
+  job: String
+  age: Int
+}
+
+input MotherInput {
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  dateOfBirth: DateTime!
+  phoneNumber: Int!
+  maritalStatus: String!
+  vitalStatus: String!
+  monthlyExpense: Float!
+  motherjob: MotherJobInput!
+}
+
+input MotherJobInput {
+    currentJobTitle: String
+    monthlyIncome: String
+}
+
