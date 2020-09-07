@@ -72,6 +72,12 @@ async function createOrphanWithAllDetails(parent, args, context, info) {
               finalDataCollectionDate,
               reportDueDate,
             } = args.groupoforphans.donor,
+          }, socialworker: {
+            create: {
+              fullName,
+              phoneNumber,
+              email
+            } = args.groupoforphans.socialWorker,
           },
           site: {
             create: {
@@ -86,7 +92,7 @@ async function createOrphanWithAllDetails(parent, args, context, info) {
               siteName: args.groupoforphans.site.siteName,
               donationAmount: args.groupoforphans.site.donationAmount,
             },
-          }
+          },
         },
       },
       guardian: {

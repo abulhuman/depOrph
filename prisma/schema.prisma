@@ -1,223 +1,254 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-}
-
-model Address {
-    state    String @id
-    zone     String
-    district String
-    kebele   String
-    site     Site
-    @@map("address")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Donor {
-    id                           Int              @id @default(autoincrement())
-    companyName                  String
-    typeOfsupport                String?
-    initialDonationAmount        Float?
-    initialReportPreparationDate DateTime?
-    finalReportPreparationDate   DateTime?
-    initialDataCollectionDate    DateTime?
-    finalDataCollectionDate      DateTime?
-    reportDueDate                DateTime?
-    groupsOfOrphans              GroupOfOrphans[]
-    @@map("donor")
+  id                           Int              @default(autoincrement()) @id
+  companyName                  String
+  initialDonationAmount        Float?
+  initialReportPreparationDate DateTime?
+  finalReportPreparationDate   DateTime?
+  initialDataCollectionDate    DateTime?
+  finalDataCollectionDate      DateTime?
+  reportDueDate                DateTime?
+  sponsoredgroup               SponsoredGroup[]
+  @@map("donor")
 }
 
 model Education {
-    id               Int                       @id @default(autoincrement())
-    enrollmentStatus educationEnrollmentStatus
-    schoolName       String?
-    typeOfSchool     educationTypeOfSchool?
-    grade            String?
-    reason           String?
-    hobbies          String?
-    orphans          Orphan[]
-    @@map("education")
+  id               Int                        @default(autoincrement()) @id
+  enrollmentStatus education_enrollmentStatus
+  schoolName       String?
+  typeOfSchool     education_typeOfSchool?
+  grade            String?
+  reason           String?
+  hobbies          String?
+  orphan           Orphan[]
+  @@map("education")
+}
+
+model EducationalSupport {
+  id      Int       @default(autoincrement()) @id
+  support Support[]
+  @@map("educationalsupport")
 }
 
 model Father {
-    id            Int      @id @default(autoincrement())
-    dateOfDeath   DateTime
-    causeOfDeath  String
-    job           String?
-    monthlyIncome Int
-    dateOfBirth   DateTime
-    orphans       Orphan[]
-    @@map("father")
+  id            Int      @default(autoincrement()) @id
+  dateOfDeath   DateTime
+  causeOfDeath  String
+  job           String?
+  monthlyIncome Int
+  dateOfBirth   DateTime
+  orphan        Orphan[]
+  @@map("father")
 }
 
-model GroupOfOrphans {
-    id               Int          @id @default(autoincrement())
-    registrationDate DateTime
-    donorId          Int?
-    socialWorkerId   Int
-    siteId           Int
-    donor            Donor?       @relation(fields: [donorId], references: [id])
-    site             Site         @relation(fields: [siteId], references: [id])
-    socialworker     SocialWorker @relation(fields: [socialWorkerId], references: [id])
-    orphans          Orphan[]
-
-    @@index([donorId], name: "donorId")
-    @@index([siteId], name: "siteId")
-    @@index([socialWorkerId], name: "socialWorkerId")
-    @@map("groupoforphans")
+model FinancialSupport {
+  id      Int       @default(autoincrement()) @id
+  support Support[]
+  @@map("financialsupport")
 }
 
 model Guardian {
-    id               Int      @id @default(autoincrement())
-    firstName        String
-    middleName       String
-    lastName         String
-    gender           String
-    nationality      String
-    state            String
-    zone             String
-    district         String
-    kebele           String
-    relationToOrphan String
-    email            String
-    job              String?
-    age              Int
-    orphans          Orphan[]
-    @@map("guardian")
+  id               Int      @default(autoincrement()) @id
+  firstName        String
+  middleName       String
+  lastName         String
+  gender           String
+  nationality      String
+  state            String
+  zone             String
+  district         String
+  kebele           String
+  relationToOrphan String
+  email            String
+  job              String?
+  age              Int
+  orphan           Orphan[]
+  @@map("guardian")
 }
 
 model Iga_property {
-    id              Int      @id @default(autoincrement())
-    ownershipStatus String
-    otherProperty   String?
-    orphans         Orphan[]
-    @@map("iga_property")
+  id              Int      @default(autoincrement()) @id
+  ownershipStatus String
+  otherProperty   String?
+  orphan          Orphan[]
+  @@map("iga_property")
 }
 
 model Mother {
-    id             Int       @id @default(autoincrement())
-    firstName      String
-    middleName     String
-    lastName       String
-    dateOfBirth    DateTime
-    phoneNumber    Int
-    job            Int
-    maritalStatus  String
-    vitalStatus    String
-    monthlyExpense Float
-    motherjob      MotherJob @relation(fields: [job], references: [id])
-    orphans        Orphan[]
+  id             Int        @default(autoincrement()) @id
+  firstName      String
+  middleName     String
+  lastName       String
+  dateOfBirth    DateTime
+  phoneNumber    String
+  jobId          Int?
+  maritalStatus  String
+  vitalStatus    String
+  monthlyExpense Float
+  motherjob      MotherJob? @relation(fields: [jobId], references: [id])
+  orphan         Orphan[]
 
-    @@index([job], name: "job")
-    @@map("mother")
+  @@index([jobId], name: "jobId")
+  @@map("mother")
 }
 
 model MotherJob {
-    id              Int     @id @default(autoincrement())
-    currentJobTitle String?
-    monthlyIncome   String?
-    mother          Mother
-    @@map("motherjob")
+  id              Int      @default(autoincrement()) @id
+  currentJobTitle String?
+  monthlyIncome   Float?
+  mother          Mother[]
+  @@map("motherjob")
+}
+
+model OfficialDocuments {
+  id                            Int      @default(autoincrement()) @id
+  photoPortraitUrl              String
+  photoLongUrl                  String
+  fatherDeathCertificateUrl     String
+  birthCertificateUrl           String
+  guardianIDCardUrl             String
+  guardianConfirmationLetterUrl String
+  orphan                        Orphan[]
+  @@map("officialdocuments")
 }
 
 model Orphan {
-    id                        Int            @id @default(autoincrement())
-    firstName                 String
-    fatherName                String
-    grandFatherName           String
-    greatGrandFatherName      String
-    gender                    orphanGender
-    placeOfBirth              String
-    dateOfBirth               DateTime
-    numberOfSponserdSiblings  Int
-    physicalHealthStatus      String
-    psychologicalHealthStatus String
-    otherHealthIssues         String?
-    photoPortraitUrl          String
-    photoLongUrl              String
-    fatherId                  Int
-    motherId                  Int
-    guardianId                Int
-    groupId                   Int
-    siblingId                 Int
-    IGA_PropertyId            Int
-    educationId               Int
-    siblings                  Sibling[]
-    iga_property              Iga_property   @relation(fields: [IGA_PropertyId], references: [id])
-    education                 Education      @relation(fields: [educationId], references: [id])
-    father                    Father         @relation(fields: [fatherId], references: [id])
-    groupoforphans            GroupOfOrphans @relation(fields: [groupId], references: [id])
-    guardian                  Guardian       @relation(fields: [guardianId], references: [id])
-    mother                    Mother         @relation(fields: [motherId], references: [id])
+  id                        Int                @default(autoincrement()) @id
+  firstName                 String
+  fatherName                String
+  grandFatherName           String
+  greatGrandFatherName      String
+  gender                    orphan_gender
+  placeOfBirth              String
+  dateOfBirth               DateTime
+  numberOfSponserdSiblings  Int
+  physicalHealthStatus      String
+  psychologicalHealthStatus String
+  otherHealthIssues         String
+  fatherId                  Int?
+  motherId                  Int?
+  guardianId                Int?
+  siblingId                 Int?
+  IGA_PropertyId            Int?
+  educationId               Int?
+  docsId                    Int?
+  regGroupId                Int?
+  sponsrGroupId             Int?
+  iga_property              Iga_property?      @relation(fields: [IGA_PropertyId], references: [id])
+  officialdocuments         OfficialDocuments? @relation(fields: [docsId], references: [id])
+  education                 Education?         @relation(fields: [educationId], references: [id])
+  father                    Father?            @relation(fields: [fatherId], references: [id])
+  guardian                  Guardian?          @relation(fields: [guardianId], references: [id])
+  mother                    Mother?            @relation(fields: [motherId], references: [id])
+  registeredgroup           RegisteredGroup?   @relation(fields: [regGroupId], references: [id])
+  sibling                   Sibling?           @relation(fields: [siblingId], references: [id])
+  sponsoredgroup            SponsoredGroup?    @relation(fields: [sponsrGroupId], references: [id])
 
-    @@index([IGA_PropertyId], name: "IGA_PropertyId")
-    @@index([educationId], name: "educationId")
-    @@index([fatherId], name: "fatherId")
-    @@index([groupId], name: "groupId")
-    @@index([guardianId], name: "guardianId")
-    @@index([motherId], name: "motherId")
-    @@map("orphan")
+  @@index([IGA_PropertyId], name: "IGA_PropertyId")
+  @@index([docsId], name: "docsId")
+  @@index([educationId], name: "educationId")
+  @@index([fatherId], name: "fatherId")
+  @@index([guardianId], name: "guardianId")
+  @@index([motherId], name: "motherId")
+  @@index([regGroupId], name: "regGroupId")
+  @@index([siblingId], name: "siblingId")
+  @@index([sponsrGroupId], name: "sponsrGroupId")
+  @@map("orphan")
+}
+
+model OtherSupport {
+  id      Int       @default(autoincrement()) @id
+  support Support[]
+  @@map("othersupport")
+}
+
+model RegisteredGroup {
+  id               Int      @default(autoincrement()) @id
+  registrationDate DateTime
+  siteName         String
+  state            String
+  zone             String
+  district         String
+  kebele           String
+  orphan           Orphan[]
+  @@map("registeredgroup")
 }
 
 model Sibling {
-    id            Int     @id @default(autoincrement())
-    fullName      String
-    gender        String
-    age           Int
-    schoolGrade   String?
-    job           String?
-    maritalStatus String
-    orphanId      Int
-    orphan        Orphan  @relation(fields: [orphanId], references: [id])
-
-    @@index([orphanId], name: "orphanId")
-    @@map("sibling")
-}
-
-model Site {
-    id             Int              @id @default(autoincrement())
-    siteName       String
-    donationAmount Int
-    addressId      String
-    address        Address          @relation(fields: [addressId], references: [state])
-    groupoforphans GroupOfOrphans[]
-    socialworker   SocialWorker[]
-
-    @@index([addressId], name: "addressId")
-    @@map("site")
+  id            Int      @default(autoincrement()) @id
+  fullName      String
+  gender        String
+  age           Int
+  schoolGrade   String?
+  job           String?
+  maritalStatus String
+  orphan        Orphan[]
+  @@map("sibling")
 }
 
 model SocialWorker {
-    id             Int              @id @default(autoincrement())
-    fullName       String
-    phoneNumber    Int
-    email          String
-    siteId         Int
-    site           Site             @relation(fields: [siteId], references: [id])
-    groupoforphans GroupOfOrphans[]
-
-    @@index([siteId], name: "siteId")
-    @@map("socialworker")
+  id             Int              @default(autoincrement()) @id
+  fullName       String
+  phoneNumber    String
+  email          String
+  sponsoredgroup SponsoredGroup[]
+  @@map("socialworker")
 }
 
-enum educationEnrollmentStatus {
-    enrolled
-    unenrolled
-    droppedout
-    @@map("education_enrollmentStatus")
+model SponsoredGroup {
+  id              Int           @default(autoincrement()) @id
+  sponsorshipDate DateTime
+  supportId       Int?
+  donorId         Int?
+  socialWorkerId  Int?
+  donor           Donor?        @relation(fields: [donorId], references: [id])
+  socialworker    SocialWorker? @relation(fields: [socialWorkerId], references: [id])
+  support         Support?      @relation(fields: [supportId], references: [id])
+  orphan          Orphan[]
+
+  @@index([donorId], name: "donorId")
+  @@index([socialWorkerId], name: "socialWorkerId")
+  @@index([supportId], name: "supportId")
+  @@map("sponsoredgroup")
 }
 
-enum educationTypeOfSchool {
-    private
-    public
-    @@map("education_typeOfSchool")
+model Support {
+  id                 Int                 @default(autoincrement()) @id
+  status             String?
+  financialId        Int?
+  educationalId      Int?
+  otherId            Int?
+  educationalsupport EducationalSupport? @relation(fields: [educationalId], references: [id])
+  financialsupport   FinancialSupport?   @relation(fields: [financialId], references: [id])
+  othersupport       OtherSupport?       @relation(fields: [otherId], references: [id])
+  sponsoredgroup     SponsoredGroup[]
+
+  @@index([educationalId], name: "educationalId")
+  @@index([financialId], name: "financialId")
+  @@index([otherId], name: "otherId")
+  @@map("support")
 }
 
-enum orphanGender {
-    M
-    F
-    @@map("orphan_gender")
+enum education_enrollmentStatus {
+  enrolled
+  unenrolled
+  droppedout
+}
+
+enum education_typeOfSchool {
+  private
+  public
+}
+
+enum orphan_gender {
+  M
+  F
 }
