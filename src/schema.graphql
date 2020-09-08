@@ -160,7 +160,7 @@ type Iga_property {
   id: ID!
   ownershipStatus: String!
   otherProperty: String
-  orphan: Orphan!
+  orphan: Orphan
 }
 
 type Education {
@@ -171,7 +171,7 @@ type Education {
   grade: String
   reason: String
   hobbies: String
-  orphans: [Orphan]!
+  orphans: [Orphan]
 }
 
 type Father {
@@ -181,7 +181,7 @@ type Father {
   job: String
   monthlyIncome: Int
   dateOfBirth: DateTime
-  orphans: [Orphan!]!
+  orphans: [Orphan]
 }
 
 type SocialWorker {
@@ -189,47 +189,74 @@ type SocialWorker {
   fullName: String!
   phoneNumber: Int!
   email: String!
-  site: Site!
-  groupOfOrphans: GroupOfOrphans!
-}
-
-type Address {
-  state: String!
-  zone: String!
-  district: String!
-  kebele: String!
-  site: Site!
-}
-
-type Site {
-  id: ID!
-  siteName: String!
-  donationAmount: Int!
-  address: Address!
-  groupsOfOrphans: [GroupOfOrphans!]!
-  socialWorkers: [SocialWorker!]!
+  sponsoredgroup: SponsoredGroup
 }
 
 type Donor {
   id: ID!
   companyName: String
-  typeOfsupport: String
   initialDonationAmount: Float
   initialReportPreparationDate: DateTime
   finalReportPreparationDate: DateTime
   initialDataCollectionDate: DateTime
   finalDataCollectionDate: DateTime
   reportDueDate: DateTime
-  groupsOfOrphans: [GroupOfOrphans!]!
+  sponsoredgroup: SponsoredGroup
 }
 
-type GroupOfOrphans {
+type EducationalSupport {
+  id: ID!
+  support: Support
+}
+
+type FinancialSupport {
+  id: ID!
+  support: Support
+}
+
+type OtherSupport {
+  id: ID!
+  support: Support
+}
+
+type Support {
+  id: ID!
+  status: String!
+  educationalsupport: EducationalSupport
+  financialsupport: FinancialSupport
+  othersupport: OtherSupport
+  sponsoredgroup: SponsoredGroup
+}
+
+type RegisteredGroup {
   id: ID!
   registrationDate: DateTime!
-  site: Site!
-  socialWorker: [SocialWorker!]!
-  orphans: [Orphan!]!
-  donor: Donor!
+  siteName: String!
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String!
+  orphans: [Orphan]
+}
+
+type SponsoredGroup {
+  id: ID!
+  sponsorshipDate: DateTime!
+  donor: Donor
+  socialworkers: SocialWorker
+  support: Support
+  orphans: [Orphan]
+}
+
+type OfficialDocuments {
+  id: ID!
+  photoPortraitUrl: String!
+  photoLongUrl: String!
+  fatherDeathCertificateUrl: String!
+  birthCertificateUrl: String!
+  guardianIDCardUrl: String!
+  guardianConfirmationLetterUrl: String!
+  orphan: [Orphan]
 }
 
 type Guardian {
@@ -247,14 +274,14 @@ type Guardian {
   email: String!
   job: String
   age: Int
-  orphans: [Orphan!]!
+  orphans: [Orphan]
 }
 
 type MotherJob {
   id: ID!
   currentJobTitle: String
   monthlyIncome: String
-  mother: Mother!
+  mother: Mother
 }
 
 type Mother {
@@ -263,13 +290,12 @@ type Mother {
   middleName: String!
   lastName: String!
   dateOfBirth: DateTime!
-  phoneNumber: Int!
-  job: Int!
+  phoneNumber: String!
   maritalStatus: String!
   vitalStatus: String!
   monthlyExpense: Float!
-  motherjob: MotherJob!
-  orphans: [Orphan!]!
+  motherjob: MotherJob
+  orphans: [Orphan]
 }
 
 type Sibling {
@@ -280,7 +306,7 @@ type Sibling {
   schoolGrade: String
   job: String
   maritalStatus: String
-  orphan: Orphan!
+  orphan: Orphan
 }
 
 type Orphan {
@@ -296,15 +322,15 @@ type Orphan {
   physicalHealthStatus: String!
   psychologicalHealthStatus: String!
   otherHealthIssues: String!
-  photoPortraitUrl: String!
-  photoLongUrl: String!
-  iga_property: Iga_property!
-  education: Education!
-  father: Father!
-  groupoforphans: GroupOfOrphans!
-  guardian: Guardian!
-  mother: Mother!
-  siblings: [Sibling!]!
+  iga_property: Iga_property
+  officialdocuments: OfficialDocuments
+  education: Education
+  father: Father
+  guardian: Guardian
+  mother: Mother
+  registeredgroup: RegisteredGroup
+  sponsoredgroup: SponsoredGroup
+  siblings: [Sibling]
 }
 
 enum orphanGender {

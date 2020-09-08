@@ -210,7 +210,7 @@ model SponsoredGroup {
   donorId         Int?
   socialWorkerId  Int?
   donor           Donor?        @relation(fields: [donorId], references: [id])
-  socialworker    SocialWorker? @relation(fields: [socialWorkerId], references: [id])
+  socialworkers   SocialWorker? @relation(fields: [socialWorkerId], references: [id])
   support         Support?      @relation(fields: [supportId], references: [id])
   orphan          Orphan[]
 
