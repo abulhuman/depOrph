@@ -13,147 +13,152 @@ type Query {
   address(state: String!): Address!
   site(id: ID!): Site!
   socialWorker(id: ID!): SocialWorker!
-  groupOfOrphans(id: ID!): GroupOfOrphans!
+  registeredGroup(id: ID!): registeredGroup!
+  sponsoredGroup(id: ID!): sponsoredGroup!
+  officialDocuments(id: ID!): OfficialDocuments!
+  support(id: ID!): support!
+  educationalSupport(id: ID!): EducationalSupport!
+  financialSupport(id: ID!): FinancialSupport!
+  otherSupport(id: ID!): OtherSupport!
 }
 
 type Mutation {
-  createOrphanOnly(
-    firstName: String!
-    fatherName: String!
-    grandFatherName: String!
-    greatGrandFatherName: String!
-    gender: orphanGender!
-    placeOfBirth: String!
-    dateOfBirth: DateTime!
-    numberOfSponserdSiblings: Int!
-    physicalHealthStatus: String!
-    psychologicalHealthStatus: String!
-    otherHealthIssues: String
-    photoPortraitUrl: String!
-    photoLongUrl: String!
+  createOrphan(
+    # firstName: String!
+    # fatherName: String!
+    # grandFatherName: String!
+    # greatGrandFatherName: String!
+    # gender: orphanGender!
+    # placeOfBirth: String!
+    # dateOfBirth: DateTime!
+    # numberOfSponserdSiblings: Int!
+    # physicalHealthStatus: String!
+    # psychologicalHealthStatus: String!
+    # otherHealthIssues: String
+    orphan: OrphanInput!
   ): Orphan!
-  createSiteWithAddress(
-    siteName: String
-    donationAmount: Int
-    address: AddressInput
-  ):Site!
-  createOrphanWithAllDetails(
-    firstName: String!
-    fatherName: String!
-    grandFatherName: String!
-    greatGrandFatherName: String!
-    gender: orphanGender!
-    placeOfBirth: String!
-    dateOfBirth: DateTime!
-    numberOfSponserdSiblings: Int!
-    physicalHealthStatus: String!
-    psychologicalHealthStatus: String!
-    otherHealthIssues: String
-    photoPortraitUrl: String!
-    photoLongUrl: String!
-    iga_property: Iga_propertyInput!
-    education: EducationInput!
-    father: FatherInput!
-    groupoforphans: GroupOfOrphansInput!
-    guardian: GuardianInput!
-    mother: MotherInput!
-  ): Orphan!
+
   createIga_property(
-    ownershipStatus: String!
-    otherProperty: String
+    iga_property: Iga_propertyInput!
   ): Iga_property!
   
   createEducation(
-    enrollmentStatus: educationEnrollmentStatus!
-    schoolName: String
-    typeOfSchool: educationTypeOfSchool
-    grade: String
-    reason: String
-    hobbies: String
+    # enrollmentStatus: educationEnrollmentStatus!
+    # schoolName: String
+    # typeOfSchool: educationTypeOfSchool
+    # grade: String
+    # reason: String
+    # hobbies: String
+    education: EducationInput!
   ): Education!
 
   createFather(
-    dateOfDeath: DateTime!
-    causeOfDeath: String
-    job: String
-    monthlyIncome: Int
-    dateOfBirth: DateTime!
+    # dateOfDeath: DateTime!
+    # causeOfDeath: String
+    # job: String
+    # monthlyIncome: Int
+    # dateOfBirth: DateTime!
+    father: FatherInput!
   ): Father!
   
   createSibling(
-    fullName: String!
-    gender: String!
-    age: Int!
-    schoolGrade: String
-    job: String
-    maritalStatus: String!
+    # fullName: String!
+    # gender: String!
+    # age: Int!
+    # schoolGrade: String
+    # job: String
+    # maritalStatus: String!
+    sibling: SiblingInput!
   ): Sibling!
 
   createGuardian(
-    firstName: String!
-    middleName: String!
-    lastName: String!
-    gender: String!
-    nationality: String!
-    state: String!
-    zone: String!
-    district: String!
-    kebele: String!
-    relationToOrphan: String!
-    email: String!
-    job: String
-    age: Int
+    # firstName: String!
+    # middleName: String!
+    # lastName: String!
+    # gender: String!
+    # nationality: String!
+    # state: String!
+    # zone: String!
+    # district: String!
+    # kebele: String!
+    # relationToOrphan: String!
+    # email: String!
+    # job: String
+    # age: Int
+    guardian: GuardianInput!
   ): Guardian!
 
   createMotherJob(
-    currentJobTitle: String
-    monthlyIncome: String
+    # currentJobTitle: String
+    # monthlyIncome: String
+    motherJob: MotherJobInput!
   ): MotherJob!
 
   createMother(
-    firstName: String!
-    middleName: String!
-    lastName: String!
-    dateOfBirth: DateTime!
-    phoneNumber: Int!
-    job: Int!
-    maritalStatus: String!
-    vitalStatus: String!
-    monthlyExpense: Float!
+    # firstName: String!
+    # middleName: String!
+    # lastName: String!
+    # dateOfBirth: DateTime!
+    # phoneNumber: String!
+    # maritalStatus: String!
+    # vitalStatus: String!
+    # monthlyExpense: Float!
+    mother: MotherInput!
   ): Mother!
 
+  createOfficialDocuments(
+    OfficialDocuments: OfficialDocumentsInput!
+  ): OfficialDocuments!
+
   createDonor(
-    companyName: String
-    typeOfsupport: String
-    initialDonationAmount: Float
-    initialReportPreparationDate: DateTime
-    finalReportPreparationDate: DateTime
-    initialDataCollectionDate: DateTime
-    finalDataCollectionDate: DateTime
-    reportDueDate: DateTime
+    # companyName: String
+    # typeOfsupport: String
+    # initialReportPreparationDate: DateTime
+    # finalReportPreparationDate: DateTime
+    # initialDataCollectionDate: DateTime
+    # finalDataCollectionDate: DateTime
+    # reportDueDate: DateTime
+    donor: DonorInput!
   ): Donor!
 
-  createAddress(
-    state: String!
-    zone: String!
-    district: String!
-    kebele: String
-  ): Address!
-
-  createSite(
-    siteName: String!
-    donationAmount: Int!
-  ): Site!
-
   createSocialWorker(
-    fullName: String!
-    phoneNumber: Int!
-    email: String!
+    # fullName: String!
+    # phoneNumber: String!
+    # email: String!
+    socialWorker: SocialWorkerInput!
   ): SocialWorker!
 
-  createGroupOfOrphans(
-    registrationDate: DateTime!
-  ): GroupOfOrphans!
+  createRegisteredGroup(
+    # registrationDate: DateTime!
+    # siteName: String!
+    # state: String!
+    # zone: String!
+    # district: String!
+    # kebele: String
+    registeredGroup: RegisteredGroupInput!
+  ): RegisteredGroup!
+
+  createSponsoredGroup(
+    # sponsorshipDate: DateTime!
+    sponsoredGroup: SponsoredGroupInput!
+  ): SponsoredGroup!
+
+  createSupport(
+    # status: String!
+    support: SupportInput!
+  ): Support!
+
+  createFinalcialSupport(
+    financialSupport: FinancialSupportInput!
+  ): FinancialSupport!
+
+  createEducationalSupport(
+    educationalSupport: EducationalSupportInput!
+  ): EducationalSupport!
+
+  createOtherSupport(
+    otherSupport: OtherSupportInput!
+  ): OtherSupport!
 }
 
 type Iga_property {
@@ -187,7 +192,7 @@ type Father {
 type SocialWorker {
   id: ID!
   fullName: String!
-  phoneNumber: Int!
+  phoneNumber: String!
   email: String!
   sponsoredgroup: SponsoredGroup
 }
@@ -195,7 +200,6 @@ type SocialWorker {
 type Donor {
   id: ID!
   companyName: String
-  initialDonationAmount: Float
   initialReportPreparationDate: DateTime
   finalReportPreparationDate: DateTime
   initialDataCollectionDate: DateTime
@@ -349,6 +353,20 @@ enum educationTypeOfSchool {
   public
 }
 
+input OrphanInput {
+  firstName: String!
+  fatherName: String!
+  grandFatherName: String!
+  greatGrandFatherName: String!
+  gender: orphanGender!
+  placeOfBirth: String!
+  dateOfBirth: DateTime!
+  numberOfSponserdSiblings: Int!
+  physicalHealthStatus: String!
+  psychologicalHealthStatus: String!
+  otherHealthIssues: String
+}
+
 input Iga_propertyInput {
   ownershipStatus: String!
   otherProperty: String
@@ -371,17 +389,8 @@ input FatherInput {
   dateOfBirth: DateTime!
 }
 
-input GroupOfOrphansInput {
-  registrationDate: DateTime!
-  donor: DonorInput!
-  site: SiteInput!
-  socialWorker: SocialWorkerInput!
-}
-
 input DonorInput {
   companyName: String
-  typeOfsupport: String
-  initialDonationAmount: Float
   initialReportPreparationDate: DateTime
   finalReportPreparationDate: DateTime
   initialDataCollectionDate: DateTime
@@ -389,22 +398,9 @@ input DonorInput {
   reportDueDate: DateTime
 }
 
-input SiteInput {
-  siteName: String!
-  donationAmount: Int!
-  address: AddressInput!
-}
-
-input AddressInput {
-  state: String!
-  zone: String!
-  district: String!
-  kebele: String!
-}
-
 input SocialWorkerInput {
   fullName: String!
-  phoneNumber: Int!
+  phoneNumber: String!
   email: String!
 }
 
@@ -429,15 +425,42 @@ input MotherInput {
   middleName: String!
   lastName: String!
   dateOfBirth: DateTime!
-  phoneNumber: Int!
+  phoneNumber: String!
   maritalStatus: String!
   vitalStatus: String!
   monthlyExpense: Float!
-  motherjob: MotherJobInput!
 }
 
 input MotherJobInput {
-    currentJobTitle: String
-    monthlyIncome: String
+  currentJobTitle: String
+  monthlyIncome: String
 }
 
+input RegisteredGroupInput {
+  registrationDate: DateTime!
+  siteName: String!
+  state: String!
+  zone: String!
+  district: String!
+  kebele: String
+}
+
+input SponsoredGroupInput {
+  sponsorshipDate: DateTime!
+}
+
+input SupportInput {
+  status: String!
+}
+
+input FinancialSupportInput{
+  # TODO: CHECK WITH COMPANY
+}
+
+input FinancialSupportInput {
+  # TODO: CHECK WITH COMPANY
+}
+
+input OtherSupportInput {
+  # TODO: CHECK WITH COMPANY
+}

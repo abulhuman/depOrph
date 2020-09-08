@@ -10,7 +10,6 @@ datasource db {
 model Donor {
   id                           Int              @default(autoincrement()) @id
   companyName                  String
-  initialDonationAmount        Float?
   initialReportPreparationDate DateTime?
   finalReportPreparationDate   DateTime?
   initialDataCollectionDate    DateTime?
