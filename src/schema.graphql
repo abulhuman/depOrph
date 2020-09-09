@@ -10,13 +10,12 @@ type Query {
   motherJob(id: ID!): MotherJob!
   mother(id: ID!): Mother!
   donor(id: ID!): Donor!
-  address(state: String!): Address!
   site(id: ID!): Site!
   socialWorker(id: ID!): SocialWorker!
-  registeredGroup(id: ID!): registeredGroup!
-  sponsoredGroup(id: ID!): sponsoredGroup!
+  registeredGroup(id: ID!): RegisteredGroup!
+  sponsoredGroup(id: ID!): SponsoredGroup!
   officialDocuments(id: ID!): OfficialDocuments!
-  support(id: ID!): support!
+  support(id: ID!): Support!
   educationalSupport(id: ID!): EducationalSupport!
   financialSupport(id: ID!): FinancialSupport!
   otherSupport(id: ID!): OtherSupport!
@@ -112,7 +111,6 @@ type Mutation {
 
   createDonor(
     # companyName: String
-    # typeOfsupport: String
     # initialReportPreparationDate: DateTime
     # finalReportPreparationDate: DateTime
     # initialDataCollectionDate: DateTime
@@ -434,6 +432,15 @@ input MotherInput {
 input MotherJobInput {
   currentJobTitle: String
   monthlyIncome: String
+}
+
+input OfficialDocumentsInput {
+  photoPortraitUrl: String!
+  photoLongUrl: String!
+  fatherDeathCertificateUrl: String!
+  birthCertificateUrl: String!
+  guardianIDCardUrl: String!
+  guardianConfirmationLetterUrl: String!
 }
 
 input RegisteredGroupInput {

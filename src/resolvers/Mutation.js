@@ -1,128 +1,12 @@
-async function createOrphanOnly(parent, args, context, info) {
+async function createOrphan(parent, args, context, info) {
   const newOrphan = await context.prisma.orphan.create({
     data: {
       firstName, fatherName, grandFatherName, greatGrandFatherName,
       gender, placeOfBirth, dateOfBirth, numberOfSponserdSiblings,
-      physicalHealthStatus, psychologicalHealthStatus,
-      otherHealthIssues, photoPortraitUrl, photoLongUrl,
+      physicalHealthStatus, psychologicalHealthStatus, otherHealthIssues,
+
     } = args,
   });
-
-  return newOrphan;
-}
-
-async function createSiteWithAddress(parent, args, context, info) {
-  return context.prisma.site.create({
-    data: {
-      siteName: args.siteName,
-      donationAmount: args.donationAmount,
-      address: {
-        create: {
-          state, zone, district, kebele
-        } = args.address,
-      },
-    },
-  });
-}
-
-async function createOrphanWithAllDetails(parent, args, context, info) {
-  console.log(args.groupoforphans.site.address);
-  const newOrphan = await context.prisma.orphan.create({
-    data: {
-      firstName: args.firstName,
-      fatherName: args.fatherName,
-      grandFatherName: args.grandFatherName,
-      greatGrandFatherName: args.greatGrandFatherName,
-      gender: args.gender,
-      placeOfBirth: args.placeOfBirth,
-      dateOfBirth: args.dateOfBirth,
-      numberOfSponserdSiblings: args.numberOfSponserdSiblings,
-      physicalHealthStatus: args.physicalHealthStatus,
-      psychologicalHealthStatus: args.psychologicalHealthStatus,
-      otherHealthIssues: args.otherHealthIssues,
-      photoPortraitUrl: args.photoPortraitUrl,
-      photoLongUrl: args.photoLongUrl,
-      iga_property: {
-        create: {
-          ownershipStatus, otherProperty,
-        } = args.iga_property
-      },
-      education: {
-        create: {
-          enrollmentStatus, schoolName, typeOfSchool,
-          grade, reason, hobbies,
-        } = args.education
-      },
-      father: {
-        create: {
-          dateOfDeath, causeOfDeath, job, monthlyIncome, dateOfBirth,
-        } = args.father
-      },
-      groupoforphans: {
-        create: {
-          registrationDate: args.groupoforphans.registrationDate,
-          donor: {
-            create: {
-              companyName,
-              typeOfsupport,
-              initialDonationAmount,
-              initialReportPreparationDate,
-              finalReportPreparationDate,
-              initialDataCollectionDate,
-              finalDataCollectionDate,
-              reportDueDate,
-            } = args.groupoforphans.donor,
-          }, socialworker: {
-            create: {
-              fullName,
-              phoneNumber,
-              email
-            } = args.groupoforphans.socialWorker,
-          },
-          site: {
-            create: {
-              address: {
-                create: {
-                  state: args.groupoforphans.site.address.state,
-                  zone: args.groupoforphans.site.address.zone,
-                  district: args.groupoforphans.site.address.district,
-                  kebele: args.groupoforphans.site.address.kebele,
-                },
-              },
-              siteName: args.groupoforphans.site.siteName,
-              donationAmount: args.groupoforphans.site.donationAmount,
-            },
-          },
-        },
-      },
-      guardian: {
-        create: {
-          firstName, middleName, lastName, gender, nationality,
-          state, zone, district, kebele, relationToOrphan,
-          email, job, age
-        } = args.guardian
-      },
-      mother: {
-        create: {
-          firstName: args.mother.firstName,
-          middleName: args.mother.middleName,
-          lastName: args.mother.lastName,
-          dateOfBirth: args.mother.dateOfBirth,
-          phoneNumber: args.mother.phoneNumber,
-          maritalStatus: args.mother.maritalStatus,
-          vitalStatus: args.mother.vitalStatus,
-          monthlyExpense: args.mother.monthlyExpense,
-          motherjob: {
-            create: {
-              currentJobTitle, monthlyIncome
-            } = args.mother.motherjob
-          }
-        }
-      },
-    },
-  },
-
-  );
 
   return newOrphan;
 }
@@ -189,12 +73,23 @@ async function createMother(parent, args, context, info) {
   return newMother;
 }
 
+async function createOfficialDocuments(parent, args, context, info) {
+  return await context.prisma.officialDocuments.create({
+    data: {
+      photoPortraitUrl,
+      photoLongUrl,
+      fatherDeathCertificateUrl,
+      birthCertificateUrl,
+      guardianIDCardUrl,
+      guardianConfirmationLetterUrl,
+    } = args,
+  })
+}
+
 async function createDonor(parent, args, context, info) {
   const newDonor = await context.prisma.donor.create({
     data: {
       companyName,
-      typeOfsupport,
-      initialDonationAmount,
       initialReportPreparationDate,
       finalReportPreparationDate,
       initialDataCollectionDate,
@@ -203,25 +98,6 @@ async function createDonor(parent, args, context, info) {
     } = args,
   })
   return newDonor;
-}
-
-async function createAddress(parent, args, context, info) {
-  const newAddress = await context.prisma.address.create({
-    data: {
-      state,
-      zone,
-      district,
-      kebele,
-    } = args,
-  });
-  return newAddress
-}
-
-async function createSite(parent, args, context, info) {
-  const newSite = await context.prisma.site.create({
-    data: { siteName, donationAmount } = args,
-  })
-  return newSite;
 }
 
 async function createSocialWorker(parent, args, context, info) {
@@ -235,17 +111,48 @@ async function createSocialWorker(parent, args, context, info) {
   return newSocialWorker;
 }
 
-async function createGroupOfOrphans(parent, args, context, info) {
-  const newGroupOfOrphans = await context.prisma.groupOfOrphans.create({
+async function createRegisteredGroup(parent, args, context, info) {
+  const newRegisteredGroup = await context.prisma.registeredGroup.create({
     data: { registrationDate } = args,
   })
-  return newGroupOfOrphans;
+  return newRegisteredGroup;
+}
+
+async function createSponsoredGroup(parent, args, context, info) {
+  const newSponsoredGroup = await context.prisma.sponsoredGroup.create({
+    data: { sponsorshipDate } = args,
+  })
+  return newSponsoredGroup;
+}
+
+async function createSupport(parent, args, context, info) {
+  const newSupport = await context.prisma.support.create({
+    data: { registrationDate } = args,
+  })
+  return newSupport;
+}
+
+
+async function createFinalcialSupport(parent, args, context, info) {
+  return await context.prisma.financialSupport.create({
+    data: args,
+  })
+}
+
+async function createEducationalSupport(parent, args, context, info) {
+  return await context.prisma.educationalSupport.create({
+    data: args,
+  })
+}
+
+async function createOtherSupport(parent, args, context, info) {
+  return await context.prisma.otherSupport.create({
+    data: args,
+  })
 }
 
 module.exports = {
-  createOrphanOnly,
-  createSiteWithAddress,
-  createOrphanWithAllDetails,
+  createOrphan,
   createIga_property,
   createEducation,
   createFather,
@@ -254,9 +161,13 @@ module.exports = {
   createMotherJob,
   createMother,
   createDonor,
-  createAddress,
-  createSite,
   createSocialWorker,
-  createGroupOfOrphans,
+  createRegisteredGroup,
+  createOfficialDocuments,
+  createSponsoredGroup,
+  createSupport,
+  createFinalcialSupport,
+  createEducationalSupport,
+  createOtherSupport,
 };
 
