@@ -27,7 +27,7 @@ model Education {
   grade            String?
   reason           String?
   hobbies          String?
-  orphan           Orphan[]
+  orphan           Orphan
   @@map("education")
 }
 
@@ -44,7 +44,7 @@ model Father {
   job           String?
   monthlyIncome Int
   dateOfBirth   DateTime
-  orphan        Orphan[]
+  orphans        Orphan[]
   @@map("father")
 }
 
