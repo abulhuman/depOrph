@@ -4,6 +4,7 @@ const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const Orphan = require('./resolvers/Orphan');
 
+// doing sth
 const prisma = new PrismaClient({
   errorFormat: 'pretty',
 });
