@@ -99,7 +99,7 @@ async function registeredGroup(parent, args, context, info) {
 }
 
 async function sponsoredGroup(parent, args, context, info) {
-  const sponsoredGroup = await context.prisma.groupOfOrphans.findOne({
+  const sponsoredGroup = await context.prisma.sponsoredGroup.findOne({
     where: {
       id: Number(args.id),
     },

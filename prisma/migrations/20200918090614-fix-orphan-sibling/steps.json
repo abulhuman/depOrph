@@ -1,0 +1,1667 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "education_enrollmentStatus",
+      "values": [
+        "enrolled",
+        "unenrolled",
+        "droppedout"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "education_typeOfSchool",
+      "values": [
+        "private",
+        "public"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "orphan_gender",
+      "values": [
+        "M",
+        "F"
+      ]
+    },
+    {
+      "tag": "DeleteEnum",
+      "enum": "educationEnrollmentStatus"
+    },
+    {
+      "tag": "DeleteEnum",
+      "enum": "educationTypeOfSchool"
+    },
+    {
+      "tag": "DeleteEnum",
+      "enum": "orphanGender"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "EducationalSupport"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EducationalSupport",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "EducationalSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "EducationalSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "EducationalSupport",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "EducationalSupport",
+      "field": "support",
+      "type": "Support",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "EducationalSupport"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "EducationalSupport"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"educationalsupport\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "FinancialSupport"
+    },
+    {
+      "tag": "CreateField",
+      "model": "FinancialSupport",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "FinancialSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "FinancialSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "FinancialSupport",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "FinancialSupport",
+      "field": "support",
+      "type": "Support",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "FinancialSupport"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "FinancialSupport"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"financialsupport\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "OfficialDocuments"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "OfficialDocuments",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "OfficialDocuments",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "OfficialDocuments",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "photoPortraitUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "photoLongUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "fatherDeathCertificateUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "birthCertificateUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "guardianIDCardUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "guardianConfirmationLetterUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OfficialDocuments",
+      "field": "orphan",
+      "type": "Orphan",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "OfficialDocuments"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "OfficialDocuments"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"officialdocuments\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "OtherSupport"
+    },
+    {
+      "tag": "CreateField",
+      "model": "OtherSupport",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "OtherSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "OtherSupport",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "OtherSupport",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "OtherSupport",
+      "field": "support",
+      "type": "Support",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "OtherSupport"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "OtherSupport"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"othersupport\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "RegisteredGroup"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "RegisteredGroup",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "RegisteredGroup",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "RegisteredGroup",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "registrationDate",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "siteName",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "state",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "zone",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "district",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "kebele",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "RegisteredGroup",
+      "field": "orphans",
+      "type": "Orphan",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "RegisteredGroup"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "RegisteredGroup"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"registeredgroup\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "SponsoredGroup"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "sponsorshipDate",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "supportId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "donorId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "socialWorkerId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "donor",
+      "type": "Donor",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "donor"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "donor"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[donorId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "donor"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "socialworkers",
+      "type": "SocialWorker",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "socialworkers"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "socialworkers"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[socialWorkerId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "socialworkers"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "support",
+      "type": "Support",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "support"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "support"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[supportId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SponsoredGroup",
+          "field": "support"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SponsoredGroup",
+      "field": "orphan",
+      "type": "Orphan",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SponsoredGroup"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "SponsoredGroup"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"sponsoredgroup\""
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SponsoredGroup",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[donorId]"
+            },
+            {
+              "name": "name",
+              "value": "\"donorId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SponsoredGroup",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[socialWorkerId]"
+            },
+            {
+              "name": "name",
+              "value": "\"socialWorkerId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SponsoredGroup",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[supportId]"
+            },
+            {
+              "name": "name",
+              "value": "\"supportId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateModel",
+      "model": "Support"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "status",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "financialId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "educationalId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "otherId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "educationalsupport",
+      "type": "EducationalSupport",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "educationalsupport"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "educationalsupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[educationalId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "educationalsupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "financialsupport",
+      "type": "FinancialSupport",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "financialsupport"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "financialsupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[financialId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "financialsupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "othersupport",
+      "type": "OtherSupport",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "othersupport"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "othersupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[otherId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Support",
+          "field": "othersupport"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Support",
+      "field": "sponsoredgroup",
+      "type": "SponsoredGroup",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Support"
+        },
+        "directive": "map"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "Support"
+        },
+        "directive": "map"
+      },
+      "argument": "",
+      "value": "\"support\""
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Support",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[educationalId]"
+            },
+            {
+              "name": "name",
+              "value": "\"educationalId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Support",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[financialId]"
+            },
+            {
+              "name": "name",
+              "value": "\"financialId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Support",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[otherId]"
+            },
+            {
+              "name": "name",
+              "value": "\"otherId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "Address"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "GroupOfOrphans"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "Site"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Donor",
+      "field": "sponsoredgroup",
+      "type": "SponsoredGroup",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Donor",
+      "field": "typeOfsupport"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Donor",
+      "field": "initialDonationAmount"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Donor",
+      "field": "groupsOfOrphans"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Education",
+      "field": "orphan",
+      "type": "Orphan",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Education",
+      "field": "orphans"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Education",
+      "field": "enrollmentStatus",
+      "type": "education_enrollmentStatus"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Education",
+      "field": "typeOfSchool",
+      "type": "education_typeOfSchool"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Iga_property",
+      "field": "orphan",
+      "type": "Orphan",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Iga_property",
+      "field": "orphans"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Mother",
+      "field": "jobId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Mother",
+      "field": "job"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Mother",
+      "field": "phoneNumber",
+      "type": "String"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Mother",
+      "field": "motherjob",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Mother",
+          "field": "motherjob"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "newValue": "[jobId]"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Mother",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[jobId]"
+            },
+            {
+              "name": "name",
+              "value": "\"jobId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Mother",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[job]"
+            },
+            {
+              "name": "name",
+              "value": "\"job\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "UpdateField",
+      "model": "MotherJob",
+      "field": "mother",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "docsId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "regGroupId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "sponsrGroupId",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "officialdocuments",
+      "type": "OfficialDocuments",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "officialdocuments"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "officialdocuments"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[docsId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "officialdocuments"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "registeredgroup",
+      "type": "RegisteredGroup",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "registeredgroup"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "registeredgroup"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[regGroupId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "registeredgroup"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Orphan",
+      "field": "sponsoredgroup",
+      "type": "SponsoredGroup",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "sponsoredgroup"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "sponsoredgroup"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[sponsrGroupId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Orphan",
+          "field": "sponsoredgroup"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Orphan",
+      "field": "photoPortraitUrl"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Orphan",
+      "field": "photoLongUrl"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Orphan",
+      "field": "groupId"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Orphan",
+      "field": "siblingId"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Orphan",
+      "field": "groupoforphans"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "gender",
+      "type": "orphan_gender"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "otherHealthIssues",
+      "arity": "Required"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "fatherId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "motherId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "guardianId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "IGA_PropertyId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "educationId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "iga_property",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "education",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "father",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "guardian",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Orphan",
+      "field": "mother",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Orphan",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[docsId]"
+            },
+            {
+              "name": "name",
+              "value": "\"docsId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Orphan",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[regGroupId]"
+            },
+            {
+              "name": "name",
+              "value": "\"regGroupId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Orphan",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[sponsrGroupId]"
+            },
+            {
+              "name": "name",
+              "value": "\"sponsrGroupId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Orphan",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[groupId]"
+            },
+            {
+              "name": "name",
+              "value": "\"groupId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Sibling",
+      "field": "orphanId",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Sibling",
+      "field": "orphan",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SocialWorker",
+      "field": "sponsoredgroup",
+      "type": "SponsoredGroup",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SocialWorker",
+      "field": "siteId"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SocialWorker",
+      "field": "site"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SocialWorker",
+      "field": "groupoforphans"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "SocialWorker",
+      "field": "phoneNumber",
+      "type": "String"
+    },
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SocialWorker",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[siteId]"
+            },
+            {
+              "name": "name",
+              "value": "\"siteId\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    }
+  ]
+}

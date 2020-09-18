@@ -1,5 +1,6 @@
 async function createOrphan(parent, args, context, info) {
   const siblingIds = [...(args.siblings)].map((val)=>({id: Number(val)}));
+  console.log(siblingIds)
   const newOrphan = await context.prisma.orphan.create({
     data: {
       firstName: args.firstName,
@@ -18,9 +19,9 @@ async function createOrphan(parent, args, context, info) {
           id: Number(args.iga_property)
         },
       } : undefined,
-      officialDocuments: args.officialDocuments ? {
+      officialdocuments: args.officialdocuments ? {
         connect: {
-          id: Number(args.officialDocuments)
+          id: Number(args.officialdocuments)
         },
       } : undefined,
       education: args.education ? {
@@ -53,11 +54,11 @@ async function createOrphan(parent, args, context, info) {
           id: Number(args.sponsoredgroup)
         },
       } : undefined,
-      siblings : siblingIds ? {
-        connect: {
-          siblingIds
-        }, 
-      }: undefined,
+      siblings :{
+        connect: [
+          ...siblingIds
+      ], 
+      }
 
     },
 
@@ -67,7 +68,6 @@ async function createOrphan(parent, args, context, info) {
 }
 
 async function createIga_property(parent, args, context, info) {
-  console.log(args);
   const newIga_property = await context.prisma.iga_property.create({
     data: {
       ownershipStatus: args.ownershipStatus,
@@ -86,10 +86,10 @@ async function createEducation(parent, args, context, info) {
   const newEducation = await context.prisma.education.create({
     data: {
       enrollmentStatus: args.enrollmentStatus,
-      schoolName: args.schoolName,
-      typeOfSchool: args.typeOfSchool,
-      grade: args.grade,
-      reason: args.reason,
+      schoolName: args.schoolName ? args.schoolName : undefined,
+      typeOfSchool: args.typeOfSchool ? args.typeOfSchool : undefined,
+      grade: args.grade ? args.grade : undefined,
+      reason: args.reason ? args.reason : undefined,
       hobbies: args.hobbies,
       orphan: {
         connect: {
@@ -128,11 +128,11 @@ async function createSibling(parent, args, context, info) {
       schoolGrade: args.schoolGrade, 
       job: args.job, 
       maritalStatus: args.maritalStatus,
-      orphan: {
+      orphan: args.orphan ? {
         connect: {
           id: Number(args.orphan)
         }
-      }
+      } : undefined
     },
   })
   return newSibling;
@@ -167,7 +167,7 @@ async function createMotherJob(parent, args, context, info) {
   const newMotherJob = await context.prisma.motherJob.create({
     data: { 
       currentJobTitle: args.currentJobTitle, 
-      monthlyIncome: args.monthlyIncome,
+      monthlyIncome: parseFloat(args.monthlyIncome),
       mother: {
         connect: {
           id: Number(args.mother)
@@ -222,6 +222,7 @@ async function createOfficialDocuments(parent, args, context, info) {
 }
 
 async function createDonor(parent, args, context, info) {
+  const GroupsIDs = [...(args.sponsoredgroups)].map((val)=>({id: Number(val)}));
   const newDonor = await context.prisma.donor.create({
     data: {
       companyName: args.companyName,
@@ -230,10 +231,8 @@ async function createDonor(parent, args, context, info) {
       initialDataCollectionDate: args.initialDataCollectionDate,
       finalDataCollectionDate: args.finalDataCollectionDate,
       reportDueDate: args.reportDueDate,
-      sponsoredgroup: {
-        connect: {
-          id: args.sponsoredgroup,
-        },
+      sponsoredgroups: {
+        connect: GroupsIDs,
       },
     },
   })
@@ -248,7 +247,7 @@ async function createSocialWorker(parent, args, context, info) {
       email: args.email,
       sponsoredgroup: {
         connect: {
-          id: args.sponsoredgroup
+          id: Number(args.sponsoredgroup)
         }
       }
     },
@@ -261,6 +260,11 @@ async function createRegisteredGroup(parent, args, context, info) {
   const newRegisteredGroup = await context.prisma.registeredGroup.create({
     data: { 
       registrationDate: args.registrationDate,
+      siteName: args.siteName,
+      state: args.state,
+      zone: args.zone,
+      district: args.district,
+      kebele: args.kebele,
       orphans: {
         connect: ids
       }
@@ -271,7 +275,7 @@ async function createRegisteredGroup(parent, args, context, info) {
 
 async function createSponsoredGroup(parent, args, context, info) {
   const orphansIds = [...(args.orphans)].map((val)=>({id: Number(val)}));
-  const socialworkersIds = [...(args.socialworkers)].map((val)=>({id: Number(val)}));
+  const socialworkersIds =  args.socialworkers ? [...(args.socialworkers)].map((val)=>({id: Number(val)})): undefined;
   const newSponsoredGroup = await context.prisma.sponsoredGroup.create({
     data: { 
       sponsorshipDate: args.sponsorshipDate,
@@ -285,7 +289,7 @@ async function createSponsoredGroup(parent, args, context, info) {
           id: Number(args.support)
         },
       } : undefined,
-      socialworkers: {
+      socialworkers:{
         connect: socialworkersIds
       },
       orphans: {

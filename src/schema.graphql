@@ -34,7 +34,7 @@ type Mutation {
     psychologicalHealthStatus: String!
     otherHealthIssues: String
     iga_property: ID
-    officialDocuments: ID
+    officialdocuments: ID
     education: ID
     father: ID
     guardian: ID
@@ -77,6 +77,7 @@ type Mutation {
     schoolGrade: String
     job: String
     maritalStatus: String!
+    orphan: ID
   ): Sibling!
 
   createGuardian(
@@ -93,11 +94,13 @@ type Mutation {
     email: String!
     job: String
     age: Int
+    orphans: [ID]
   ): Guardian!
 
   createMotherJob(
     currentJobTitle: String
-    monthlyIncome: String
+    monthlyIncome: Float
+    mother: ID
   ): MotherJob!
 
   createMother(
@@ -109,6 +112,7 @@ type Mutation {
     maritalStatus: String!
     vitalStatus: String!
     monthlyExpense: Float!
+    orphans: [ID]
   ): Mother!
 
   createOfficialDocuments(
@@ -118,6 +122,7 @@ type Mutation {
     birthCertificateUrl: String!
     guardianIDCardUrl: String!
     guardianConfirmationLetterUrl: String!
+    orphan: ID
   ): OfficialDocuments!
 
   createDonor(
@@ -127,6 +132,7 @@ type Mutation {
     initialDataCollectionDate: DateTime
     finalDataCollectionDate: DateTime
     reportDueDate: DateTime
+    sponsoredgroups: [ID]
   ): Donor!
 
   createSocialWorker(
@@ -143,6 +149,7 @@ type Mutation {
     zone: String!
     district: String!
     kebele: String
+    orphans: [ID]
   ): RegisteredGroup!
 
   createSponsoredGroup(
@@ -150,6 +157,7 @@ type Mutation {
     donor: ID
     support: ID
     socialworkers: [ID]
+    orphans: [ID]
   ): SponsoredGroup!
 
   createSupport(
@@ -214,7 +222,7 @@ type Donor {
   initialDataCollectionDate: DateTime
   finalDataCollectionDate: DateTime
   reportDueDate: DateTime
-  sponsoredgroup: SponsoredGroup
+  sponsoredgroups: [SponsoredGroup]
 }
 
 type EducationalSupport {
@@ -269,7 +277,7 @@ type OfficialDocuments {
   birthCertificateUrl: String!
   guardianIDCardUrl: String!
   guardianConfirmationLetterUrl: String!
-  orphan: [Orphan]
+  orphan: Orphan
 }
 
 type Guardian {
@@ -362,132 +370,3 @@ enum educationTypeOfSchool {
   public
 }
 
-input OrphanInput {
-  firstName: String!
-  fatherName: String!
-  grandFatherName: String!
-  greatGrandFatherName: String!
-  gender: orphanGender!
-  placeOfBirth: String!
-  dateOfBirth: DateTime!
-  numberOfSponserdSiblings: Int!
-  physicalHealthStatus: String!
-  psychologicalHealthStatus: String!
-  otherHealthIssues: String
-}
-
-input Iga_propertyInput {
-  ownershipStatus: String!
-  otherProperty: String
-}
-
-input EducationInput {
-  enrollmentStatus: educationEnrollmentStatus!
-  schoolName: String
-  typeOfSchool: educationTypeOfSchool
-  grade: String
-  reason: String
-  hobbies: String
-}
-
-input FatherInput {
-  dateOfDeath: DateTime!
-  causeOfDeath: String
-  job: String
-  monthlyIncome: Int
-  dateOfBirth: DateTime!
-}
-
-input DonorInput {
-  companyName: String
-  initialReportPreparationDate: DateTime
-  finalReportPreparationDate: DateTime
-  initialDataCollectionDate: DateTime
-  finalDataCollectionDate: DateTime
-  reportDueDate: DateTime
-}
-
-input SocialWorkerInput {
-  fullName: String!
-  phoneNumber: String!
-  email: String!
-}
-
-input GuardianInput {
-  firstName: String!
-  middleName: String!
-  lastName: String!
-  gender: String!
-  nationality: String!
-  state: String!
-  zone: String!
-  district: String!
-  kebele: String!
-  relationToOrphan: String!
-  email: String!
-  job: String
-  age: Int
-}
-
-input MotherInput {
-  firstName: String!
-  middleName: String!
-  lastName: String!
-  dateOfBirth: DateTime!
-  phoneNumber: String!
-  maritalStatus: String!
-  vitalStatus: String!
-  monthlyExpense: Float!
-}
-
-input MotherJobInput {
-  currentJobTitle: String
-  monthlyIncome: String
-}
-
-input SiblingInput {
-  fullName: String!
-  gender: String!
-  age: Int!
-  schoolGrade: String
-  job: String
-  maritalStatus: String
-}
-
-input OfficialDocumentsInput {
-  photoPortraitUrl: String!
-  photoLongUrl: String!
-  fatherDeathCertificateUrl: String!
-  birthCertificateUrl: String!
-  guardianIDCardUrl: String!
-  guardianConfirmationLetterUrl: String!
-}
-
-input RegisteredGroupInput {
-  registrationDate: DateTime!
-  siteName: String!
-  state: String!
-  zone: String!
-  district: String!
-  kebele: String
-}
-
-input SponsoredGroupInput {
-  sponsorshipDate: DateTime!
-}
-
-input SupportInput {
-  status: String!
-}
-
-# input FinancialSupportInput{
-#   # TODO: CHECK WITH COMPANY
-# }
-
-# input FinancialSupportInput {
-#   # TODO: CHECK WITH COMPANY
-# }
-
-# input OtherSupportInput {
-#   # TODO: CHECK WITH COMPANY
-# }

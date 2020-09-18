@@ -540,6 +540,16 @@ export declare class PrismaClient<
     * ```
     */
   get support(): SupportDelegate;
+
+  /**
+   * `prisma.migration`: Exposes CRUD operations for the **migration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Migrations
+    * const migrations = await prisma.migration.findMany()
+    * ```
+    */
+  get migration(): migrationDelegate;
 }
 
 
@@ -686,7 +696,6 @@ export declare const OrphanDistinctFieldEnum: {
   fatherId: 'fatherId',
   motherId: 'motherId',
   guardianId: 'guardianId',
-  siblingId: 'siblingId',
   IGA_PropertyId: 'IGA_PropertyId',
   educationId: 'educationId',
   docsId: 'docsId',
@@ -724,7 +733,8 @@ export declare const SiblingDistinctFieldEnum: {
   age: 'age',
   schoolGrade: 'schoolGrade',
   job: 'job',
-  maritalStatus: 'maritalStatus'
+  maritalStatus: 'maritalStatus',
+  orphanId: 'orphanId'
 };
 
 export declare type SiblingDistinctFieldEnum = (typeof SiblingDistinctFieldEnum)[keyof typeof SiblingDistinctFieldEnum]
@@ -760,6 +770,23 @@ export declare const SupportDistinctFieldEnum: {
 };
 
 export declare type SupportDistinctFieldEnum = (typeof SupportDistinctFieldEnum)[keyof typeof SupportDistinctFieldEnum]
+
+
+export declare const MigrationDistinctFieldEnum: {
+  revision: 'revision',
+  name: 'name',
+  datamodel: 'datamodel',
+  status: 'status',
+  applied: 'applied',
+  rolled_back: 'rolled_back',
+  datamodel_steps: 'datamodel_steps',
+  database_migration: 'database_migration',
+  errors: 'errors',
+  started_at: 'started_at',
+  finished_at: 'finished_at'
+};
+
+export declare type MigrationDistinctFieldEnum = (typeof MigrationDistinctFieldEnum)[keyof typeof MigrationDistinctFieldEnum]
 
 
 export declare const SortOrder: {
@@ -884,11 +911,11 @@ export type DonorSelect = {
   initialDataCollectionDate?: boolean
   finalDataCollectionDate?: boolean
   reportDueDate?: boolean
-  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
+  sponsoredgroups?: boolean | FindManySponsoredGroupArgs
 }
 
 export type DonorInclude = {
-  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
+  sponsoredgroups?: boolean | FindManySponsoredGroupArgs
 }
 
 export type DonorGetPayload<
@@ -902,14 +929,14 @@ export type DonorGetPayload<
   ? 'include' extends U
     ? Donor  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'sponsoredgroup'
+      P extends 'sponsoredgroups'
       ? Array<SponsoredGroupGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Donor ? Donor[P]
 : 
-      P extends 'sponsoredgroup'
+      P extends 'sponsoredgroups'
       ? Array<SponsoredGroupGetPayload<S['select'][P]>> : never
     }
   : Donor
@@ -1082,7 +1109,7 @@ export declare class Prisma__DonorClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  sponsoredgroup<T extends FindManySponsoredGroupArgs = {}>(args?: Subset<T, FindManySponsoredGroupArgs>): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>;
+  sponsoredgroups<T extends FindManySponsoredGroupArgs = {}>(args?: Subset<T, FindManySponsoredGroupArgs>): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -3333,11 +3360,11 @@ export type GuardianSelect = {
   email?: boolean
   job?: boolean
   age?: boolean
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type GuardianInclude = {
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type GuardianGetPayload<
@@ -3351,14 +3378,14 @@ export type GuardianGetPayload<
   ? 'include' extends U
     ? Guardian  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Guardian ? Guardian[P]
 : 
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
   : Guardian
@@ -3531,7 +3558,7 @@ export declare class Prisma__GuardianClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -4326,12 +4353,12 @@ export type MotherSelect = {
   vitalStatus?: boolean
   monthlyExpense?: boolean
   motherjob?: boolean | MotherJobArgs
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type MotherInclude = {
   motherjob?: boolean | MotherJobArgs
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type MotherGetPayload<
@@ -4347,7 +4374,7 @@ export type MotherGetPayload<
       [P in TrueKeys<S['include']>]:
       P extends 'motherjob'
       ? MotherJobGetPayload<S['include'][P]> | null :
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
@@ -4356,7 +4383,7 @@ export type MotherGetPayload<
 : 
       P extends 'motherjob'
       ? MotherJobGetPayload<S['select'][P]> | null :
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
   : Mother
@@ -4531,7 +4558,7 @@ export declare class Prisma__MotherClient<T> implements Promise<T> {
 
   motherjob<T extends MotherJobArgs = {}>(args?: Subset<T, MotherJobArgs>): CheckSelect<T, Prisma__MotherJobClient<MotherJob | null>, Prisma__MotherJobClient<MotherJobGetPayload<T> | null>>;
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -4822,11 +4849,11 @@ export type MotherJobSelect = {
   id?: boolean
   currentJobTitle?: boolean
   monthlyIncome?: boolean
-  mother?: boolean | FindManyMotherArgs
+  mother?: boolean | MotherArgs
 }
 
 export type MotherJobInclude = {
-  mother?: boolean | FindManyMotherArgs
+  mother?: boolean | MotherArgs
 }
 
 export type MotherJobGetPayload<
@@ -4841,14 +4868,14 @@ export type MotherJobGetPayload<
     ? MotherJob  & {
       [P in TrueKeys<S['include']>]:
       P extends 'mother'
-      ? Array<MotherGetPayload<S['include'][P]>> : never
+      ? MotherGetPayload<S['include'][P]> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof MotherJob ? MotherJob[P]
 : 
       P extends 'mother'
-      ? Array<MotherGetPayload<S['select'][P]>> : never
+      ? MotherGetPayload<S['select'][P]> : never
     }
   : MotherJob
 : MotherJob
@@ -5020,7 +5047,7 @@ export declare class Prisma__MotherJobClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  mother<T extends FindManyMotherArgs = {}>(args?: Subset<T, FindManyMotherArgs>): CheckSelect<T, Promise<Array<Mother>>, Promise<Array<MotherGetPayload<T>>>>;
+  mother<T extends MotherArgs = {}>(args?: Subset<T, MotherArgs>): CheckSelect<T, Prisma__MotherClient<Mother | null>, Prisma__MotherClient<MotherGetPayload<T> | null>>;
 
   private get _document();
   /**
@@ -5311,11 +5338,11 @@ export type OfficialDocumentsSelect = {
   birthCertificateUrl?: boolean
   guardianIDCardUrl?: boolean
   guardianConfirmationLetterUrl?: boolean
-  orphan?: boolean | FindManyOrphanArgs
+  orphan?: boolean | OrphanArgs
 }
 
 export type OfficialDocumentsInclude = {
-  orphan?: boolean | FindManyOrphanArgs
+  orphan?: boolean | OrphanArgs
 }
 
 export type OfficialDocumentsGetPayload<
@@ -5330,14 +5357,14 @@ export type OfficialDocumentsGetPayload<
     ? OfficialDocuments  & {
       [P in TrueKeys<S['include']>]:
       P extends 'orphan'
-      ? Array<OrphanGetPayload<S['include'][P]>> : never
+      ? OrphanGetPayload<S['include'][P]> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof OfficialDocuments ? OfficialDocuments[P]
 : 
       P extends 'orphan'
-      ? Array<OrphanGetPayload<S['select'][P]>> : never
+      ? OrphanGetPayload<S['select'][P]> : never
     }
   : OfficialDocuments
 : OfficialDocuments
@@ -5509,7 +5536,7 @@ export declare class Prisma__OfficialDocumentsClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphan<T extends OrphanArgs = {}>(args?: Subset<T, OrphanArgs>): CheckSelect<T, Prisma__OrphanClient<Orphan | null>, Prisma__OrphanClient<OrphanGetPayload<T> | null>>;
 
   private get _document();
   /**
@@ -5732,7 +5759,6 @@ export type Orphan = {
   fatherId: number | null
   motherId: number | null
   guardianId: number | null
-  siblingId: number | null
   IGA_PropertyId: number | null
   educationId: number | null
   docsId: number | null
@@ -5755,7 +5781,6 @@ export type OrphanAvgAggregateOutputType = {
   fatherId: number
   motherId: number
   guardianId: number
-  siblingId: number
   IGA_PropertyId: number
   educationId: number
   docsId: number
@@ -5769,7 +5794,6 @@ export type OrphanSumAggregateOutputType = {
   fatherId: number | null
   motherId: number | null
   guardianId: number | null
-  siblingId: number | null
   IGA_PropertyId: number | null
   educationId: number | null
   docsId: number | null
@@ -5783,7 +5807,6 @@ export type OrphanMinAggregateOutputType = {
   fatherId: number | null
   motherId: number | null
   guardianId: number | null
-  siblingId: number | null
   IGA_PropertyId: number | null
   educationId: number | null
   docsId: number | null
@@ -5797,7 +5820,6 @@ export type OrphanMaxAggregateOutputType = {
   fatherId: number | null
   motherId: number | null
   guardianId: number | null
-  siblingId: number | null
   IGA_PropertyId: number | null
   educationId: number | null
   docsId: number | null
@@ -5812,7 +5834,6 @@ export type OrphanAvgAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
   docsId?: true
@@ -5826,7 +5847,6 @@ export type OrphanSumAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
   docsId?: true
@@ -5840,7 +5860,6 @@ export type OrphanMinAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
   docsId?: true
@@ -5854,7 +5873,6 @@ export type OrphanMaxAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
   docsId?: true
@@ -5902,7 +5920,6 @@ export type OrphanSelect = {
   fatherId?: boolean
   motherId?: boolean
   guardianId?: boolean
-  siblingId?: boolean
   IGA_PropertyId?: boolean
   educationId?: boolean
   docsId?: boolean
@@ -5915,8 +5932,8 @@ export type OrphanSelect = {
   guardian?: boolean | GuardianArgs
   mother?: boolean | MotherArgs
   registeredgroup?: boolean | RegisteredGroupArgs
-  sibling?: boolean | SiblingArgs
   sponsoredgroup?: boolean | SponsoredGroupArgs
+  siblings?: boolean | FindManySiblingArgs
 }
 
 export type OrphanInclude = {
@@ -5927,8 +5944,8 @@ export type OrphanInclude = {
   guardian?: boolean | GuardianArgs
   mother?: boolean | MotherArgs
   registeredgroup?: boolean | RegisteredGroupArgs
-  sibling?: boolean | SiblingArgs
   sponsoredgroup?: boolean | SponsoredGroupArgs
+  siblings?: boolean | FindManySiblingArgs
 }
 
 export type OrphanGetPayload<
@@ -5956,10 +5973,10 @@ export type OrphanGetPayload<
       ? MotherGetPayload<S['include'][P]> | null :
       P extends 'registeredgroup'
       ? RegisteredGroupGetPayload<S['include'][P]> | null :
-      P extends 'sibling'
-      ? SiblingGetPayload<S['include'][P]> | null :
       P extends 'sponsoredgroup'
-      ? SponsoredGroupGetPayload<S['include'][P]> | null : never
+      ? SponsoredGroupGetPayload<S['include'][P]> | null :
+      P extends 'siblings'
+      ? Array<SiblingGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
@@ -5979,10 +5996,10 @@ export type OrphanGetPayload<
       ? MotherGetPayload<S['select'][P]> | null :
       P extends 'registeredgroup'
       ? RegisteredGroupGetPayload<S['select'][P]> | null :
-      P extends 'sibling'
-      ? SiblingGetPayload<S['select'][P]> | null :
       P extends 'sponsoredgroup'
-      ? SponsoredGroupGetPayload<S['select'][P]> | null : never
+      ? SponsoredGroupGetPayload<S['select'][P]> | null :
+      P extends 'siblings'
+      ? Array<SiblingGetPayload<S['select'][P]>> : never
     }
   : Orphan
 : Orphan
@@ -6168,9 +6185,9 @@ export declare class Prisma__OrphanClient<T> implements Promise<T> {
 
   registeredgroup<T extends RegisteredGroupArgs = {}>(args?: Subset<T, RegisteredGroupArgs>): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup | null>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T> | null>>;
 
-  sibling<T extends SiblingArgs = {}>(args?: Subset<T, SiblingArgs>): CheckSelect<T, Prisma__SiblingClient<Sibling | null>, Prisma__SiblingClient<SiblingGetPayload<T> | null>>;
-
   sponsoredgroup<T extends SponsoredGroupArgs = {}>(args?: Subset<T, SponsoredGroupArgs>): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup | null>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T> | null>>;
+
+  siblings<T extends FindManySiblingArgs = {}>(args?: Subset<T, FindManySiblingArgs>): CheckSelect<T, Promise<Array<Sibling>>, Promise<Array<SiblingGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -6938,11 +6955,11 @@ export type RegisteredGroupSelect = {
   zone?: boolean
   district?: boolean
   kebele?: boolean
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type RegisteredGroupInclude = {
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type RegisteredGroupGetPayload<
@@ -6956,14 +6973,14 @@ export type RegisteredGroupGetPayload<
   ? 'include' extends U
     ? RegisteredGroup  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof RegisteredGroup ? RegisteredGroup[P]
 : 
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
   : RegisteredGroup
@@ -7136,7 +7153,7 @@ export declare class Prisma__RegisteredGroupClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -7351,6 +7368,7 @@ export type Sibling = {
   schoolGrade: string | null
   job: string | null
   maritalStatus: string
+  orphanId: number | null
 }
 
 
@@ -7365,42 +7383,50 @@ export type AggregateSibling = {
 export type SiblingAvgAggregateOutputType = {
   id: number
   age: number
+  orphanId: number
 }
 
 export type SiblingSumAggregateOutputType = {
   id: number
   age: number
+  orphanId: number | null
 }
 
 export type SiblingMinAggregateOutputType = {
   id: number
   age: number
+  orphanId: number | null
 }
 
 export type SiblingMaxAggregateOutputType = {
   id: number
   age: number
+  orphanId: number | null
 }
 
 
 export type SiblingAvgAggregateInputType = {
   id?: true
   age?: true
+  orphanId?: true
 }
 
 export type SiblingSumAggregateInputType = {
   id?: true
   age?: true
+  orphanId?: true
 }
 
 export type SiblingMinAggregateInputType = {
   id?: true
   age?: true
+  orphanId?: true
 }
 
 export type SiblingMaxAggregateInputType = {
   id?: true
   age?: true
+  orphanId?: true
 }
 
 export type AggregateSiblingArgs = {
@@ -7435,11 +7461,12 @@ export type SiblingSelect = {
   schoolGrade?: boolean
   job?: boolean
   maritalStatus?: boolean
-  orphan?: boolean | FindManyOrphanArgs
+  orphanId?: boolean
+  orphan?: boolean | OrphanArgs
 }
 
 export type SiblingInclude = {
-  orphan?: boolean | FindManyOrphanArgs
+  orphan?: boolean | OrphanArgs
 }
 
 export type SiblingGetPayload<
@@ -7454,14 +7481,14 @@ export type SiblingGetPayload<
     ? Sibling  & {
       [P in TrueKeys<S['include']>]:
       P extends 'orphan'
-      ? Array<OrphanGetPayload<S['include'][P]>> : never
+      ? OrphanGetPayload<S['include'][P]> | null : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Sibling ? Sibling[P]
 : 
       P extends 'orphan'
-      ? Array<OrphanGetPayload<S['select'][P]>> : never
+      ? OrphanGetPayload<S['select'][P]> | null : never
     }
   : Sibling
 : Sibling
@@ -7633,7 +7660,7 @@ export declare class Prisma__SiblingClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphan<T extends OrphanArgs = {}>(args?: Subset<T, OrphanArgs>): CheckSelect<T, Prisma__OrphanClient<Orphan | null>, Prisma__OrphanClient<OrphanGetPayload<T> | null>>;
 
   private get _document();
   /**
@@ -8430,14 +8457,14 @@ export type SponsoredGroupSelect = {
   donor?: boolean | DonorArgs
   socialworkers?: boolean | SocialWorkerArgs
   support?: boolean | SupportArgs
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type SponsoredGroupInclude = {
   donor?: boolean | DonorArgs
   socialworkers?: boolean | SocialWorkerArgs
   support?: boolean | SupportArgs
-  orphan?: boolean | FindManyOrphanArgs
+  orphans?: boolean | FindManyOrphanArgs
 }
 
 export type SponsoredGroupGetPayload<
@@ -8457,7 +8484,7 @@ export type SponsoredGroupGetPayload<
       ? SocialWorkerGetPayload<S['include'][P]> | null :
       P extends 'support'
       ? SupportGetPayload<S['include'][P]> | null :
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
@@ -8470,7 +8497,7 @@ export type SponsoredGroupGetPayload<
       ? SocialWorkerGetPayload<S['select'][P]> | null :
       P extends 'support'
       ? SupportGetPayload<S['select'][P]> | null :
-      P extends 'orphan'
+      P extends 'orphans'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
   : SponsoredGroup
@@ -8649,7 +8676,7 @@ export declare class Prisma__SponsoredGroupClient<T> implements Promise<T> {
 
   support<T extends SupportArgs = {}>(args?: Subset<T, SupportArgs>): CheckSelect<T, Prisma__SupportClient<Support | null>, Prisma__SupportClient<SupportGetPayload<T> | null>>;
 
-  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -9386,6 +9413,480 @@ export type SupportArgs = {
 
 
 /**
+ * Model migration
+ */
+
+export type migration = {
+  revision: number
+  name: string
+  datamodel: string
+  status: string
+  applied: number
+  rolled_back: number
+  datamodel_steps: string
+  database_migration: string
+  errors: string
+  started_at: Date
+  finished_at: Date | null
+}
+
+
+export type AggregateMigration = {
+  count: number
+  avg: MigrationAvgAggregateOutputType | null
+  sum: MigrationSumAggregateOutputType | null
+  min: MigrationMinAggregateOutputType | null
+  max: MigrationMaxAggregateOutputType | null
+}
+
+export type MigrationAvgAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationSumAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationMinAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationMaxAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+
+export type MigrationAvgAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationSumAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationMinAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationMaxAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type AggregateMigrationArgs = {
+  where?: migrationWhereInput
+  orderBy?: Enumerable<migrationOrderByInput>
+  cursor?: migrationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<MigrationDistinctFieldEnum>
+  count?: true
+  avg?: MigrationAvgAggregateInputType
+  sum?: MigrationSumAggregateInputType
+  min?: MigrationMinAggregateInputType
+  max?: MigrationMaxAggregateInputType
+}
+
+export type GetMigrationAggregateType<T extends AggregateMigrationArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetMigrationAggregateScalarType<T[P]>
+}
+
+export type GetMigrationAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof MigrationAvgAggregateOutputType ? MigrationAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type migrationSelect = {
+  revision?: boolean
+  name?: boolean
+  datamodel?: boolean
+  status?: boolean
+  applied?: boolean
+  rolled_back?: boolean
+  datamodel_steps?: boolean
+  database_migration?: boolean
+  errors?: boolean
+  started_at?: boolean
+  finished_at?: boolean
+}
+
+export type migrationGetPayload<
+  S extends boolean | null | undefined | migrationArgs,
+  U = keyof S
+> = S extends true
+  ? migration
+  : S extends undefined
+  ? never
+  : S extends migrationArgs | FindManymigrationArgs
+  ? 'include' extends U
+    ? migration 
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof migration ? migration[P]
+: 
+ never
+    }
+  : migration
+: migration
+
+
+export interface migrationDelegate {
+  /**
+   * Find zero or one Migration.
+   * @param {FindOnemigrationArgs} args - Arguments to find a Migration
+   * @example
+   * // Get one Migration
+   * const migration = await prisma.migration.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOnemigrationArgs>(
+    args: Subset<T, FindOnemigrationArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration | null>, Prisma__migrationClient<migrationGetPayload<T> | null>>
+  /**
+   * Find zero or more Migrations.
+   * @param {FindManymigrationArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all Migrations
+   * const migrations = await prisma.migration.findMany()
+   * 
+   * // Get first 10 Migrations
+   * const migrations = await prisma.migration.findMany({ take: 10 })
+   * 
+   * // Only select the `revision`
+   * const migrationWithRevisionOnly = await prisma.migration.findMany({ select: { revision: true } })
+   * 
+  **/
+  findMany<T extends FindManymigrationArgs>(
+    args?: Subset<T, FindManymigrationArgs>
+  ): CheckSelect<T, Promise<Array<migration>>, Promise<Array<migrationGetPayload<T>>>>
+  /**
+   * Create a Migration.
+   * @param {migrationCreateArgs} args - Arguments to create a Migration.
+   * @example
+   * // Create one Migration
+   * const Migration = await prisma.migration.create({
+   *   data: {
+   *     // ... data to create a Migration
+   *   }
+   * })
+   * 
+  **/
+  create<T extends migrationCreateArgs>(
+    args: Subset<T, migrationCreateArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Delete a Migration.
+   * @param {migrationDeleteArgs} args - Arguments to delete one Migration.
+   * @example
+   * // Delete one Migration
+   * const Migration = await prisma.migration.delete({
+   *   where: {
+   *     // ... filter to delete one Migration
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends migrationDeleteArgs>(
+    args: Subset<T, migrationDeleteArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Update one Migration.
+   * @param {migrationUpdateArgs} args - Arguments to update one Migration.
+   * @example
+   * // Update one Migration
+   * const migration = await prisma.migration.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends migrationUpdateArgs>(
+    args: Subset<T, migrationUpdateArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Delete zero or more Migrations.
+   * @param {migrationDeleteManyArgs} args - Arguments to filter Migrations to delete.
+   * @example
+   * // Delete a few Migrations
+   * const { count } = await prisma.migration.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends migrationDeleteManyArgs>(
+    args: Subset<T, migrationDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more Migrations.
+   * @param {migrationUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many Migrations
+   * const migration = await prisma.migration.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends migrationUpdateManyArgs>(
+    args: Subset<T, migrationUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one Migration.
+   * @param {migrationUpsertArgs} args - Arguments to update or create a Migration.
+   * @example
+   * // Update or create a Migration
+   * const migration = await prisma.migration.upsert({
+   *   create: {
+   *     // ... data to create a Migration
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the Migration we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends migrationUpsertArgs>(
+    args: Subset<T, migrationUpsertArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManymigrationArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateMigrationArgs>(args: Subset<T, AggregateMigrationArgs>): Promise<GetMigrationAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for migration.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__migrationClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * migration findOne
+ */
+export type FindOnemigrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter, which migration to fetch.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration findMany
+ */
+export type FindManymigrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter, which migrations to fetch.
+  **/
+  where?: migrationWhereInput
+  /**
+   * Determine the order of the migrations to fetch.
+  **/
+  orderBy?: Enumerable<migrationOrderByInput>
+  /**
+   * Sets the position for listing migrations.
+  **/
+  cursor?: migrationWhereUniqueInput
+  /**
+   * The number of migrations to fetch. If negative number, it will take migrations before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` migrations.
+  **/
+  skip?: number
+  distinct?: Enumerable<MigrationDistinctFieldEnum>
+}
+
+
+/**
+ * migration create
+ */
+export type migrationCreateArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The data needed to create a migration.
+  **/
+  data: migrationCreateInput
+}
+
+
+/**
+ * migration update
+ */
+export type migrationUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The data needed to update a migration.
+  **/
+  data: migrationUpdateInput
+  /**
+   * Choose, which migration to update.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration updateMany
+ */
+export type migrationUpdateManyArgs = {
+  data: migrationUpdateManyMutationInput
+  where?: migrationWhereInput
+}
+
+
+/**
+ * migration upsert
+ */
+export type migrationUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The filter to search for the migration to update in case it exists.
+  **/
+  where: migrationWhereUniqueInput
+  /**
+   * In case the migration found by the `where` argument doesn't exist, create a new migration with this data.
+  **/
+  create: migrationCreateInput
+  /**
+   * In case the migration was found with the provided `where` argument, update it with this data.
+  **/
+  update: migrationUpdateInput
+}
+
+
+/**
+ * migration delete
+ */
+export type migrationDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter which migration to delete.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration deleteMany
+ */
+export type migrationDeleteManyArgs = {
+  where?: migrationWhereInput
+}
+
+
+/**
+ * migration without action
+ */
+export type migrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+}
+
+
+
+/**
  * Deep Input Types
  */
 
@@ -9401,7 +9902,7 @@ export type DonorWhereInput = {
   initialDataCollectionDate?: Date | string | DateTimeNullableFilter | null
   finalDataCollectionDate?: Date | string | DateTimeNullableFilter | null
   reportDueDate?: Date | string | DateTimeNullableFilter | null
-  sponsoredgroup?: SponsoredGroupListRelationFilter
+  sponsoredgroups?: SponsoredGroupListRelationFilter
 }
 
 export type DonorOrderByInput = {
@@ -9522,7 +10023,7 @@ export type GuardianWhereInput = {
   email?: string | StringFilter
   job?: string | StringNullableFilter | null
   age?: number | IntFilter
-  orphan?: OrphanListRelationFilter
+  orphans?: OrphanListRelationFilter
 }
 
 export type GuardianOrderByInput = {
@@ -9581,7 +10082,7 @@ export type MotherWhereInput = {
   vitalStatus?: string | StringFilter
   monthlyExpense?: number | FloatFilter
   motherjob?: MotherJobWhereInput | null
-  orphan?: OrphanListRelationFilter
+  orphans?: OrphanListRelationFilter
 }
 
 export type MotherOrderByInput = {
@@ -9609,7 +10110,7 @@ export type MotherJobWhereInput = {
   id?: number | IntFilter
   currentJobTitle?: string | StringNullableFilter | null
   monthlyIncome?: number | FloatNullableFilter | null
-  mother?: MotherListRelationFilter
+  mother?: MotherWhereInput | null
 }
 
 export type MotherJobOrderByInput = {
@@ -9633,7 +10134,7 @@ export type OfficialDocumentsWhereInput = {
   birthCertificateUrl?: string | StringFilter
   guardianIDCardUrl?: string | StringFilter
   guardianConfirmationLetterUrl?: string | StringFilter
-  orphan?: OrphanListRelationFilter
+  orphan?: OrphanWhereInput | null
 }
 
 export type OfficialDocumentsOrderByInput = {
@@ -9669,7 +10170,6 @@ export type OrphanWhereInput = {
   fatherId?: number | IntNullableFilter | null
   motherId?: number | IntNullableFilter | null
   guardianId?: number | IntNullableFilter | null
-  siblingId?: number | IntNullableFilter | null
   IGA_PropertyId?: number | IntNullableFilter | null
   educationId?: number | IntNullableFilter | null
   docsId?: number | IntNullableFilter | null
@@ -9682,8 +10182,8 @@ export type OrphanWhereInput = {
   guardian?: GuardianWhereInput | null
   mother?: MotherWhereInput | null
   registeredgroup?: RegisteredGroupWhereInput | null
-  sibling?: SiblingWhereInput | null
   sponsoredgroup?: SponsoredGroupWhereInput | null
+  siblings?: SiblingListRelationFilter
 }
 
 export type OrphanOrderByInput = {
@@ -9702,7 +10202,6 @@ export type OrphanOrderByInput = {
   fatherId?: SortOrder
   motherId?: SortOrder
   guardianId?: SortOrder
-  siblingId?: SortOrder
   IGA_PropertyId?: SortOrder
   educationId?: SortOrder
   docsId?: SortOrder
@@ -9715,7 +10214,6 @@ export type OrphanWhereUniqueInput = {
   fatherId?: number | null
   motherId?: number | null
   guardianId?: number | null
-  siblingId?: number | null
   IGA_PropertyId?: number | null
   educationId?: number | null
   docsId?: number | null
@@ -9750,7 +10248,7 @@ export type RegisteredGroupWhereInput = {
   zone?: string | StringFilter
   district?: string | StringFilter
   kebele?: string | StringFilter
-  orphan?: OrphanListRelationFilter
+  orphans?: OrphanListRelationFilter
 }
 
 export type RegisteredGroupOrderByInput = {
@@ -9778,7 +10276,8 @@ export type SiblingWhereInput = {
   schoolGrade?: string | StringNullableFilter | null
   job?: string | StringNullableFilter | null
   maritalStatus?: string | StringFilter
-  orphan?: OrphanListRelationFilter
+  orphanId?: number | IntNullableFilter | null
+  orphan?: OrphanWhereInput | null
 }
 
 export type SiblingOrderByInput = {
@@ -9789,10 +10288,12 @@ export type SiblingOrderByInput = {
   schoolGrade?: SortOrder
   job?: SortOrder
   maritalStatus?: SortOrder
+  orphanId?: SortOrder
 }
 
 export type SiblingWhereUniqueInput = {
   id?: number
+  orphanId?: number | null
 }
 
 export type SocialWorkerWhereInput = {
@@ -9829,7 +10330,7 @@ export type SponsoredGroupWhereInput = {
   donor?: DonorWhereInput | null
   socialworkers?: SocialWorkerWhereInput | null
   support?: SupportWhereInput | null
-  orphan?: OrphanListRelationFilter
+  orphans?: OrphanListRelationFilter
 }
 
 export type SponsoredGroupOrderByInput = {
@@ -9877,6 +10378,41 @@ export type SupportWhereUniqueInput = {
   otherId?: number | null
 }
 
+export type migrationWhereInput = {
+  AND?: Enumerable<migrationWhereInput>
+  OR?: Array<migrationWhereInput>
+  NOT?: Enumerable<migrationWhereInput>
+  revision?: number | IntFilter
+  name?: string | StringFilter
+  datamodel?: string | StringFilter
+  status?: string | StringFilter
+  applied?: number | IntFilter
+  rolled_back?: number | IntFilter
+  datamodel_steps?: string | StringFilter
+  database_migration?: string | StringFilter
+  errors?: string | StringFilter
+  started_at?: Date | string | DateTimeFilter
+  finished_at?: Date | string | DateTimeNullableFilter | null
+}
+
+export type migrationOrderByInput = {
+  revision?: SortOrder
+  name?: SortOrder
+  datamodel?: SortOrder
+  status?: SortOrder
+  applied?: SortOrder
+  rolled_back?: SortOrder
+  datamodel_steps?: SortOrder
+  database_migration?: SortOrder
+  errors?: SortOrder
+  started_at?: SortOrder
+  finished_at?: SortOrder
+}
+
+export type migrationWhereUniqueInput = {
+  revision?: number
+}
+
 export type DonorCreateInput = {
   companyName: string
   initialReportPreparationDate?: Date | string | null
@@ -9884,7 +10420,7 @@ export type DonorCreateInput = {
   initialDataCollectionDate?: Date | string | null
   finalDataCollectionDate?: Date | string | null
   reportDueDate?: Date | string | null
-  sponsoredgroup?: SponsoredGroupCreateManyWithoutDonorInput
+  sponsoredgroups?: SponsoredGroupCreateManyWithoutDonorInput
 }
 
 export type DonorUpdateInput = {
@@ -9894,7 +10430,7 @@ export type DonorUpdateInput = {
   initialDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
   finalDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
   reportDueDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
-  sponsoredgroup?: SponsoredGroupUpdateManyWithoutDonorInput
+  sponsoredgroups?: SponsoredGroupUpdateManyWithoutDonorInput
 }
 
 export type DonorUpdateManyMutationInput = {
@@ -9999,7 +10535,7 @@ export type GuardianCreateInput = {
   email: string
   job?: string | null
   age: number
-  orphan?: OrphanCreateManyWithoutGuardianInput
+  orphans?: OrphanCreateManyWithoutGuardianInput
 }
 
 export type GuardianUpdateInput = {
@@ -10016,7 +10552,7 @@ export type GuardianUpdateInput = {
   email?: string | StringFieldUpdateOperationsInput
   job?: string | NullableStringFieldUpdateOperationsInput | null
   age?: number | IntFieldUpdateOperationsInput
-  orphan?: OrphanUpdateManyWithoutGuardianInput
+  orphans?: OrphanUpdateManyWithoutGuardianInput
 }
 
 export type GuardianUpdateManyMutationInput = {
@@ -10062,7 +10598,7 @@ export type MotherCreateInput = {
   vitalStatus: string
   monthlyExpense: number
   motherjob?: MotherJobCreateOneWithoutMotherInput
-  orphan?: OrphanCreateManyWithoutMotherInput
+  orphans?: OrphanCreateManyWithoutMotherInput
 }
 
 export type MotherUpdateInput = {
@@ -10075,7 +10611,7 @@ export type MotherUpdateInput = {
   vitalStatus?: string | StringFieldUpdateOperationsInput
   monthlyExpense?: number | FloatFieldUpdateOperationsInput
   motherjob?: MotherJobUpdateOneWithoutMotherInput
-  orphan?: OrphanUpdateManyWithoutMotherInput
+  orphans?: OrphanUpdateManyWithoutMotherInput
 }
 
 export type MotherUpdateManyMutationInput = {
@@ -10092,13 +10628,13 @@ export type MotherUpdateManyMutationInput = {
 export type MotherJobCreateInput = {
   currentJobTitle?: string | null
   monthlyIncome?: number | null
-  mother?: MotherCreateManyWithoutMotherjobInput
+  mother?: MotherCreateOneWithoutMotherjobInput
 }
 
 export type MotherJobUpdateInput = {
   currentJobTitle?: string | NullableStringFieldUpdateOperationsInput | null
   monthlyIncome?: number | NullableFloatFieldUpdateOperationsInput | null
-  mother?: MotherUpdateManyWithoutMotherjobInput
+  mother?: MotherUpdateOneRequiredWithoutMotherjobInput
 }
 
 export type MotherJobUpdateManyMutationInput = {
@@ -10113,7 +10649,7 @@ export type OfficialDocumentsCreateInput = {
   birthCertificateUrl: string
   guardianIDCardUrl: string
   guardianConfirmationLetterUrl: string
-  orphan?: OrphanCreateManyWithoutOfficialdocumentsInput
+  orphan?: OrphanCreateOneWithoutOfficialdocumentsInput
 }
 
 export type OfficialDocumentsUpdateInput = {
@@ -10123,7 +10659,7 @@ export type OfficialDocumentsUpdateInput = {
   birthCertificateUrl?: string | StringFieldUpdateOperationsInput
   guardianIDCardUrl?: string | StringFieldUpdateOperationsInput
   guardianConfirmationLetterUrl?: string | StringFieldUpdateOperationsInput
-  orphan?: OrphanUpdateManyWithoutOfficialdocumentsInput
+  orphan?: OrphanUpdateOneRequiredWithoutOfficialdocumentsInput
 }
 
 export type OfficialDocumentsUpdateManyMutationInput = {
@@ -10151,11 +10687,11 @@ export type OrphanCreateInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateInput = {
@@ -10174,11 +10710,11 @@ export type OrphanUpdateInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateManyMutationInput = {
@@ -10214,7 +10750,7 @@ export type RegisteredGroupCreateInput = {
   zone: string
   district: string
   kebele: string
-  orphan?: OrphanCreateManyWithoutRegisteredgroupInput
+  orphans?: OrphanCreateManyWithoutRegisteredgroupInput
 }
 
 export type RegisteredGroupUpdateInput = {
@@ -10224,7 +10760,7 @@ export type RegisteredGroupUpdateInput = {
   zone?: string | StringFieldUpdateOperationsInput
   district?: string | StringFieldUpdateOperationsInput
   kebele?: string | StringFieldUpdateOperationsInput
-  orphan?: OrphanUpdateManyWithoutRegisteredgroupInput
+  orphans?: OrphanUpdateManyWithoutRegisteredgroupInput
 }
 
 export type RegisteredGroupUpdateManyMutationInput = {
@@ -10243,7 +10779,7 @@ export type SiblingCreateInput = {
   schoolGrade?: string | null
   job?: string | null
   maritalStatus: string
-  orphan?: OrphanCreateManyWithoutSiblingInput
+  orphan?: OrphanCreateOneWithoutSiblingsInput
 }
 
 export type SiblingUpdateInput = {
@@ -10253,7 +10789,7 @@ export type SiblingUpdateInput = {
   schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
   job?: string | NullableStringFieldUpdateOperationsInput | null
   maritalStatus?: string | StringFieldUpdateOperationsInput
-  orphan?: OrphanUpdateManyWithoutSiblingInput
+  orphan?: OrphanUpdateOneWithoutSiblingsInput
 }
 
 export type SiblingUpdateManyMutationInput = {
@@ -10287,18 +10823,18 @@ export type SocialWorkerUpdateManyMutationInput = {
 
 export type SponsoredGroupCreateInput = {
   sponsorshipDate: Date | string
-  donor?: DonorCreateOneWithoutSponsoredgroupInput
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
   socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
   support?: SupportCreateOneWithoutSponsoredgroupInput
-  orphan?: OrphanCreateManyWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
 }
 
 export type SponsoredGroupUpdateInput = {
   sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
-  donor?: DonorUpdateOneWithoutSponsoredgroupInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
   socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
   support?: SupportUpdateOneWithoutSponsoredgroupInput
-  orphan?: OrphanUpdateManyWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
 }
 
 export type SponsoredGroupUpdateManyMutationInput = {
@@ -10323,6 +10859,45 @@ export type SupportUpdateInput = {
 
 export type SupportUpdateManyMutationInput = {
   status?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type migrationCreateInput = {
+  name: string
+  datamodel: string
+  status: string
+  applied: number
+  rolled_back: number
+  datamodel_steps: string
+  database_migration: string
+  errors: string
+  started_at: Date | string
+  finished_at?: Date | string | null
+}
+
+export type migrationUpdateInput = {
+  name?: string | StringFieldUpdateOperationsInput
+  datamodel?: string | StringFieldUpdateOperationsInput
+  status?: string | StringFieldUpdateOperationsInput
+  applied?: number | IntFieldUpdateOperationsInput
+  rolled_back?: number | IntFieldUpdateOperationsInput
+  datamodel_steps?: string | StringFieldUpdateOperationsInput
+  database_migration?: string | StringFieldUpdateOperationsInput
+  errors?: string | StringFieldUpdateOperationsInput
+  started_at?: Date | string | DateTimeFieldUpdateOperationsInput
+  finished_at?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+}
+
+export type migrationUpdateManyMutationInput = {
+  name?: string | StringFieldUpdateOperationsInput
+  datamodel?: string | StringFieldUpdateOperationsInput
+  status?: string | StringFieldUpdateOperationsInput
+  applied?: number | IntFieldUpdateOperationsInput
+  rolled_back?: number | IntFieldUpdateOperationsInput
+  datamodel_steps?: string | StringFieldUpdateOperationsInput
+  database_migration?: string | StringFieldUpdateOperationsInput
+  errors?: string | StringFieldUpdateOperationsInput
+  started_at?: Date | string | DateTimeFieldUpdateOperationsInput
+  finished_at?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
 }
 
 export type IntFilter = {
@@ -10461,10 +11036,9 @@ export type FloatNullableFilter = {
   not?: number | NestedFloatNullableFilter | null
 }
 
-export type MotherListRelationFilter = {
-  every?: MotherWhereInput
-  some?: MotherWhereInput
-  none?: MotherWhereInput
+export type MotherRelationFilter = {
+  is?: MotherWhereInput | null
+  isNot?: MotherWhereInput | null
 }
 
 export type Enumorphan_genderFilter = {
@@ -10499,24 +11073,20 @@ export type GuardianRelationFilter = {
   isNot?: GuardianWhereInput | null
 }
 
-export type MotherRelationFilter = {
-  is?: MotherWhereInput | null
-  isNot?: MotherWhereInput | null
-}
-
 export type RegisteredGroupRelationFilter = {
   is?: RegisteredGroupWhereInput | null
   isNot?: RegisteredGroupWhereInput | null
 }
 
-export type SiblingRelationFilter = {
-  is?: SiblingWhereInput | null
-  isNot?: SiblingWhereInput | null
-}
-
 export type SponsoredGroupRelationFilter = {
   is?: SponsoredGroupWhereInput | null
   isNot?: SponsoredGroupWhereInput | null
+}
+
+export type SiblingListRelationFilter = {
+  every?: SiblingWhereInput
+  some?: SiblingWhereInput
+  none?: SiblingWhereInput
 }
 
 export type DonorRelationFilter = {
@@ -10726,42 +11296,32 @@ export type OrphanUpdateManyWithoutMotherInput = {
   upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutMotherInput>
 }
 
-export type MotherCreateManyWithoutMotherjobInput = {
-  create?: Enumerable<MotherCreateWithoutMotherjobInput>
-  connect?: Enumerable<MotherWhereUniqueInput>
+export type MotherCreateOneWithoutMotherjobInput = {
+  create?: MotherCreateWithoutMotherjobInput
+  connect?: MotherWhereUniqueInput
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
   set?: number | null
 }
 
-export type MotherUpdateManyWithoutMotherjobInput = {
-  create?: Enumerable<MotherCreateWithoutMotherjobInput>
-  connect?: Enumerable<MotherWhereUniqueInput>
-  set?: Enumerable<MotherWhereUniqueInput>
-  disconnect?: Enumerable<MotherWhereUniqueInput>
-  delete?: Enumerable<MotherWhereUniqueInput>
-  update?: Enumerable<MotherUpdateWithWhereUniqueWithoutMotherjobInput>
-  updateMany?: Enumerable<MotherUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<MotherScalarWhereInput>
-  upsert?: Enumerable<MotherUpsertWithWhereUniqueWithoutMotherjobInput>
+export type MotherUpdateOneRequiredWithoutMotherjobInput = {
+  create?: MotherCreateWithoutMotherjobInput
+  connect?: MotherWhereUniqueInput
+  update?: MotherUpdateWithoutMotherjobDataInput
+  upsert?: MotherUpsertWithoutMotherjobInput
 }
 
-export type OrphanCreateManyWithoutOfficialdocumentsInput = {
-  create?: Enumerable<OrphanCreateWithoutOfficialdocumentsInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
+export type OrphanCreateOneWithoutOfficialdocumentsInput = {
+  create?: OrphanCreateWithoutOfficialdocumentsInput
+  connect?: OrphanWhereUniqueInput
 }
 
-export type OrphanUpdateManyWithoutOfficialdocumentsInput = {
-  create?: Enumerable<OrphanCreateWithoutOfficialdocumentsInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-  set?: Enumerable<OrphanWhereUniqueInput>
-  disconnect?: Enumerable<OrphanWhereUniqueInput>
-  delete?: Enumerable<OrphanWhereUniqueInput>
-  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutOfficialdocumentsInput>
-  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<OrphanScalarWhereInput>
-  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutOfficialdocumentsInput>
+export type OrphanUpdateOneRequiredWithoutOfficialdocumentsInput = {
+  create?: OrphanCreateWithoutOfficialdocumentsInput
+  connect?: OrphanWhereUniqueInput
+  update?: OrphanUpdateWithoutOfficialdocumentsDataInput
+  upsert?: OrphanUpsertWithoutOfficialdocumentsInput
 }
 
 export type Iga_propertyCreateOneWithoutOrphanInput = {
@@ -10784,29 +11344,29 @@ export type FatherCreateOneWithoutOrphansInput = {
   connect?: FatherWhereUniqueInput
 }
 
-export type GuardianCreateOneWithoutOrphanInput = {
-  create?: GuardianCreateWithoutOrphanInput
+export type GuardianCreateOneWithoutOrphansInput = {
+  create?: GuardianCreateWithoutOrphansInput
   connect?: GuardianWhereUniqueInput
 }
 
-export type MotherCreateOneWithoutOrphanInput = {
-  create?: MotherCreateWithoutOrphanInput
+export type MotherCreateOneWithoutOrphansInput = {
+  create?: MotherCreateWithoutOrphansInput
   connect?: MotherWhereUniqueInput
 }
 
-export type RegisteredGroupCreateOneWithoutOrphanInput = {
-  create?: RegisteredGroupCreateWithoutOrphanInput
+export type RegisteredGroupCreateOneWithoutOrphansInput = {
+  create?: RegisteredGroupCreateWithoutOrphansInput
   connect?: RegisteredGroupWhereUniqueInput
 }
 
-export type SiblingCreateOneWithoutOrphanInput = {
-  create?: SiblingCreateWithoutOrphanInput
-  connect?: SiblingWhereUniqueInput
+export type SponsoredGroupCreateOneWithoutOrphansInput = {
+  create?: SponsoredGroupCreateWithoutOrphansInput
+  connect?: SponsoredGroupWhereUniqueInput
 }
 
-export type SponsoredGroupCreateOneWithoutOrphanInput = {
-  create?: SponsoredGroupCreateWithoutOrphanInput
-  connect?: SponsoredGroupWhereUniqueInput
+export type SiblingCreateManyWithoutOrphanInput = {
+  create?: Enumerable<SiblingCreateWithoutOrphanInput>
+  connect?: Enumerable<SiblingWhereUniqueInput>
 }
 
 export type Enumorphan_genderFieldUpdateOperationsInput = {
@@ -10849,49 +11409,52 @@ export type FatherUpdateOneWithoutOrphansInput = {
   upsert?: FatherUpsertWithoutOrphansInput
 }
 
-export type GuardianUpdateOneWithoutOrphanInput = {
-  create?: GuardianCreateWithoutOrphanInput
+export type GuardianUpdateOneWithoutOrphansInput = {
+  create?: GuardianCreateWithoutOrphansInput
   connect?: GuardianWhereUniqueInput
   disconnect?: boolean
   delete?: boolean
-  update?: GuardianUpdateWithoutOrphanDataInput
-  upsert?: GuardianUpsertWithoutOrphanInput
+  update?: GuardianUpdateWithoutOrphansDataInput
+  upsert?: GuardianUpsertWithoutOrphansInput
 }
 
-export type MotherUpdateOneWithoutOrphanInput = {
-  create?: MotherCreateWithoutOrphanInput
+export type MotherUpdateOneWithoutOrphansInput = {
+  create?: MotherCreateWithoutOrphansInput
   connect?: MotherWhereUniqueInput
   disconnect?: boolean
   delete?: boolean
-  update?: MotherUpdateWithoutOrphanDataInput
-  upsert?: MotherUpsertWithoutOrphanInput
+  update?: MotherUpdateWithoutOrphansDataInput
+  upsert?: MotherUpsertWithoutOrphansInput
 }
 
-export type RegisteredGroupUpdateOneWithoutOrphanInput = {
-  create?: RegisteredGroupCreateWithoutOrphanInput
+export type RegisteredGroupUpdateOneWithoutOrphansInput = {
+  create?: RegisteredGroupCreateWithoutOrphansInput
   connect?: RegisteredGroupWhereUniqueInput
   disconnect?: boolean
   delete?: boolean
-  update?: RegisteredGroupUpdateWithoutOrphanDataInput
-  upsert?: RegisteredGroupUpsertWithoutOrphanInput
+  update?: RegisteredGroupUpdateWithoutOrphansDataInput
+  upsert?: RegisteredGroupUpsertWithoutOrphansInput
 }
 
-export type SiblingUpdateOneWithoutOrphanInput = {
-  create?: SiblingCreateWithoutOrphanInput
-  connect?: SiblingWhereUniqueInput
-  disconnect?: boolean
-  delete?: boolean
-  update?: SiblingUpdateWithoutOrphanDataInput
-  upsert?: SiblingUpsertWithoutOrphanInput
-}
-
-export type SponsoredGroupUpdateOneWithoutOrphanInput = {
-  create?: SponsoredGroupCreateWithoutOrphanInput
+export type SponsoredGroupUpdateOneWithoutOrphansInput = {
+  create?: SponsoredGroupCreateWithoutOrphansInput
   connect?: SponsoredGroupWhereUniqueInput
   disconnect?: boolean
   delete?: boolean
-  update?: SponsoredGroupUpdateWithoutOrphanDataInput
-  upsert?: SponsoredGroupUpsertWithoutOrphanInput
+  update?: SponsoredGroupUpdateWithoutOrphansDataInput
+  upsert?: SponsoredGroupUpsertWithoutOrphansInput
+}
+
+export type SiblingUpdateManyWithoutOrphanInput = {
+  create?: Enumerable<SiblingCreateWithoutOrphanInput>
+  connect?: Enumerable<SiblingWhereUniqueInput>
+  set?: Enumerable<SiblingWhereUniqueInput>
+  disconnect?: Enumerable<SiblingWhereUniqueInput>
+  delete?: Enumerable<SiblingWhereUniqueInput>
+  update?: Enumerable<SiblingUpdateWithWhereUniqueWithoutOrphanInput>
+  updateMany?: Enumerable<SiblingUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SiblingScalarWhereInput>
+  upsert?: Enumerable<SiblingUpsertWithWhereUniqueWithoutOrphanInput>
 }
 
 export type SupportCreateManyWithoutOthersupportInput = {
@@ -10928,21 +11491,18 @@ export type OrphanUpdateManyWithoutRegisteredgroupInput = {
   upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutRegisteredgroupInput>
 }
 
-export type OrphanCreateManyWithoutSiblingInput = {
-  create?: Enumerable<OrphanCreateWithoutSiblingInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
+export type OrphanCreateOneWithoutSiblingsInput = {
+  create?: OrphanCreateWithoutSiblingsInput
+  connect?: OrphanWhereUniqueInput
 }
 
-export type OrphanUpdateManyWithoutSiblingInput = {
-  create?: Enumerable<OrphanCreateWithoutSiblingInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-  set?: Enumerable<OrphanWhereUniqueInput>
-  disconnect?: Enumerable<OrphanWhereUniqueInput>
-  delete?: Enumerable<OrphanWhereUniqueInput>
-  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutSiblingInput>
-  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<OrphanScalarWhereInput>
-  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutSiblingInput>
+export type OrphanUpdateOneWithoutSiblingsInput = {
+  create?: OrphanCreateWithoutSiblingsInput
+  connect?: OrphanWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: OrphanUpdateWithoutSiblingsDataInput
+  upsert?: OrphanUpsertWithoutSiblingsInput
 }
 
 export type SponsoredGroupCreateManyWithoutSocialworkersInput = {
@@ -10962,8 +11522,8 @@ export type SponsoredGroupUpdateManyWithoutSocialworkersInput = {
   upsert?: Enumerable<SponsoredGroupUpsertWithWhereUniqueWithoutSocialworkersInput>
 }
 
-export type DonorCreateOneWithoutSponsoredgroupInput = {
-  create?: DonorCreateWithoutSponsoredgroupInput
+export type DonorCreateOneWithoutSponsoredgroupsInput = {
+  create?: DonorCreateWithoutSponsoredgroupsInput
   connect?: DonorWhereUniqueInput
 }
 
@@ -10982,13 +11542,13 @@ export type OrphanCreateManyWithoutSponsoredgroupInput = {
   connect?: Enumerable<OrphanWhereUniqueInput>
 }
 
-export type DonorUpdateOneWithoutSponsoredgroupInput = {
-  create?: DonorCreateWithoutSponsoredgroupInput
+export type DonorUpdateOneWithoutSponsoredgroupsInput = {
+  create?: DonorCreateWithoutSponsoredgroupsInput
   connect?: DonorWhereUniqueInput
   disconnect?: boolean
   delete?: boolean
-  update?: DonorUpdateWithoutSponsoredgroupDataInput
-  upsert?: DonorUpsertWithoutSponsoredgroupInput
+  update?: DonorUpdateWithoutSponsoredgroupsDataInput
+  upsert?: DonorUpsertWithoutSponsoredgroupsInput
 }
 
 export type SocialWorkerUpdateOneWithoutSponsoredgroupInput = {
@@ -11196,7 +11756,7 @@ export type SponsoredGroupCreateWithoutDonorInput = {
   sponsorshipDate: Date | string
   socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
   support?: SupportCreateOneWithoutSponsoredgroupInput
-  orphan?: OrphanCreateManyWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
 }
 
 export type SponsoredGroupUpdateWithWhereUniqueWithoutDonorInput = {
@@ -11241,11 +11801,11 @@ export type OrphanCreateWithoutEducationInput = {
   iga_property?: Iga_propertyCreateOneWithoutOrphanInput
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithoutEducationDataInput = {
@@ -11263,11 +11823,11 @@ export type OrphanUpdateWithoutEducationDataInput = {
   iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type OrphanUpsertWithoutEducationInput = {
@@ -11324,11 +11884,11 @@ export type OrphanCreateWithoutFatherInput = {
   iga_property?: Iga_propertyCreateOneWithoutOrphanInput
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithWhereUniqueWithoutFatherInput = {
@@ -11360,7 +11920,6 @@ export type OrphanScalarWhereInput = {
   fatherId?: number | IntNullableFilter | null
   motherId?: number | IntNullableFilter | null
   guardianId?: number | IntNullableFilter | null
-  siblingId?: number | IntNullableFilter | null
   IGA_PropertyId?: number | IntNullableFilter | null
   educationId?: number | IntNullableFilter | null
   docsId?: number | IntNullableFilter | null
@@ -11408,10 +11967,10 @@ export type OrphanCreateWithoutGuardianInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithWhereUniqueWithoutGuardianInput = {
@@ -11440,11 +11999,11 @@ export type OrphanCreateWithoutIga_propertyInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithWhereUniqueWithoutIga_propertyInput = {
@@ -11479,10 +12038,10 @@ export type OrphanCreateWithoutMotherInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type MotherJobUpdateWithoutMotherDataInput = {
@@ -11515,37 +12074,22 @@ export type MotherCreateWithoutMotherjobInput = {
   maritalStatus: string
   vitalStatus: string
   monthlyExpense: number
-  orphan?: OrphanCreateManyWithoutMotherInput
+  orphans?: OrphanCreateManyWithoutMotherInput
 }
 
-export type MotherUpdateWithWhereUniqueWithoutMotherjobInput = {
-  where: MotherWhereUniqueInput
-  data: MotherUpdateWithoutMotherjobDataInput
+export type MotherUpdateWithoutMotherjobDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  vitalStatus?: string | StringFieldUpdateOperationsInput
+  monthlyExpense?: number | FloatFieldUpdateOperationsInput
+  orphans?: OrphanUpdateManyWithoutMotherInput
 }
 
-export type MotherUpdateManyWithWhereNestedInput = {
-  where: MotherScalarWhereInput
-  data: MotherUpdateManyDataInput
-}
-
-export type MotherScalarWhereInput = {
-  AND?: Enumerable<MotherScalarWhereInput>
-  OR?: Array<MotherScalarWhereInput>
-  NOT?: Enumerable<MotherScalarWhereInput>
-  id?: number | IntFilter
-  firstName?: string | StringFilter
-  middleName?: string | StringFilter
-  lastName?: string | StringFilter
-  dateOfBirth?: Date | string | DateTimeFilter
-  phoneNumber?: string | StringFilter
-  jobId?: number | IntNullableFilter | null
-  maritalStatus?: string | StringFilter
-  vitalStatus?: string | StringFilter
-  monthlyExpense?: number | FloatFilter
-}
-
-export type MotherUpsertWithWhereUniqueWithoutMotherjobInput = {
-  where: MotherWhereUniqueInput
+export type MotherUpsertWithoutMotherjobInput = {
   update: MotherUpdateWithoutMotherjobDataInput
   create: MotherCreateWithoutMotherjobInput
 }
@@ -11565,20 +12109,36 @@ export type OrphanCreateWithoutOfficialdocumentsInput = {
   iga_property?: Iga_propertyCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
-export type OrphanUpdateWithWhereUniqueWithoutOfficialdocumentsInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutOfficialdocumentsDataInput
+export type OrphanUpdateWithoutOfficialdocumentsDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
-export type OrphanUpsertWithWhereUniqueWithoutOfficialdocumentsInput = {
-  where: OrphanWhereUniqueInput
+export type OrphanUpsertWithoutOfficialdocumentsInput = {
   update: OrphanUpdateWithoutOfficialdocumentsDataInput
   create: OrphanCreateWithoutOfficialdocumentsInput
 }
@@ -11614,7 +12174,7 @@ export type FatherCreateWithoutOrphansInput = {
   dateOfBirth: Date | string
 }
 
-export type GuardianCreateWithoutOrphanInput = {
+export type GuardianCreateWithoutOrphansInput = {
   firstName: string
   middleName: string
   lastName: string
@@ -11630,7 +12190,7 @@ export type GuardianCreateWithoutOrphanInput = {
   age: number
 }
 
-export type MotherCreateWithoutOrphanInput = {
+export type MotherCreateWithoutOrphansInput = {
   firstName: string
   middleName: string
   lastName: string
@@ -11642,13 +12202,20 @@ export type MotherCreateWithoutOrphanInput = {
   motherjob?: MotherJobCreateOneWithoutMotherInput
 }
 
-export type RegisteredGroupCreateWithoutOrphanInput = {
+export type RegisteredGroupCreateWithoutOrphansInput = {
   registrationDate: Date | string
   siteName: string
   state: string
   zone: string
   district: string
   kebele: string
+}
+
+export type SponsoredGroupCreateWithoutOrphansInput = {
+  sponsorshipDate: Date | string
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
+  support?: SupportCreateOneWithoutSponsoredgroupInput
 }
 
 export type SiblingCreateWithoutOrphanInput = {
@@ -11658,13 +12225,6 @@ export type SiblingCreateWithoutOrphanInput = {
   schoolGrade?: string | null
   job?: string | null
   maritalStatus: string
-}
-
-export type SponsoredGroupCreateWithoutOrphanInput = {
-  sponsorshipDate: Date | string
-  donor?: DonorCreateOneWithoutSponsoredgroupInput
-  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
-  support?: SupportCreateOneWithoutSponsoredgroupInput
 }
 
 export type Iga_propertyUpdateWithoutOrphanDataInput = {
@@ -11718,7 +12278,7 @@ export type FatherUpsertWithoutOrphansInput = {
   create: FatherCreateWithoutOrphansInput
 }
 
-export type GuardianUpdateWithoutOrphanDataInput = {
+export type GuardianUpdateWithoutOrphansDataInput = {
   firstName?: string | StringFieldUpdateOperationsInput
   middleName?: string | StringFieldUpdateOperationsInput
   lastName?: string | StringFieldUpdateOperationsInput
@@ -11734,12 +12294,12 @@ export type GuardianUpdateWithoutOrphanDataInput = {
   age?: number | IntFieldUpdateOperationsInput
 }
 
-export type GuardianUpsertWithoutOrphanInput = {
-  update: GuardianUpdateWithoutOrphanDataInput
-  create: GuardianCreateWithoutOrphanInput
+export type GuardianUpsertWithoutOrphansInput = {
+  update: GuardianUpdateWithoutOrphansDataInput
+  create: GuardianCreateWithoutOrphansInput
 }
 
-export type MotherUpdateWithoutOrphanDataInput = {
+export type MotherUpdateWithoutOrphansDataInput = {
   firstName?: string | StringFieldUpdateOperationsInput
   middleName?: string | StringFieldUpdateOperationsInput
   lastName?: string | StringFieldUpdateOperationsInput
@@ -11751,12 +12311,12 @@ export type MotherUpdateWithoutOrphanDataInput = {
   motherjob?: MotherJobUpdateOneWithoutMotherInput
 }
 
-export type MotherUpsertWithoutOrphanInput = {
-  update: MotherUpdateWithoutOrphanDataInput
-  create: MotherCreateWithoutOrphanInput
+export type MotherUpsertWithoutOrphansInput = {
+  update: MotherUpdateWithoutOrphansDataInput
+  create: MotherCreateWithoutOrphansInput
 }
 
-export type RegisteredGroupUpdateWithoutOrphanDataInput = {
+export type RegisteredGroupUpdateWithoutOrphansDataInput = {
   registrationDate?: Date | string | DateTimeFieldUpdateOperationsInput
   siteName?: string | StringFieldUpdateOperationsInput
   state?: string | StringFieldUpdateOperationsInput
@@ -11765,35 +12325,51 @@ export type RegisteredGroupUpdateWithoutOrphanDataInput = {
   kebele?: string | StringFieldUpdateOperationsInput
 }
 
-export type RegisteredGroupUpsertWithoutOrphanInput = {
-  update: RegisteredGroupUpdateWithoutOrphanDataInput
-  create: RegisteredGroupCreateWithoutOrphanInput
+export type RegisteredGroupUpsertWithoutOrphansInput = {
+  update: RegisteredGroupUpdateWithoutOrphansDataInput
+  create: RegisteredGroupCreateWithoutOrphansInput
 }
 
-export type SiblingUpdateWithoutOrphanDataInput = {
-  fullName?: string | StringFieldUpdateOperationsInput
-  gender?: string | StringFieldUpdateOperationsInput
-  age?: number | IntFieldUpdateOperationsInput
-  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
-  job?: string | NullableStringFieldUpdateOperationsInput | null
-  maritalStatus?: string | StringFieldUpdateOperationsInput
-}
-
-export type SiblingUpsertWithoutOrphanInput = {
-  update: SiblingUpdateWithoutOrphanDataInput
-  create: SiblingCreateWithoutOrphanInput
-}
-
-export type SponsoredGroupUpdateWithoutOrphanDataInput = {
+export type SponsoredGroupUpdateWithoutOrphansDataInput = {
   sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
-  donor?: DonorUpdateOneWithoutSponsoredgroupInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
   socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
   support?: SupportUpdateOneWithoutSponsoredgroupInput
 }
 
-export type SponsoredGroupUpsertWithoutOrphanInput = {
-  update: SponsoredGroupUpdateWithoutOrphanDataInput
-  create: SponsoredGroupCreateWithoutOrphanInput
+export type SponsoredGroupUpsertWithoutOrphansInput = {
+  update: SponsoredGroupUpdateWithoutOrphansDataInput
+  create: SponsoredGroupCreateWithoutOrphansInput
+}
+
+export type SiblingUpdateWithWhereUniqueWithoutOrphanInput = {
+  where: SiblingWhereUniqueInput
+  data: SiblingUpdateWithoutOrphanDataInput
+}
+
+export type SiblingUpdateManyWithWhereNestedInput = {
+  where: SiblingScalarWhereInput
+  data: SiblingUpdateManyDataInput
+}
+
+export type SiblingScalarWhereInput = {
+  AND?: Enumerable<SiblingScalarWhereInput>
+  OR?: Array<SiblingScalarWhereInput>
+  NOT?: Enumerable<SiblingScalarWhereInput>
+  id?: number | IntFilter
+  fullName?: string | StringFilter
+  gender?: string | StringFilter
+  age?: number | IntFilter
+  schoolGrade?: string | StringNullableFilter | null
+  job?: string | StringNullableFilter | null
+  maritalStatus?: string | StringFilter
+  orphanId?: number | IntNullableFilter | null
+}
+
+export type SiblingUpsertWithWhereUniqueWithoutOrphanInput = {
+  where: SiblingWhereUniqueInput
+  update: SiblingUpdateWithoutOrphanDataInput
+  create: SiblingCreateWithoutOrphanInput
 }
 
 export type SupportCreateWithoutOthersupportInput = {
@@ -11830,10 +12406,10 @@ export type OrphanCreateWithoutRegisteredgroupInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithWhereUniqueWithoutRegisteredgroupInput = {
@@ -11847,7 +12423,7 @@ export type OrphanUpsertWithWhereUniqueWithoutRegisteredgroupInput = {
   create: OrphanCreateWithoutRegisteredgroupInput
 }
 
-export type OrphanCreateWithoutSiblingInput = {
+export type OrphanCreateWithoutSiblingsInput = {
   firstName: string
   fatherName: string
   grandFatherName: string
@@ -11863,28 +12439,44 @@ export type OrphanCreateWithoutSiblingInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
 }
 
-export type OrphanUpdateWithWhereUniqueWithoutSiblingInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutSiblingDataInput
+export type OrphanUpdateWithoutSiblingsDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
 }
 
-export type OrphanUpsertWithWhereUniqueWithoutSiblingInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutSiblingDataInput
-  create: OrphanCreateWithoutSiblingInput
+export type OrphanUpsertWithoutSiblingsInput = {
+  update: OrphanUpdateWithoutSiblingsDataInput
+  create: OrphanCreateWithoutSiblingsInput
 }
 
 export type SponsoredGroupCreateWithoutSocialworkersInput = {
   sponsorshipDate: Date | string
-  donor?: DonorCreateOneWithoutSponsoredgroupInput
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
   support?: SupportCreateOneWithoutSponsoredgroupInput
-  orphan?: OrphanCreateManyWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
 }
 
 export type SponsoredGroupUpdateWithWhereUniqueWithoutSocialworkersInput = {
@@ -11898,7 +12490,7 @@ export type SponsoredGroupUpsertWithWhereUniqueWithoutSocialworkersInput = {
   create: SponsoredGroupCreateWithoutSocialworkersInput
 }
 
-export type DonorCreateWithoutSponsoredgroupInput = {
+export type DonorCreateWithoutSponsoredgroupsInput = {
   companyName: string
   initialReportPreparationDate?: Date | string | null
   finalReportPreparationDate?: Date | string | null
@@ -11936,13 +12528,13 @@ export type OrphanCreateWithoutSponsoredgroupInput = {
   officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
   education?: EducationCreateOneWithoutOrphanInput
   father?: FatherCreateOneWithoutOrphansInput
-  guardian?: GuardianCreateOneWithoutOrphanInput
-  mother?: MotherCreateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupCreateOneWithoutOrphanInput
-  sibling?: SiblingCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
 }
 
-export type DonorUpdateWithoutSponsoredgroupDataInput = {
+export type DonorUpdateWithoutSponsoredgroupsDataInput = {
   companyName?: string | StringFieldUpdateOperationsInput
   initialReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
   finalReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
@@ -11951,9 +12543,9 @@ export type DonorUpdateWithoutSponsoredgroupDataInput = {
   reportDueDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
 }
 
-export type DonorUpsertWithoutSponsoredgroupInput = {
-  update: DonorUpdateWithoutSponsoredgroupDataInput
-  create: DonorCreateWithoutSponsoredgroupInput
+export type DonorUpsertWithoutSponsoredgroupsInput = {
+  update: DonorUpdateWithoutSponsoredgroupsDataInput
+  create: DonorCreateWithoutSponsoredgroupsInput
 }
 
 export type SocialWorkerUpdateWithoutSponsoredgroupDataInput = {
@@ -12004,9 +12596,9 @@ export type OtherSupportCreateWithoutSupportInput = {
 
 export type SponsoredGroupCreateWithoutSupportInput = {
   sponsorshipDate: Date | string
-  donor?: DonorCreateOneWithoutSponsoredgroupInput
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
   socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
-  orphan?: OrphanCreateManyWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
 }
 
 export type EducationalSupportUpdateWithoutSupportDataInput = {
@@ -12036,7 +12628,7 @@ export type SponsoredGroupUpdateWithoutDonorDataInput = {
   sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
   socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
   support?: SupportUpdateOneWithoutSponsoredgroupInput
-  orphan?: OrphanUpdateManyWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
 }
 
 export type SponsoredGroupUpdateManyDataInput = {
@@ -12069,11 +12661,11 @@ export type OrphanUpdateWithoutFatherDataInput = {
   iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateManyDataInput = {
@@ -12113,10 +12705,10 @@ export type OrphanUpdateWithoutGuardianDataInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithoutIga_propertyDataInput = {
@@ -12134,11 +12726,11 @@ export type OrphanUpdateWithoutIga_propertyDataInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type OrphanUpdateWithoutMotherDataInput = {
@@ -12157,55 +12749,28 @@ export type OrphanUpdateWithoutMotherDataInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
-export type MotherUpdateWithoutMotherjobDataInput = {
-  firstName?: string | StringFieldUpdateOperationsInput
-  middleName?: string | StringFieldUpdateOperationsInput
-  lastName?: string | StringFieldUpdateOperationsInput
-  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
-  phoneNumber?: string | StringFieldUpdateOperationsInput
+export type SiblingUpdateWithoutOrphanDataInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
   maritalStatus?: string | StringFieldUpdateOperationsInput
-  vitalStatus?: string | StringFieldUpdateOperationsInput
-  monthlyExpense?: number | FloatFieldUpdateOperationsInput
-  orphan?: OrphanUpdateManyWithoutMotherInput
 }
 
-export type MotherUpdateManyDataInput = {
-  firstName?: string | StringFieldUpdateOperationsInput
-  middleName?: string | StringFieldUpdateOperationsInput
-  lastName?: string | StringFieldUpdateOperationsInput
-  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
-  phoneNumber?: string | StringFieldUpdateOperationsInput
+export type SiblingUpdateManyDataInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
   maritalStatus?: string | StringFieldUpdateOperationsInput
-  vitalStatus?: string | StringFieldUpdateOperationsInput
-  monthlyExpense?: number | FloatFieldUpdateOperationsInput
-}
-
-export type OrphanUpdateWithoutOfficialdocumentsDataInput = {
-  firstName?: string | StringFieldUpdateOperationsInput
-  fatherName?: string | StringFieldUpdateOperationsInput
-  grandFatherName?: string | StringFieldUpdateOperationsInput
-  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
-  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
-  placeOfBirth?: string | StringFieldUpdateOperationsInput
-  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
-  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
-  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
-  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
-  otherHealthIssues?: string | StringFieldUpdateOperationsInput
-  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
-  education?: EducationUpdateOneWithoutOrphanInput
-  father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
 }
 
 export type SupportUpdateWithoutOthersupportDataInput = {
@@ -12231,39 +12796,17 @@ export type OrphanUpdateWithoutRegisteredgroupDataInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
-}
-
-export type OrphanUpdateWithoutSiblingDataInput = {
-  firstName?: string | StringFieldUpdateOperationsInput
-  fatherName?: string | StringFieldUpdateOperationsInput
-  grandFatherName?: string | StringFieldUpdateOperationsInput
-  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
-  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
-  placeOfBirth?: string | StringFieldUpdateOperationsInput
-  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
-  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
-  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
-  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
-  otherHealthIssues?: string | StringFieldUpdateOperationsInput
-  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
-  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
-  education?: EducationUpdateOneWithoutOrphanInput
-  father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type SponsoredGroupUpdateWithoutSocialworkersDataInput = {
   sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
-  donor?: DonorUpdateOneWithoutSponsoredgroupInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
   support?: SupportUpdateOneWithoutSponsoredgroupInput
-  orphan?: OrphanUpdateManyWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
 }
 
 export type OrphanUpdateWithoutSponsoredgroupDataInput = {
@@ -12282,17 +12825,17 @@ export type OrphanUpdateWithoutSponsoredgroupDataInput = {
   officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
   education?: EducationUpdateOneWithoutOrphanInput
   father?: FatherUpdateOneWithoutOrphansInput
-  guardian?: GuardianUpdateOneWithoutOrphanInput
-  mother?: MotherUpdateOneWithoutOrphanInput
-  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphanInput
-  sibling?: SiblingUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
 }
 
 export type SponsoredGroupUpdateWithoutSupportDataInput = {
   sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
-  donor?: DonorUpdateOneWithoutSponsoredgroupInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
   socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
-  orphan?: OrphanUpdateManyWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
 }
 
 /**

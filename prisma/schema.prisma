@@ -15,7 +15,8 @@ model Donor {
   initialDataCollectionDate    DateTime?
   finalDataCollectionDate      DateTime?
   reportDueDate                DateTime?
-  sponsoredgroup               SponsoredGroup[]
+  sponsoredgroups              SponsoredGroup[]
+
   @@map("donor")
 }
 
@@ -28,12 +29,14 @@ model Education {
   reason           String?
   hobbies          String?
   orphan           Orphan
+
   @@map("education")
 }
 
 model EducationalSupport {
   id      Int       @default(autoincrement()) @id
   support Support[]
+
   @@map("educationalsupport")
 }
 
@@ -44,13 +47,15 @@ model Father {
   job           String?
   monthlyIncome Int
   dateOfBirth   DateTime
-  orphans        Orphan[]
+  orphans       Orphan[]
+
   @@map("father")
 }
 
 model FinancialSupport {
   id      Int       @default(autoincrement()) @id
   support Support[]
+
   @@map("financialsupport")
 }
 
@@ -69,7 +74,8 @@ model Guardian {
   email            String
   job              String?
   age              Int
-  orphan           Orphan[]
+  orphans          Orphan[]
+
   @@map("guardian")
 }
 
@@ -78,6 +84,7 @@ model Iga_property {
   ownershipStatus String
   otherProperty   String?
   orphan          Orphan[]
+
   @@map("iga_property")
 }
 
@@ -93,7 +100,7 @@ model Mother {
   vitalStatus    String
   monthlyExpense Float
   motherjob      MotherJob? @relation(fields: [jobId], references: [id])
-  orphan         Orphan[]
+  orphans        Orphan[]
 
   @@index([jobId], name: "jobId")
   @@map("mother")
@@ -103,7 +110,8 @@ model MotherJob {
   id              Int      @default(autoincrement()) @id
   currentJobTitle String?
   monthlyIncome   Float?
-  mother          Mother[]
+  mother          Mother
+
   @@map("motherjob")
 }
 
@@ -115,7 +123,8 @@ model OfficialDocuments {
   birthCertificateUrl           String
   guardianIDCardUrl             String
   guardianConfirmationLetterUrl String
-  orphan                        Orphan[]
+  orphan                        Orphan
+
   @@map("officialdocuments")
 }
 
@@ -135,7 +144,6 @@ model Orphan {
   fatherId                  Int?
   motherId                  Int?
   guardianId                Int?
-  siblingId                 Int?
   IGA_PropertyId            Int?
   educationId               Int?
   docsId                    Int?
@@ -148,8 +156,8 @@ model Orphan {
   guardian                  Guardian?          @relation(fields: [guardianId], references: [id])
   mother                    Mother?            @relation(fields: [motherId], references: [id])
   registeredgroup           RegisteredGroup?   @relation(fields: [regGroupId], references: [id])
-  sibling                   Sibling?           @relation(fields: [siblingId], references: [id])
   sponsoredgroup            SponsoredGroup?    @relation(fields: [sponsrGroupId], references: [id])
+  siblings                  Sibling[]
 
   @@index([IGA_PropertyId], name: "IGA_PropertyId")
   @@index([docsId], name: "docsId")
@@ -158,7 +166,6 @@ model Orphan {
   @@index([guardianId], name: "guardianId")
   @@index([motherId], name: "motherId")
   @@index([regGroupId], name: "regGroupId")
-  @@index([siblingId], name: "siblingId")
   @@index([sponsrGroupId], name: "sponsrGroupId")
   @@map("orphan")
 }
@@ -166,6 +173,7 @@ model Orphan {
 model OtherSupport {
   id      Int       @default(autoincrement()) @id
   support Support[]
+
   @@map("othersupport")
 }
 
@@ -177,19 +185,23 @@ model RegisteredGroup {
   zone             String
   district         String
   kebele           String
-  orphan           Orphan[]
+  orphans          Orphan[]
+
   @@map("registeredgroup")
 }
 
 model Sibling {
-  id            Int      @default(autoincrement()) @id
+  id            Int     @default(autoincrement()) @id
   fullName      String
   gender        String
   age           Int
   schoolGrade   String?
   job           String?
   maritalStatus String
-  orphan        Orphan[]
+  orphanId      Int?
+  orphan        Orphan? @relation(fields: [orphanId], references: [id])
+
+  @@index([orphanId], name: "sibling_ibfk_1")
   @@map("sibling")
 }
 
@@ -199,6 +211,7 @@ model SocialWorker {
   phoneNumber    String
   email          String
   sponsoredgroup SponsoredGroup[]
+
   @@map("socialworker")
 }
 
@@ -211,7 +224,7 @@ model SponsoredGroup {
   donor           Donor?        @relation(fields: [donorId], references: [id])
   socialworkers   SocialWorker? @relation(fields: [socialWorkerId], references: [id])
   support         Support?      @relation(fields: [supportId], references: [id])
-  orphan          Orphan[]
+  orphans         Orphan[]
 
   @@index([donorId], name: "donorId")
   @@index([socialWorkerId], name: "socialWorkerId")
@@ -234,6 +247,22 @@ model Support {
   @@index([financialId], name: "financialId")
   @@index([otherId], name: "otherId")
   @@map("support")
+}
+
+model migration {
+  revision           Int       @default(autoincrement()) @id
+  name               String
+  datamodel          String
+  status             String
+  applied            Int
+  rolled_back        Int
+  datamodel_steps    String
+  database_migration String
+  errors             String
+  started_at         DateTime
+  finished_at        DateTime?
+
+  @@map("_migration")
 }
 
 enum education_enrollmentStatus {
