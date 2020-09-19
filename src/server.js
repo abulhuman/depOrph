@@ -3,6 +3,17 @@ const { GraphQLServer } = require('graphql-yoga');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const Orphan = require('./resolvers/Orphan');
+const Donor = require('./resolvers/Donor');
+const Education = require('./resolvers/Education');
+const Father = require('./resolvers/Father');
+const Guardian = require('./resolvers/Guardian');
+const Iga_property = require('./resolvers/Iga_property');
+const Mother = require('./resolvers/Mother');
+const MotherJob = require('./resolvers/MotherJob');
+const Sibling = require('./resolvers/Sibling');
+const SocialWorker = require('./resolvers/SocialWorker');
+const SponsoredGroup = require('./resolvers/SponsoredGroup');
+const RegisteredGroup = require('./resolvers/RegisteredGroup');
 
 const prisma = new PrismaClient({
   errorFormat: 'pretty',
@@ -12,6 +23,17 @@ const resolvers = {
   Query,
   Mutation,
   Orphan,
+  Donor,
+  Education,
+  Father,
+  Guardian,
+  Iga_property,
+  Mother,
+  MotherJob,
+  Sibling,
+  SocialWorker,
+  RegisteredGroup,
+  SponsoredGroup,
 };
 
 const server = new GraphQLServer({

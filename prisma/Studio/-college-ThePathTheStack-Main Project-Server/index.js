@@ -9,19 +9,23 @@ const {
   PrismaClientValidationError,
   getPrismaClient,
   debugLib,
-  sqltag
+  sqltag,
+  sql,
+  empty,
+  join,
+  raw
 } = require('./runtime')
 
 const path = require('path')
 const debug = debugLib('prisma-client')
 
 /**
- * Prisma Client JS version: 2.6.2
- * Query Engine version: 6a8054bb549e4cc23f157b0010cb2e95cb2637fb
+ * Prisma Client JS version: 2.7.1
+ * Query Engine version: 5c2ad460cf4fe8c9330e6640b266c046542c8b6a
  */
 exports.prismaVersion = {
-  client: "2.6.2",
-  engine: "6a8054bb549e4cc23f157b0010cb2e95cb2637fb"
+  client: "2.7.1",
+  engine: "5c2ad460cf4fe8c9330e6640b266c046542c8b6a"
 }
 
 exports.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -34,10 +38,10 @@ exports.PrismaClientValidationError = PrismaClientValidationError;
  * Re-export of sql-template-tag
  */
 
-exports.sql = sqltag.sqltag
-exports.empty = sqltag.empty
-exports.join = sqltag.join
-exports.raw = sqltag.raw
+exports.sql = sqltag
+exports.empty = empty
+exports.join = join
+exports.raw = raw
 
 
 /**
@@ -272,7 +276,9 @@ exports.dmmf = JSON.parse(dmmfString)
 const config = {
   "generator": {
     "binaryTargets": [],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "transactionApi"
+    ],
     "config": {
       "copyRuntime": "true"
     },
@@ -283,8 +289,8 @@ const config = {
   },
   "sqliteDatasourceOverrides": [],
   "relativePath": "..\\..",
-  "clientVersion": "2.6.2",
-  "engineVersion": "6a8054bb549e4cc23f157b0010cb2e95cb2637fb"
+  "clientVersion": "2.7.1",
+  "engineVersion": "5c2ad460cf4fe8c9330e6640b266c046542c8b6a"
 }
 config.document = dmmf
 config.dirname = __dirname

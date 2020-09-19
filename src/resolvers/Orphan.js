@@ -3,7 +3,7 @@ function iga_property(parent, args, context){
 }
 
 function officialdocuments(parent, args, context){
-    return context.prisma.orphan.findOne({ where: { id: parent.id } }).officialDocuments();
+    return context.prisma.orphan.findOne({ where: { id: parent.id } }).officialdocuments();
 }
 
 function education(parent, args, context){

@@ -25,8 +25,8 @@ export { PrismaClientValidationError }
 export { sql, empty, join, raw }
 
 /**
- * Prisma Client JS version: 2.6.2
- * Query Engine version: 6a8054bb549e4cc23f157b0010cb2e95cb2637fb
+ * Prisma Client JS version: 2.7.1
+ * Query Engine version: 5c2ad460cf4fe8c9330e6640b266c046542c8b6a
  */
 export declare type PrismaVersion = {
   client: string
@@ -367,9 +367,26 @@ export declare class PrismaClient<
   $queryRaw<T = any>(query: string | TemplateStringsArray, ...values: any[]): Promise<T>;
  
   /**
-   * @deprecated renamed to `$executeRaw`
+   * @deprecated renamed to `$queryRaw`
    */
   queryRaw<T = any>(query: string | TemplateStringsArray, ...values: any[]): Promise<T>;
+
+  /**
+   * Execute queries in a transaction
+   * @example
+   * ```
+   * const [george, bob, alice] = await prisma.transaction([
+   *   prisma.user.create({ data: { name: 'George' } }),
+   *   prisma.user.create({ data: { name: 'Bob' } }),
+   *   prisma.user.create({ data: { name: 'Alice' } }),
+   * ])
+   * ```
+   */
+  $transaction: PromiseConstructor['all']
+  /**
+   * @deprecated renamed to `$transaction`
+   */
+  transaction: PromiseConstructor['all']
 
   /**
    * `prisma.donor`: Exposes CRUD operations for the **Donor** model.
