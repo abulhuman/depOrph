@@ -1,6 +1,5 @@
 async function createOrphan(parent, args, context, info) {
-  const siblingIds = [...(args.siblings)].map((val)=>({id: Number(val)}));
-  console.log(siblingIds)
+  const siblingIds = args.siblings ? [...(args.siblings)].map((val)=>({id: Number(val)})) : undefined;
   const newOrphan = await context.prisma.orphan.create({
     data: {
       firstName: args.firstName,
@@ -132,7 +131,7 @@ async function createSibling(parent, args, context, info) {
         connect: {
           id: Number(args.orphan)
         }
-      } : undefined
+      } : undefined,
     },
   })
   return newSibling;
@@ -245,11 +244,11 @@ async function createSocialWorker(parent, args, context, info) {
       fullName: args.fullName,
       phoneNumber: args.phoneNumber,
       email: args.email,
-      sponsoredgroup: {
+      sponsoredgroup: args.sponsoredgroup ? {
         connect: {
           id: Number(args.sponsoredgroup)
         }
-      }
+      } : undefined,
     },
   })
   return newSocialWorker;
@@ -274,7 +273,7 @@ async function createRegisteredGroup(parent, args, context, info) {
 }
 
 async function createSponsoredGroup(parent, args, context, info) {
-  const orphansIds = [...(args.orphans)].map((val)=>({id: Number(val)}));
+  const orphansIds = args.orphans ? [...(args.orphans)].map((val)=>({id: Number(val)})) : undefined;
   const socialworkersIds =  args.socialworkers ? [...(args.socialworkers)].map((val)=>({id: Number(val)})): undefined;
   const newSponsoredGroup = await context.prisma.sponsoredGroup.create({
     data: { 
@@ -290,7 +289,9 @@ async function createSponsoredGroup(parent, args, context, info) {
         },
       } : undefined,
       socialworkers:{
-        connect: socialworkersIds
+        connect: [
+          ...socialworkersIds
+        ]
       },
       orphans: {
         connect: orphansIds
@@ -306,7 +307,7 @@ async function createSupport(parent, args, context, info) {
       status: args.status,
       sponsoredgroup: {
         connect: {
-          id: args.id,
+          id: Number(args.sponsoredgroup),
         },
       },
      },
