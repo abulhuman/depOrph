@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { GraphQLServer } = require('graphql-yoga');
+const path = require('path');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const Orphan = require('./resolvers/Orphan');
@@ -46,6 +47,13 @@ const server = new GraphQLServer({
     };
   },
 });
+server.createHttpServer({cors:true})
+const express = server.express;
+
+express.get('/images/:id', (req, res) => {
+  console.log(`Hello Number ${req.params.id}`)
+  res.sendFile(path.join(__dirname, 'public', 'powerfulFiles.PNG'));
+})
 
 server.start({ port: 5005 }, ({ port }) => {
   console.log(`\n\nServer is running on port ${port} ... \n\n`);

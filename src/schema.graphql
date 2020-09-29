@@ -54,7 +54,7 @@ type Mutation {
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
     typeOfSchool: educationTypeOfSchool
-    grade: String
+    grade: String 
     reason: String
     hobbies: String
     orphan: ID
@@ -190,9 +190,9 @@ type Education {
   enrollmentStatus: educationEnrollmentStatus!
   schoolName: String
   typeOfSchool: educationTypeOfSchool
-  grade: String
+  grade: String # TODO add level:enum(gradeschool,undergrad, postgrad), add year
   reason: String
-  hobbies: String
+  hobbies: String # TODO move hobbies to orphan
   orphan: Orphan
 }
 
@@ -249,7 +249,7 @@ type Support {
   sponsoredgroup: SponsoredGroup
 }
 
-type RegisteredGroup {
+type RegisteredGroup { # TODO rename to site
   id: ID!
   registrationDate: DateTime!
   siteName: String!
@@ -258,6 +258,7 @@ type RegisteredGroup {
   district: String!
   kebele: String!
   orphans: [Orphan]
+  # sponsored: [sponsoredgroup]
 }
 
 type SponsoredGroup {
@@ -273,32 +274,32 @@ type OfficialDocuments {
   id: ID!
   photoPortraitUrl: String!
   photoLongUrl: String!
-  fatherDeathCertificateUrl: String!
+  fatherDeathCertificateUrl: String! # move to father
   birthCertificateUrl: String!
-  guardianIDCardUrl: String!
-  guardianConfirmationLetterUrl: String!
+  guardianIDCardUrl: String! # move to guardian
+  guardianConfirmationLetterUrl: String! # move to guardian
   orphan: Orphan
 }
 
-type Guardian {
+type Guardian { # add [monthly expense, ]
   id: ID!
   firstName: String!
   middleName: String!
   lastName: String!
-  gender: String!
+  gender: String! # make a general gender for all human entities
   nationality: String!
   state: String!
   zone: String!
   district: String!
   kebele: String!
-  relationToOrphan: String!
+  relationToOrphan: String! # change to enum(mother, grandparents, siblings, cousin, niece...)
   email: String!
   job: String
   age: Int
   orphans: [Orphan]
 }
 
-type MotherJob {
+type MotherJob { # change rln to one{mother}:many{jobs} add [initdate, termdate]
   id: ID!
   currentJobTitle: String
   monthlyIncome: String
@@ -312,8 +313,8 @@ type Mother {
   lastName: String!
   dateOfBirth: DateTime!
   phoneNumber: String!
-  maritalStatus: String!
-  vitalStatus: String!
+  maritalStatus: String! # change to enum(remarreid, widow, divorcedthendead)
+  vitalStatus: String! # change to enum(alive, passed)
   monthlyExpense: Float!
   motherjob: MotherJob
   orphans: [Orphan]
@@ -330,7 +331,7 @@ type Sibling {
   orphan: Orphan
 }
 
-type Orphan {
+type Orphan { # TODO  add [sponsoship status: bool, donor: Donor, sponsoredDate: DateTime], move father
   id: ID!
   firstName: String!
   fatherName: String!
