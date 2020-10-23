@@ -190,9 +190,10 @@ type Education {
   enrollmentStatus: educationEnrollmentStatus!
   schoolName: String
   typeOfSchool: educationTypeOfSchool
-  grade: String # TODO add level:enum(gradeschool,undergrad, postgrad), add year
+  grade: Int # TODO add level:enum(gradeschool,undergrad, postgrad), add year #DONE
+  level: educationLevel
   reason: String
-  hobbies: String # TODO move hobbies to orphan
+  hobbies: String # TODO move hobbies to orphan #DONE
   orphan: Orphan
 }
 
@@ -249,7 +250,7 @@ type Support {
   sponsoredgroup: SponsoredGroup
 }
 
-type RegisteredGroup { # TODO rename to site
+type RegisteredGroup { # TODO rename to site #DONE
   id: ID!
   registrationDate: DateTime!
   siteName: String!
@@ -258,7 +259,7 @@ type RegisteredGroup { # TODO rename to site
   district: String!
   kebele: String!
   orphans: [Orphan]
-  # sponsored: [sponsoredgroup]
+  # sponsored: [sponsoredgroup] #DONE
 }
 
 type SponsoredGroup {
@@ -274,32 +275,32 @@ type OfficialDocuments {
   id: ID!
   photoPortraitUrl: String!
   photoLongUrl: String!
-  fatherDeathCertificateUrl: String! # move to father
+  fatherDeathCertificateUrl: String! # move to father #DONE
   birthCertificateUrl: String!
-  guardianIDCardUrl: String! # move to guardian
-  guardianConfirmationLetterUrl: String! # move to guardian
+  guardianIDCardUrl: String! # move to guardian #DONE
+  guardianConfirmationLetterUrl: String! # move to guardian #DONE
   orphan: Orphan
 }
 
-type Guardian { # add [monthly expense, ]
+type Guardian { # add [monthly expense, ] #DONE
   id: ID!
   firstName: String!
   middleName: String!
   lastName: String!
-  gender: String! # make a general gender for all human entities
+  gender: String! # make a general gender for all human entities #DONE
   nationality: String!
   state: String!
   zone: String!
   district: String!
   kebele: String!
-  relationToOrphan: String! # change to enum(mother, grandparents, siblings, cousin, niece...)
+  relationToOrphan: String! # change to enum(mother, grandparents, siblings, cousin, niece...) #DONE
   email: String!
   job: String
   age: Int
   orphans: [Orphan]
 }
 
-type MotherJob { # change rln to one{mother}:many{jobs} add [initdate, termdate]
+type MotherJob { # change rln to one{mother}:many{jobs} add [initdate, termdate] #DONE
   id: ID!
   currentJobTitle: String
   monthlyIncome: String
@@ -313,8 +314,8 @@ type Mother {
   lastName: String!
   dateOfBirth: DateTime!
   phoneNumber: String!
-  maritalStatus: String! # change to enum(remarreid, widow, divorcedthendead)
-  vitalStatus: String! # change to enum(alive, passed)
+  maritalStatus: String! # change to enum(remarreid, widow, divorcedthendead) #DONE
+  vitalStatus: String! # change to enum(alive, passed) #DONE
   monthlyExpense: Float!
   motherjob: MotherJob
   orphans: [Orphan]
@@ -331,7 +332,7 @@ type Sibling {
   orphan: Orphan
 }
 
-type Orphan { # TODO  add [sponsoship status: bool, donor: Donor, sponsoredDate: DateTime], move father
+type Orphan { # TODO  add [sponsoship status: enum(inProgress, active, suspended, graduated ), donor: Donor, sponsoredDate: DateTime], move father
   id: ID!
   firstName: String!
   fatherName: String!
@@ -369,5 +370,12 @@ enum educationEnrollmentStatus {
 enum educationTypeOfSchool {
   private
   public
+}
+
+enum educationLevel {
+  preSchool
+  gradeSchool
+  underGraduate
+  postGraduate
 }
 

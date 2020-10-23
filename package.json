@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@prisma/cli": "^2.7.1",
+    "@prisma/cli": "^2.9.0",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
