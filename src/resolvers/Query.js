@@ -1,7 +1,7 @@
 async function orphan(parent, args, context, info) {
   const orphan = await context.prisma.orphan.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -11,7 +11,7 @@ async function orphan(parent, args, context, info) {
 async function iga_property(parent, args, context, info) {
   const iga_property = await context.prisma.iga_property.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -21,7 +21,7 @@ async function iga_property(parent, args, context, info) {
 async function education(parent, args, context, info) {
   const education = await context.prisma.education.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -31,7 +31,7 @@ async function education(parent, args, context, info) {
 async function father(parent, args, context, info) {
   const father = await context.prisma.father.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -41,7 +41,7 @@ async function father(parent, args, context, info) {
 async function sibling(parent, args, context, info) {
   const sibling = await context.prisma.sibling.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -51,7 +51,7 @@ async function sibling(parent, args, context, info) {
 async function motherJob(parent, args, context, info) {
   const motherJob = await context.prisma.motherJob.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -61,7 +61,7 @@ async function motherJob(parent, args, context, info) {
 async function mother(parent, args, context, info) {
   const mother = await context.prisma.mother.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
@@ -71,50 +71,91 @@ async function mother(parent, args, context, info) {
 async function donor(parent, args, context, info) {
   const donor = await context.prisma.donor.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
   return donor;
 }
 
-async function address(parent, args, context, info) {
-  const address = await context.prisma.address.findOne({
+async function socialWorker(parent, args, context, info) {
+  const socialWorker = await context.prisma.socialWorker.findOne({
     where: {
-      state: args.state,
+      id: Number(args.id),
     },
   });
 
-  return address;
+  return socialWorker;
 }
 
 async function site(parent, args, context, info) {
   const site = await context.prisma.site.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
   return site;
 }
 
-async function socialWorker(parent, args, context, info) {
-  const socialWorker = await context.prisma.socialWorker.findOne({
+async function sponsoredGroup(parent, args, context, info) {
+  const sponsoredGroup = await context.prisma.sponsoredGroup.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
-  return socialWorker;
+  return sponsoredGroup;
 }
-async function groupOfOrphans(parent, args, context, info) {
-  const groupOfOrphans = await context.prisma.groupOfOrphans.findOne({
+
+async function officialDocuments(parent, args, context, info) {
+  const docs = await context.prisma.groupOfOrphans.findOne({
     where: {
-      id: parseInt(args.id),
+      id: Number(args.id),
     },
   });
 
-  return groupOfOrphans;
+  return docs;
+}
+
+async function support(parent, args, context, info) {
+  const support = await context.prisma.groupOfOrphans.findOne({
+    where: {
+      id: Number(args.id),
+    },
+  });
+
+  return support;
+}
+
+async function otherSupport(parent, args, context, info) {
+  const otherSupport = await context.prisma.groupOfOrphans.findOne({
+    where: {
+      id: Number(args.id),
+    },
+  });
+
+  return otherSupport;
+}
+
+async function educationalSupport(parent, args, context, info) {
+  const educationalSupport = await context.prisma.groupOfOrphans.findOne({
+    where: {
+      id: Number(args.id),
+    },
+  });
+
+  return educationalSupport;
+}
+
+async function financialSupport(parent, args, context, info) {
+  const financialSupport = await context.prisma.groupOfOrphans.findOne({
+    where: {
+      id: Number(args.id),
+    },
+  });
+
+  return financialSupport;
 }
 
 
@@ -127,8 +168,12 @@ module.exports = {
   motherJob,
   mother,
   donor,
-  address,
-  site,
   socialWorker,
-  groupOfOrphans,
+  site,
+  sponsoredGroup,
+  officialDocuments,
+  support,
+  otherSupport,
+  educationalSupport,
+  financialSupport,
 };

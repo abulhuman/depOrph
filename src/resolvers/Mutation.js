@@ -1,32 +1,7 @@
-async function createOrphanOnly(parent, args, context, info) {
-  const newOrphan = await context.prisma.orphan.create({
-    data: {
-      firstName, fatherName, grandFatherName, greatGrandFatherName,
-      gender, placeOfBirth, dateOfBirth, numberOfSponserdSiblings,
-      physicalHealthStatus, psychologicalHealthStatus,
-      otherHealthIssues, photoPortraitUrl, photoLongUrl,
-    } = args,
-  });
+const { sponsoredgroup } = require("./SocialWorker");
 
-  return newOrphan;
-}
-
-async function createSiteWithAddress(parent, args, context, info) {
-  return context.prisma.site.create({
-    data: {
-      siteName: args.siteName,
-      donationAmount: args.donationAmount,
-      address: {
-        create: {
-          state, zone, district, kebele
-        } = args.address,
-      },
-    },
-  });
-}
-
-async function createOrphanWithAllDetails(parent, args, context, info) {
-  console.log(args.groupoforphans.site.address);
+async function createOrphan(parent, args, context, info) {
+  const siblingIds = args.siblings ? [...(args.siblings)].map((val)=>({id: Number(val)})) : undefined;
   const newOrphan = await context.prisma.orphan.create({
     data: {
       firstName: args.firstName,
@@ -40,96 +15,77 @@ async function createOrphanWithAllDetails(parent, args, context, info) {
       physicalHealthStatus: args.physicalHealthStatus,
       psychologicalHealthStatus: args.psychologicalHealthStatus,
       otherHealthIssues: args.otherHealthIssues,
-      photoPortraitUrl: args.photoPortraitUrl,
-      photoLongUrl: args.photoLongUrl,
-      iga_property: {
-        create: {
-          ownershipStatus, otherProperty,
-        } = args.iga_property
-      },
-      education: {
-        create: {
-          enrollmentStatus, schoolName, typeOfSchool,
-          grade, reason, hobbies,
-        } = args.education
-      },
-      father: {
-        create: {
-          dateOfDeath, causeOfDeath, job, monthlyIncome, dateOfBirth,
-        } = args.father
-      },
-      groupoforphans: {
-        create: {
-          registrationDate: args.groupoforphans.registrationDate,
-          donor: {
-            create: {
-              companyName,
-              typeOfsupport,
-              initialDonationAmount,
-              initialReportPreparationDate,
-              finalReportPreparationDate,
-              initialDataCollectionDate,
-              finalDataCollectionDate,
-              reportDueDate,
-            } = args.groupoforphans.donor,
-          }, socialworker: {
-            create: {
-              fullName,
-              phoneNumber,
-              email
-            } = args.groupoforphans.socialWorker,
-          },
-          site: {
-            create: {
-              address: {
-                create: {
-                  state: args.groupoforphans.site.address.state,
-                  zone: args.groupoforphans.site.address.zone,
-                  district: args.groupoforphans.site.address.district,
-                  kebele: args.groupoforphans.site.address.kebele,
-                },
-              },
-              siteName: args.groupoforphans.site.siteName,
-              donationAmount: args.groupoforphans.site.donationAmount,
-            },
-          },
+      hobbies: args.hobbies,
+      sponsorshipStatus: args.sponsorshipStatus,
+      iga_property: args.iga_property ? {
+        connect: {
+          id: Number(args.iga_property)
         },
-      },
-      guardian: {
-        create: {
-          firstName, middleName, lastName, gender, nationality,
-          state, zone, district, kebele, relationToOrphan,
-          email, job, age
-        } = args.guardian
-      },
-      mother: {
-        create: {
-          firstName: args.mother.firstName,
-          middleName: args.mother.middleName,
-          lastName: args.mother.lastName,
-          dateOfBirth: args.mother.dateOfBirth,
-          phoneNumber: args.mother.phoneNumber,
-          maritalStatus: args.mother.maritalStatus,
-          vitalStatus: args.mother.vitalStatus,
-          monthlyExpense: args.mother.monthlyExpense,
-          motherjob: {
-            create: {
-              currentJobTitle, monthlyIncome
-            } = args.mother.motherjob
-          }
-        }
-      },
-    },
-  },
+      } : undefined,
+      officialdocuments: args.officialdocuments ? {
+        connect: {
+          id: Number(args.officialdocuments)
+        },
+      } : undefined,
+      education: args.education ? {
+        connect: {
+          id: Number(args.education)
+        },
+      } : undefined,
+      father: args.father ? {
+        connect: {
+          id: Number(args.father)
+        },
+      } : undefined,
+      guardian: args.guardian ? {
+        connect: {
+          id: Number(args.guardian)
+        },
+      } : undefined,
+      mother: args.mother ? {
+        connect: {
+          id: Number(args.mother)
+        },
+      } : undefined,
+      donor: args.donor ? {
+        connect: {
+          id: Number(args.donor)
+        },
+      } : undefined,
+      site: args.site ? {
+        connect: {
+          id: Number(args.site)
+        },
+      } : undefined,
+      sponsoredgroup: args.sponsoredgroup ? {
+        connect: {
+          id: Number(args.sponsoredgroup)
+        },
+      } : undefined,
+      siblings :{
+        connect: [
+          ...siblingIds
+      ], 
+      }
 
-  );
+    },
+
+  });
 
   return newOrphan;
 }
 
 async function createIga_property(parent, args, context, info) {
   const newIga_property = await context.prisma.iga_property.create({
-    data: { ownershipStatus, otherProperty, } = args,
+    data: {
+      ownershipStatus: args.ownershipStatus,
+      otherProperty: args.otherProperty,
+      orphan: {
+        connect: {
+          id: Number(args.orphan),
+        }
+      }
+    },
   });
   return newIga_property;
 }
@@ -137,17 +93,37 @@ async function createIga_property(parent, args, context, info) {
 async function createEducation(parent, args, context, info) {
   const newEducation = await context.prisma.education.create({
     data: {
-      enrollmentStatus, schoolName, typeOfSchool,
-      grade, reason, hobbies,
-    } = args,
+      enrollmentStatus: args.enrollmentStatus,
+      schoolName: args.schoolName ? args.schoolName : undefined,
+      typeOfSchool: args.typeOfSchool ? args.typeOfSchool : undefined,
+      grade: args.grade ? args.grade : undefined,
+      year: args.year ? args.year : undefined,
+      level: args.level ? args.level : undefined,
+      reason: args.reason ? args.reason : undefined,
+      orphan: {
+        connect: {
+          id: Number(args.orphan)
+        },
+      },
+    },
   });
   return newEducation;
 }
 
 async function createFather(parent, args, context, info) {
-
+  const ids = [...(args.orphans)].map((val)=>({id: Number(val)}));
   const newFather = await context.prisma.father.create({
-    data: { dateOfDeath, causeOfDeath, job, monthlyIncome, dateOfBirth, } = args,
+    data: { 
+      dateOfDeath: args.dateOfDeath, 
+      causeOfDeath: args.causeOfDeath, 
+      job: args.job, 
+      monthlyIncome: args.monthlyIncome, 
+      dateOfBirth: args.dateOfBirth,
+      fatherDeathCertificateUrl: args.fatherDeathCertificateUrl,
+      orphans: {
+        connect: ids
+      },
+    },
   })
   return newFather;
 
@@ -155,97 +131,227 @@ async function createFather(parent, args, context, info) {
 
 async function createSibling(parent, args, context, info) {
   const newSibling = await context.prisma.sibling.create({
-    data: { fullName, gender, age, schoolGrade, job, maritalStatus, } = args,
+    data: { 
+      fullName: args.fullName, 
+      gender: args.gender, 
+      age: args.age, 
+      schoolGrade: args.schoolGrade, 
+      job: args.job, 
+      maritalStatus: args.maritalStatus,
+      orphan: args.orphan ? {
+        connect: {
+          id: Number(args.orphan)
+        }
+      } : undefined,
+    },
   })
   return newSibling;
 }
 
 async function createGuardian(parent, args, context, info) {
+  const ids = [...(args.orphans)].map((val)=>({id: Number(val)}));
   const newGuardian = await context.prisma.guardian.create({
     data: {
-      firstName, middleName, lastName, gender, nationality,
-      state, zone, district, kebele, relationToOrphan,
-      email, job, age
-    } = args,
+      firstName: args.firstName, 
+      middleName: args.middleName, 
+      lastName: args.lastName, 
+      gender: args.gender, 
+      nationality: args.nationality,
+      state: args.state, 
+      zone: args.zone, 
+      district: args.district, 
+      kebele: args.kebele, 
+      relationToOrphan: args.relationToOrphan,
+      email: args.email, 
+      job: args.job, 
+      dateOfBirth: args.dateOfBirth,
+      monthlyExpense: parseFloat(args.monthlyExpense),
+      guardianIDCardUrl: args.guardianIDCardUrl,
+      guardianConfirmationLetterUrl: args.guardianConfirmationLetterUrl,
+      orphans: {
+        connect: ids
+      }
+    },
   })
   return newGuardian;
 }
 
 async function createMotherJob(parent, args, context, info) {
   const newMotherJob = await context.prisma.motherJob.create({
-    data: { currentJobTitle, monthlyIncome, } = args,
+    data: { 
+      currentJobTitle: args.currentJobTitle, 
+      monthlyIncome: parseFloat(args.monthlyIncome),
+      initDate: args.initDate,
+      termdate: args.termdate,
+      mother: {
+        connect: {
+          id: Number(args.mother)
+        }
+      }
+     },
   });
   return newMotherJob
 }
 
 async function createMother(parent, args, context, info) {
+  const ids = [...(args.orphans)].map((val)=>({id: Number(val)}));
+  const jobIds = [...(args.motherjob)].map((val)=>({id: Number(val)}));
   const newMother = await context.prisma.mother.create({
     data: {
-      firstName, middleName, lastName, dateOfBirth,
-      phoneNumber, job, maritalStatus, vitalStatus,
-      monthlyExpense,
-    } = args,
+      firstName: args.firstName, 
+      middleName: args.middleName, 
+      lastName: args.lastName, 
+      dateOfBirth: args.dateOfBirth,
+      phoneNumber: args.phoneNumber,
+      maritalStatus: args.maritalStatus, 
+      vitalStatus: args.vitalStatus,
+      monthlyExpense: args.monthlyExpense,
+      motherjob: {
+        connect: jobIds
+      },
+      orphans: {
+        connect: ids
+      }
+    },
   });
   return newMother;
 }
 
+async function createOfficialDocuments(parent, args, context, info) {
+  return await context.prisma.officialDocuments.create({
+    data: {
+      photoPortraitUrl: args.photoPortraitUrl,
+      photoLongUrl: args.photoLongUrl,
+      birthCertificateUrl: args.birthCertificateUrl,
+      orphan: {
+        connect: {
+          id: Number(args.orphan)
+        }
+      },
+    },
+  })
+}
+
 async function createDonor(parent, args, context, info) {
+  const GroupsIDs = [...(args.sponsoredgroups)].map((val)=>({id: Number(val)}));
   const newDonor = await context.prisma.donor.create({
     data: {
-      companyName,
-      typeOfsupport,
-      initialDonationAmount,
-      initialReportPreparationDate,
-      finalReportPreparationDate,
-      initialDataCollectionDate,
-      finalDataCollectionDate,
-      reportDueDate,
-    } = args,
+      companyName: args.companyName,
+      initialReportPreparationDate: args.initialReportPreparationDate,
+      finalReportPreparationDate: args.finalReportPreparationDate,
+      initialDataCollectionDate: args.initialDataCollectionDate,
+      finalDataCollectionDate: args.finalDataCollectionDate,
+      reportDueDate: args.reportDueDate,
+      sponsoredgroups: {
+        connect: GroupsIDs,
+      },
+    },
   })
   return newDonor;
-}
-
-async function createAddress(parent, args, context, info) {
-  const newAddress = await context.prisma.address.create({
-    data: {
-      state,
-      zone,
-      district,
-      kebele,
-    } = args,
-  });
-  return newAddress
-}
-
-async function createSite(parent, args, context, info) {
-  const newSite = await context.prisma.site.create({
-    data: { siteName, donationAmount } = args,
-  })
-  return newSite;
 }
 
 async function createSocialWorker(parent, args, context, info) {
   const newSocialWorker = await context.prisma.socialWorker.create({
     data: {
-      fullName,
-      phoneNumber,
-      email,
-    } = args,
+      fullName: args.fullName,
+      phoneNumber: args.phoneNumber,
+      email: args.email,
+      sponsoredgroup: args.sponsoredgroup ? {
+        connect: {
+          id: Number(args.sponsoredgroup)
+        }
+      } : undefined,
+    },
   })
   return newSocialWorker;
 }
 
-async function createGroupOfOrphans(parent, args, context, info) {
-  const newGroupOfOrphans = await context.prisma.groupOfOrphans.create({
-    data: { registrationDate } = args,
+async function createSite(parent, args, context, info) {
+  const ids = [...(args.orphans)].map((val)=>({id: Number(val)}));
+  const sponsoredgroupsIds = [...(args.sponsoredgroups)].map((val)=>({id: Number(val)}));
+  const newSite = await context.prisma.site.create({
+    data: { 
+      registrationDate: args.registrationDate,
+      siteName: args.siteName,
+      state: args.state,
+      zone: args.zone,
+      district: args.district,
+      kebele: args.kebele,
+      orphans: {
+        connect: ids
+      },
+      sponsoredgroups: {
+        connect: sponsoredgroupsIds
+      }
+     },
   })
-  return newGroupOfOrphans;
+  return newSite;
 }
 
+async function createSponsoredGroup(parent, args, context, info) {
+  const orphansIds = args.orphans ? [...(args.orphans)].map((val)=>({id: Number(val)})) : undefined;
+  const socialworkersIds =  args.socialworkers ? [...(args.socialworkers)].map((val)=>({id: Number(val)})): undefined;
+  const newSponsoredGroup = await context.prisma.sponsoredGroup.create({
+    data: { 
+      sponsorshipDate: args.sponsorshipDate,
+      donor: args.donor ? {
+        connect : {
+          id: Number(args.donor)
+        },
+      } : undefined,
+      support: args.support ? {
+        connect : {
+          id: Number(args.support)
+        },
+      } : undefined,
+      socialworkers:{
+        connect: [
+          ...socialworkersIds
+        ]
+      },
+      orphans: {
+        connect: orphansIds
+      }
+     },
+  })
+  return newSponsoredGroup;
+}
+
+async function createSupport(parent, args, context, info) {
+  const newSupport = await context.prisma.support.create({
+    data: { 
+      status: args.status,
+      sponsoredgroup: {
+        connect: {
+          id: Number(args.sponsoredgroup),
+        },
+      },
+     },
+  })
+  return newSupport;
+}
+
+
+// async function createFinalcialSupport(parent, args, context, info) {
+//   return await context.prisma.financialSupport.create({
+//     data: args,
+//   })
+// }
+
+// async function createEducationalSupport(parent, args, context, info) {
+//   return await context.prisma.educationalSupport.create({
+//     data: args,
+//   })
+// }
+
+// async function createOtherSupport(parent, args, context, info) {
+//   return await context.prisma.otherSupport.create({
+//     data: args,
+//   })
+// }
+
 module.exports = {
-  createOrphanOnly,
-  createSiteWithAddress,
-  createOrphanWithAllDetails,
+  createOrphan,
   createIga_property,
   createEducation,
   createFather,
@@ -254,9 +360,13 @@ module.exports = {
   createMotherJob,
   createMother,
   createDonor,
-  createAddress,
-  createSite,
   createSocialWorker,
-  createGroupOfOrphans,
+  createSite,
+  createOfficialDocuments,
+  createSponsoredGroup,
+  createSupport,
+  // createFinalcialSupport,
+  // createEducationalSupport,
+  // createOtherSupport,
 };
 

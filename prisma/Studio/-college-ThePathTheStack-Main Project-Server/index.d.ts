@@ -25,8 +25,8 @@ export { PrismaClientValidationError }
 export { sql, empty, join, raw }
 
 /**
- * Prisma Client JS version: 2.5.1
- * Query Engine version: c88925ce44a9b89b4351aec85ba6a28979d2658e
+ * Prisma Client JS version: 2.7.1
+ * Query Engine version: 5c2ad460cf4fe8c9330e6640b266c046542c8b6a
  */
 export declare type PrismaVersion = {
   client: string
@@ -184,7 +184,9 @@ export type LogDefinition = {
 }
 
 export type GetLogType<T extends LogLevel | LogDefinition> = T extends LogDefinition ? T['emit'] extends 'event' ? T['level'] : never : never
-export type GetEvents<T extends Array<LogLevel | LogDefinition>> = GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]> 
+export type GetEvents<T extends any> = T extends Array<LogLevel | LogDefinition> ?
+  GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]>
+  : never
 
 export type QueryEvent = {
   timestamp: Date
@@ -202,7 +204,7 @@ export type LogEvent = {
 /* End Types for Logging */
 
 
-export type Action =
+export type PrismaAction =
   | 'findOne'
   | 'findMany'
   | 'create'
@@ -220,7 +222,7 @@ export type Action =
  */
 export type MiddlewareParams = {
   model?: string
-  action: Action
+  action: PrismaAction
   args: any
   dataPath: string[]
   runInTransaction: boolean
@@ -244,8 +246,8 @@ export declare function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLe
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Addresses
- * const addresses = await prisma.address.findMany()
+ * // Fetch zero or more Donors
+ * const donors = await prisma.donor.findMany()
  * ```
  *
  * 
@@ -253,7 +255,7 @@ export declare function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLe
  */
 export declare class PrismaClient<
   T extends PrismaClientOptions = PrismaClientOptions,
-  U = keyof T extends 'log' ? T['log'] extends Array<LogLevel | LogDefinition> ? GetEvents<T['log']> : never : never
+  U = 'log' extends keyof T ? T['log'] extends Array<LogLevel | LogDefinition> ? GetEvents<T['log']> : never : never
 > {
   /**
    * @private
@@ -295,8 +297,8 @@ export declare class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Addresses
-   * const addresses = await prisma.address.findMany()
+   * // Fetch zero or more Donors
+   * const donors = await prisma.donor.findMany()
    * ```
    *
    * 
@@ -365,19 +367,26 @@ export declare class PrismaClient<
   $queryRaw<T = any>(query: string | TemplateStringsArray, ...values: any[]): Promise<T>;
  
   /**
-   * @deprecated renamed to `$executeRaw`
+   * @deprecated renamed to `$queryRaw`
    */
   queryRaw<T = any>(query: string | TemplateStringsArray, ...values: any[]): Promise<T>;
 
   /**
-   * `prisma.address`: Exposes CRUD operations for the **Address** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Addresses
-    * const addresses = await prisma.address.findMany()
-    * ```
-    */
-  get address(): AddressDelegate;
+   * Execute queries in a transaction
+   * @example
+   * ```
+   * const [george, bob, alice] = await prisma.transaction([
+   *   prisma.user.create({ data: { name: 'George' } }),
+   *   prisma.user.create({ data: { name: 'Bob' } }),
+   *   prisma.user.create({ data: { name: 'Alice' } }),
+   * ])
+   * ```
+   */
+  $transaction: PromiseConstructor['all']
+  /**
+   * @deprecated renamed to `$transaction`
+   */
+  transaction: PromiseConstructor['all']
 
   /**
    * `prisma.donor`: Exposes CRUD operations for the **Donor** model.
@@ -400,6 +409,16 @@ export declare class PrismaClient<
   get education(): EducationDelegate;
 
   /**
+   * `prisma.educationalSupport`: Exposes CRUD operations for the **EducationalSupport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EducationalSupports
+    * const educationalSupports = await prisma.educationalSupport.findMany()
+    * ```
+    */
+  get educationalSupport(): EducationalSupportDelegate;
+
+  /**
    * `prisma.father`: Exposes CRUD operations for the **Father** model.
     * Example usage:
     * ```ts
@@ -410,14 +429,14 @@ export declare class PrismaClient<
   get father(): FatherDelegate;
 
   /**
-   * `prisma.groupOfOrphans`: Exposes CRUD operations for the **GroupOfOrphans** model.
+   * `prisma.financialSupport`: Exposes CRUD operations for the **FinancialSupport** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more GroupOfOrphans
-    * const groupOfOrphans = await prisma.groupOfOrphans.findMany()
+    * // Fetch zero or more FinancialSupports
+    * const financialSupports = await prisma.financialSupport.findMany()
     * ```
     */
-  get groupOfOrphans(): GroupOfOrphansDelegate;
+  get financialSupport(): FinancialSupportDelegate;
 
   /**
    * `prisma.guardian`: Exposes CRUD operations for the **Guardian** model.
@@ -460,6 +479,16 @@ export declare class PrismaClient<
   get motherJob(): MotherJobDelegate;
 
   /**
+   * `prisma.officialDocuments`: Exposes CRUD operations for the **OfficialDocuments** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OfficialDocuments
+    * const officialDocuments = await prisma.officialDocuments.findMany()
+    * ```
+    */
+  get officialDocuments(): OfficialDocumentsDelegate;
+
+  /**
    * `prisma.orphan`: Exposes CRUD operations for the **Orphan** model.
     * Example usage:
     * ```ts
@@ -468,6 +497,26 @@ export declare class PrismaClient<
     * ```
     */
   get orphan(): OrphanDelegate;
+
+  /**
+   * `prisma.otherSupport`: Exposes CRUD operations for the **OtherSupport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OtherSupports
+    * const otherSupports = await prisma.otherSupport.findMany()
+    * ```
+    */
+  get otherSupport(): OtherSupportDelegate;
+
+  /**
+   * `prisma.registeredGroup`: Exposes CRUD operations for the **RegisteredGroup** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RegisteredGroups
+    * const registeredGroups = await prisma.registeredGroup.findMany()
+    * ```
+    */
+  get registeredGroup(): RegisteredGroupDelegate;
 
   /**
    * `prisma.sibling`: Exposes CRUD operations for the **Sibling** model.
@@ -480,16 +529,6 @@ export declare class PrismaClient<
   get sibling(): SiblingDelegate;
 
   /**
-   * `prisma.site`: Exposes CRUD operations for the **Site** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Sites
-    * const sites = await prisma.site.findMany()
-    * ```
-    */
-  get site(): SiteDelegate;
-
-  /**
    * `prisma.socialWorker`: Exposes CRUD operations for the **SocialWorker** model.
     * Example usage:
     * ```ts
@@ -498,6 +537,36 @@ export declare class PrismaClient<
     * ```
     */
   get socialWorker(): SocialWorkerDelegate;
+
+  /**
+   * `prisma.sponsoredGroup`: Exposes CRUD operations for the **SponsoredGroup** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SponsoredGroups
+    * const sponsoredGroups = await prisma.sponsoredGroup.findMany()
+    * ```
+    */
+  get sponsoredGroup(): SponsoredGroupDelegate;
+
+  /**
+   * `prisma.support`: Exposes CRUD operations for the **Support** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Supports
+    * const supports = await prisma.support.findMany()
+    * ```
+    */
+  get support(): SupportDelegate;
+
+  /**
+   * `prisma.migration`: Exposes CRUD operations for the **migration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Migrations
+    * const migrations = await prisma.migration.findMany()
+    * ```
+    */
+  get migration(): migrationDelegate;
 }
 
 
@@ -509,117 +578,9 @@ export declare class PrismaClient<
 // Based on
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
-export declare const orphanGender: {
-  M: 'M',
-  F: 'F'
-};
-
-export declare type orphanGender = (typeof orphanGender)[keyof typeof orphanGender]
-
-
-export declare const educationEnrollmentStatus: {
-  enrolled: 'enrolled',
-  unenrolled: 'unenrolled',
-  droppedout: 'droppedout'
-};
-
-export declare type educationEnrollmentStatus = (typeof educationEnrollmentStatus)[keyof typeof educationEnrollmentStatus]
-
-
-export declare const educationTypeOfSchool: {
-  private: 'private',
-  public: 'public'
-};
-
-export declare type educationTypeOfSchool = (typeof educationTypeOfSchool)[keyof typeof educationTypeOfSchool]
-
-
-export declare const SortOrder: {
-  asc: 'asc',
-  desc: 'desc'
-};
-
-export declare type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
-
-
-export declare const AddressDistinctFieldEnum: {
-  state: 'state',
-  zone: 'zone',
-  district: 'district',
-  kebele: 'kebele'
-};
-
-export declare type AddressDistinctFieldEnum = (typeof AddressDistinctFieldEnum)[keyof typeof AddressDistinctFieldEnum]
-
-
-export declare const GroupOfOrphansDistinctFieldEnum: {
-  id: 'id',
-  registrationDate: 'registrationDate',
-  donorId: 'donorId',
-  socialWorkerId: 'socialWorkerId',
-  siteId: 'siteId'
-};
-
-export declare type GroupOfOrphansDistinctFieldEnum = (typeof GroupOfOrphansDistinctFieldEnum)[keyof typeof GroupOfOrphansDistinctFieldEnum]
-
-
-export declare const OrphanDistinctFieldEnum: {
-  id: 'id',
-  firstName: 'firstName',
-  fatherName: 'fatherName',
-  grandFatherName: 'grandFatherName',
-  greatGrandFatherName: 'greatGrandFatherName',
-  gender: 'gender',
-  placeOfBirth: 'placeOfBirth',
-  dateOfBirth: 'dateOfBirth',
-  numberOfSponserdSiblings: 'numberOfSponserdSiblings',
-  physicalHealthStatus: 'physicalHealthStatus',
-  psychologicalHealthStatus: 'psychologicalHealthStatus',
-  otherHealthIssues: 'otherHealthIssues',
-  photoPortraitUrl: 'photoPortraitUrl',
-  photoLongUrl: 'photoLongUrl',
-  fatherId: 'fatherId',
-  motherId: 'motherId',
-  guardianId: 'guardianId',
-  groupId: 'groupId',
-  siblingId: 'siblingId',
-  IGA_PropertyId: 'IGA_PropertyId',
-  educationId: 'educationId'
-};
-
-export declare type OrphanDistinctFieldEnum = (typeof OrphanDistinctFieldEnum)[keyof typeof OrphanDistinctFieldEnum]
-
-
-export declare const SiblingDistinctFieldEnum: {
-  id: 'id',
-  fullName: 'fullName',
-  gender: 'gender',
-  age: 'age',
-  schoolGrade: 'schoolGrade',
-  job: 'job',
-  maritalStatus: 'maritalStatus',
-  orphanId: 'orphanId'
-};
-
-export declare type SiblingDistinctFieldEnum = (typeof SiblingDistinctFieldEnum)[keyof typeof SiblingDistinctFieldEnum]
-
-
-export declare const SocialWorkerDistinctFieldEnum: {
-  id: 'id',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
-  email: 'email',
-  siteId: 'siteId'
-};
-
-export declare type SocialWorkerDistinctFieldEnum = (typeof SocialWorkerDistinctFieldEnum)[keyof typeof SocialWorkerDistinctFieldEnum]
-
-
 export declare const DonorDistinctFieldEnum: {
   id: 'id',
   companyName: 'companyName',
-  typeOfsupport: 'typeOfsupport',
-  initialDonationAmount: 'initialDonationAmount',
   initialReportPreparationDate: 'initialReportPreparationDate',
   finalReportPreparationDate: 'finalReportPreparationDate',
   initialDataCollectionDate: 'initialDataCollectionDate',
@@ -643,6 +604,13 @@ export declare const EducationDistinctFieldEnum: {
 export declare type EducationDistinctFieldEnum = (typeof EducationDistinctFieldEnum)[keyof typeof EducationDistinctFieldEnum]
 
 
+export declare const EducationalSupportDistinctFieldEnum: {
+  id: 'id'
+};
+
+export declare type EducationalSupportDistinctFieldEnum = (typeof EducationalSupportDistinctFieldEnum)[keyof typeof EducationalSupportDistinctFieldEnum]
+
+
 export declare const FatherDistinctFieldEnum: {
   id: 'id',
   dateOfDeath: 'dateOfDeath',
@@ -653,6 +621,13 @@ export declare const FatherDistinctFieldEnum: {
 };
 
 export declare type FatherDistinctFieldEnum = (typeof FatherDistinctFieldEnum)[keyof typeof FatherDistinctFieldEnum]
+
+
+export declare const FinancialSupportDistinctFieldEnum: {
+  id: 'id'
+};
+
+export declare type FinancialSupportDistinctFieldEnum = (typeof FinancialSupportDistinctFieldEnum)[keyof typeof FinancialSupportDistinctFieldEnum]
 
 
 export declare const GuardianDistinctFieldEnum: {
@@ -691,7 +666,7 @@ export declare const MotherDistinctFieldEnum: {
   lastName: 'lastName',
   dateOfBirth: 'dateOfBirth',
   phoneNumber: 'phoneNumber',
-  job: 'job',
+  jobId: 'jobId',
   maritalStatus: 'maritalStatus',
   vitalStatus: 'vitalStatus',
   monthlyExpense: 'monthlyExpense'
@@ -709,456 +684,159 @@ export declare const MotherJobDistinctFieldEnum: {
 export declare type MotherJobDistinctFieldEnum = (typeof MotherJobDistinctFieldEnum)[keyof typeof MotherJobDistinctFieldEnum]
 
 
-export declare const SiteDistinctFieldEnum: {
+export declare const OfficialDocumentsDistinctFieldEnum: {
   id: 'id',
-  siteName: 'siteName',
-  donationAmount: 'donationAmount',
-  addressId: 'addressId'
+  photoPortraitUrl: 'photoPortraitUrl',
+  photoLongUrl: 'photoLongUrl',
+  fatherDeathCertificateUrl: 'fatherDeathCertificateUrl',
+  birthCertificateUrl: 'birthCertificateUrl',
+  guardianIDCardUrl: 'guardianIDCardUrl',
+  guardianConfirmationLetterUrl: 'guardianConfirmationLetterUrl'
 };
 
-export declare type SiteDistinctFieldEnum = (typeof SiteDistinctFieldEnum)[keyof typeof SiteDistinctFieldEnum]
+export declare type OfficialDocumentsDistinctFieldEnum = (typeof OfficialDocumentsDistinctFieldEnum)[keyof typeof OfficialDocumentsDistinctFieldEnum]
 
 
+export declare const OrphanDistinctFieldEnum: {
+  id: 'id',
+  firstName: 'firstName',
+  fatherName: 'fatherName',
+  grandFatherName: 'grandFatherName',
+  greatGrandFatherName: 'greatGrandFatherName',
+  gender: 'gender',
+  placeOfBirth: 'placeOfBirth',
+  dateOfBirth: 'dateOfBirth',
+  numberOfSponserdSiblings: 'numberOfSponserdSiblings',
+  physicalHealthStatus: 'physicalHealthStatus',
+  psychologicalHealthStatus: 'psychologicalHealthStatus',
+  otherHealthIssues: 'otherHealthIssues',
+  fatherId: 'fatherId',
+  motherId: 'motherId',
+  guardianId: 'guardianId',
+  IGA_PropertyId: 'IGA_PropertyId',
+  educationId: 'educationId',
+  docsId: 'docsId',
+  regGroupId: 'regGroupId',
+  sponsrGroupId: 'sponsrGroupId'
+};
 
-/**
- * Model Address
- */
-
-export type Address = {
-  state: string
-  zone: string
-  district: string
-  kebele: string
-}
-
-
-export type AggregateAddress = {
-  count: number
-}
-
-
-
-export type AggregateAddressArgs = {
-  where?: AddressWhereInput
-  orderBy?: Enumerable<AddressOrderByInput>
-  cursor?: AddressWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Enumerable<AddressDistinctFieldEnum>
-  count?: true
-}
-
-export type GetAddressAggregateType<T extends AggregateAddressArgs> = {
-  [P in keyof T]: P extends 'count' ? number : never
-}
+export declare type OrphanDistinctFieldEnum = (typeof OrphanDistinctFieldEnum)[keyof typeof OrphanDistinctFieldEnum]
 
 
-    
-    
+export declare const OtherSupportDistinctFieldEnum: {
+  id: 'id'
+};
 
-export type AddressSelect = {
-  state?: boolean
-  zone?: boolean
-  district?: boolean
-  kebele?: boolean
-  site?: boolean | SiteArgs
-}
-
-export type AddressInclude = {
-  site?: boolean | SiteArgs
-}
-
-export type AddressGetPayload<
-  S extends boolean | null | undefined | AddressArgs,
-  U = keyof S
-> = S extends true
-  ? Address
-  : S extends undefined
-  ? never
-  : S extends AddressArgs | FindManyAddressArgs
-  ? 'include' extends U
-    ? Address  & {
-      [P in TrueKeys<S['include']>]:
-      P extends 'site'
-      ? SiteGetPayload<S['include'][P]> : never
-    }
-  : 'select' extends U
-    ? {
-      [P in TrueKeys<S['select']>]:P extends keyof Address ? Address[P]
-: 
-      P extends 'site'
-      ? SiteGetPayload<S['select'][P]> : never
-    }
-  : Address
-: Address
+export declare type OtherSupportDistinctFieldEnum = (typeof OtherSupportDistinctFieldEnum)[keyof typeof OtherSupportDistinctFieldEnum]
 
 
-export interface AddressDelegate {
-  /**
-   * Find zero or one Address.
-   * @param {FindOneAddressArgs} args - Arguments to find a Address
-   * @example
-   * // Get one Address
-   * const address = await prisma.address.findOne({
-   *   where: {
-   *     // ... provide filter here
-   *   }
-   * })
-  **/
-  findOne<T extends FindOneAddressArgs>(
-    args: Subset<T, FindOneAddressArgs>
-  ): CheckSelect<T, Prisma__AddressClient<Address | null>, Prisma__AddressClient<AddressGetPayload<T> | null>>
-  /**
-   * Find zero or more Addresses.
-   * @param {FindManyAddressArgs=} args - Arguments to filter and select certain fields only.
-   * @example
-   * // Get all Addresses
-   * const addresses = await prisma.address.findMany()
-   * 
-   * // Get first 10 Addresses
-   * const addresses = await prisma.address.findMany({ take: 10 })
-   * 
-   * // Only select the `state`
-   * const addressWithStateOnly = await prisma.address.findMany({ select: { state: true } })
-   * 
-  **/
-  findMany<T extends FindManyAddressArgs>(
-    args?: Subset<T, FindManyAddressArgs>
-  ): CheckSelect<T, Promise<Array<Address>>, Promise<Array<AddressGetPayload<T>>>>
-  /**
-   * Create a Address.
-   * @param {AddressCreateArgs} args - Arguments to create a Address.
-   * @example
-   * // Create one Address
-   * const Address = await prisma.address.create({
-   *   data: {
-   *     // ... data to create a Address
-   *   }
-   * })
-   * 
-  **/
-  create<T extends AddressCreateArgs>(
-    args: Subset<T, AddressCreateArgs>
-  ): CheckSelect<T, Prisma__AddressClient<Address>, Prisma__AddressClient<AddressGetPayload<T>>>
-  /**
-   * Delete a Address.
-   * @param {AddressDeleteArgs} args - Arguments to delete one Address.
-   * @example
-   * // Delete one Address
-   * const Address = await prisma.address.delete({
-   *   where: {
-   *     // ... filter to delete one Address
-   *   }
-   * })
-   * 
-  **/
-  delete<T extends AddressDeleteArgs>(
-    args: Subset<T, AddressDeleteArgs>
-  ): CheckSelect<T, Prisma__AddressClient<Address>, Prisma__AddressClient<AddressGetPayload<T>>>
-  /**
-   * Update one Address.
-   * @param {AddressUpdateArgs} args - Arguments to update one Address.
-   * @example
-   * // Update one Address
-   * const address = await prisma.address.update({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: {
-   *     // ... provide data here
-   *   }
-   * })
-   * 
-  **/
-  update<T extends AddressUpdateArgs>(
-    args: Subset<T, AddressUpdateArgs>
-  ): CheckSelect<T, Prisma__AddressClient<Address>, Prisma__AddressClient<AddressGetPayload<T>>>
-  /**
-   * Delete zero or more Addresses.
-   * @param {AddressDeleteManyArgs} args - Arguments to filter Addresses to delete.
-   * @example
-   * // Delete a few Addresses
-   * const { count } = await prisma.address.deleteMany({
-   *   where: {
-   *     // ... provide filter here
-   *   }
-   * })
-   * 
-  **/
-  deleteMany<T extends AddressDeleteManyArgs>(
-    args: Subset<T, AddressDeleteManyArgs>
-  ): Promise<BatchPayload>
-  /**
-   * Update zero or more Addresses.
-   * @param {AddressUpdateManyArgs} args - Arguments to update one or more rows.
-   * @example
-   * // Update many Addresses
-   * const address = await prisma.address.updateMany({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: {
-   *     // ... provide data here
-   *   }
-   * })
-   * 
-  **/
-  updateMany<T extends AddressUpdateManyArgs>(
-    args: Subset<T, AddressUpdateManyArgs>
-  ): Promise<BatchPayload>
-  /**
-   * Create or update one Address.
-   * @param {AddressUpsertArgs} args - Arguments to update or create a Address.
-   * @example
-   * // Update or create a Address
-   * const address = await prisma.address.upsert({
-   *   create: {
-   *     // ... data to create a Address
-   *   },
-   *   update: {
-   *     // ... in case it already exists, update
-   *   },
-   *   where: {
-   *     // ... the filter for the Address we want to update
-   *   }
-   * })
-  **/
-  upsert<T extends AddressUpsertArgs>(
-    args: Subset<T, AddressUpsertArgs>
-  ): CheckSelect<T, Prisma__AddressClient<Address>, Prisma__AddressClient<AddressGetPayload<T>>>
-  /**
-   * Count
-   */
-  count(args?: Omit<FindManyAddressArgs, 'select' | 'include'>): Promise<number>
+export declare const RegisteredGroupDistinctFieldEnum: {
+  id: 'id',
+  registrationDate: 'registrationDate',
+  siteName: 'siteName',
+  state: 'state',
+  zone: 'zone',
+  district: 'district',
+  kebele: 'kebele'
+};
 
-  /**
-   * Aggregate
-   */
-  aggregate<T extends AggregateAddressArgs>(args: Subset<T, AggregateAddressArgs>): Promise<GetAddressAggregateType<T>>
-}
-
-/**
- * The delegate class that acts as a "Promise-like" for Address.
- * Why is this prefixed with `Prisma__`?
- * Because we want to prevent naming conflicts as mentioned in 
- * https://github.com/prisma/prisma-client-js/issues/707
- */
-export declare class Prisma__AddressClient<T> implements Promise<T> {
-  private readonly _dmmf;
-  private readonly _fetcher;
-  private readonly _queryType;
-  private readonly _rootField;
-  private readonly _clientMethod;
-  private readonly _args;
-  private readonly _dataPath;
-  private readonly _errorFormat;
-  private readonly _measurePerformance?;
-  private _isList;
-  private _callsite;
-  private _requestPromise?;
-  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
-  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-  site<T extends SiteArgs = {}>(args?: Subset<T, SiteArgs>): CheckSelect<T, Prisma__SiteClient<Site | null>, Prisma__SiteClient<SiteGetPayload<T> | null>>;
-
-  private get _document();
-  /**
-   * Attaches callbacks for the resolution and/or rejection of the Promise.
-   * @param onfulfilled The callback to execute when the Promise is resolved.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of which ever callback is executed.
-   */
-  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-  /**
-   * Attaches a callback for only the rejection of the Promise.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of the callback.
-   */
-  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
-  /**
-   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-   * resolved value cannot be modified from the callback.
-   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-   * @returns A Promise for the completion of the callback.
-   */
-  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-}
-
-// Custom InputTypes
-
-/**
- * Address findOne
- */
-export type FindOneAddressArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * Filter, which Address to fetch.
-  **/
-  where: AddressWhereUniqueInput
-}
+export declare type RegisteredGroupDistinctFieldEnum = (typeof RegisteredGroupDistinctFieldEnum)[keyof typeof RegisteredGroupDistinctFieldEnum]
 
 
-/**
- * Address findMany
- */
-export type FindManyAddressArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * Filter, which Addresses to fetch.
-  **/
-  where?: AddressWhereInput
-  /**
-   * Determine the order of the Addresses to fetch.
-  **/
-  orderBy?: Enumerable<AddressOrderByInput>
-  /**
-   * Sets the position for listing Addresses.
-  **/
-  cursor?: AddressWhereUniqueInput
-  /**
-   * The number of Addresses to fetch. If negative number, it will take Addresses before the `cursor`.
-  **/
-  take?: number
-  /**
-   * Skip the first `n` Addresses.
-  **/
-  skip?: number
-  distinct?: Enumerable<AddressDistinctFieldEnum>
-}
+export declare const SiblingDistinctFieldEnum: {
+  id: 'id',
+  fullName: 'fullName',
+  gender: 'gender',
+  age: 'age',
+  schoolGrade: 'schoolGrade',
+  job: 'job',
+  maritalStatus: 'maritalStatus',
+  orphanId: 'orphanId'
+};
+
+export declare type SiblingDistinctFieldEnum = (typeof SiblingDistinctFieldEnum)[keyof typeof SiblingDistinctFieldEnum]
 
 
-/**
- * Address create
- */
-export type AddressCreateArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * The data needed to create a Address.
-  **/
-  data: AddressCreateInput
-}
+export declare const SocialWorkerDistinctFieldEnum: {
+  id: 'id',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
+  email: 'email'
+};
+
+export declare type SocialWorkerDistinctFieldEnum = (typeof SocialWorkerDistinctFieldEnum)[keyof typeof SocialWorkerDistinctFieldEnum]
 
 
-/**
- * Address update
- */
-export type AddressUpdateArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * The data needed to update a Address.
-  **/
-  data: AddressUpdateInput
-  /**
-   * Choose, which Address to update.
-  **/
-  where: AddressWhereUniqueInput
-}
+export declare const SponsoredGroupDistinctFieldEnum: {
+  id: 'id',
+  sponsorshipDate: 'sponsorshipDate',
+  supportId: 'supportId',
+  donorId: 'donorId',
+  socialWorkerId: 'socialWorkerId'
+};
+
+export declare type SponsoredGroupDistinctFieldEnum = (typeof SponsoredGroupDistinctFieldEnum)[keyof typeof SponsoredGroupDistinctFieldEnum]
 
 
-/**
- * Address updateMany
- */
-export type AddressUpdateManyArgs = {
-  data: AddressUpdateManyMutationInput
-  where?: AddressWhereInput
-}
+export declare const SupportDistinctFieldEnum: {
+  id: 'id',
+  status: 'status',
+  financialId: 'financialId',
+  educationalId: 'educationalId',
+  otherId: 'otherId'
+};
+
+export declare type SupportDistinctFieldEnum = (typeof SupportDistinctFieldEnum)[keyof typeof SupportDistinctFieldEnum]
 
 
-/**
- * Address upsert
- */
-export type AddressUpsertArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * The filter to search for the Address to update in case it exists.
-  **/
-  where: AddressWhereUniqueInput
-  /**
-   * In case the Address found by the `where` argument doesn't exist, create a new Address with this data.
-  **/
-  create: AddressCreateInput
-  /**
-   * In case the Address was found with the provided `where` argument, update it with this data.
-  **/
-  update: AddressUpdateInput
-}
+export declare const MigrationDistinctFieldEnum: {
+  revision: 'revision',
+  name: 'name',
+  datamodel: 'datamodel',
+  status: 'status',
+  applied: 'applied',
+  rolled_back: 'rolled_back',
+  datamodel_steps: 'datamodel_steps',
+  database_migration: 'database_migration',
+  errors: 'errors',
+  started_at: 'started_at',
+  finished_at: 'finished_at'
+};
+
+export declare type MigrationDistinctFieldEnum = (typeof MigrationDistinctFieldEnum)[keyof typeof MigrationDistinctFieldEnum]
 
 
-/**
- * Address delete
- */
-export type AddressDeleteArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-  /**
-   * Filter which Address to delete.
-  **/
-  where: AddressWhereUniqueInput
-}
+export declare const SortOrder: {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+export declare type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-/**
- * Address deleteMany
- */
-export type AddressDeleteManyArgs = {
-  where?: AddressWhereInput
-}
+export declare const education_enrollmentStatus: {
+  enrolled: 'enrolled',
+  unenrolled: 'unenrolled',
+  droppedout: 'droppedout'
+};
+
+export declare type education_enrollmentStatus = (typeof education_enrollmentStatus)[keyof typeof education_enrollmentStatus]
 
 
-/**
- * Address without action
- */
-export type AddressArgs = {
-  /**
-   * Select specific fields to fetch from the Address
-  **/
-  select?: AddressSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: AddressInclude | null
-}
+export declare const education_typeOfSchool: {
+  private: 'private',
+  public: 'public'
+};
+
+export declare type education_typeOfSchool = (typeof education_typeOfSchool)[keyof typeof education_typeOfSchool]
+
+
+export declare const orphan_gender: {
+  M: 'M',
+  F: 'F'
+};
+
+export declare type orphan_gender = (typeof orphan_gender)[keyof typeof orphan_gender]
 
 
 
@@ -1169,8 +847,6 @@ export type AddressArgs = {
 export type Donor = {
   id: number
   companyName: string
-  typeOfsupport: string | null
-  initialDonationAmount: number | null
   initialReportPreparationDate: Date | null
   finalReportPreparationDate: Date | null
   initialDataCollectionDate: Date | null
@@ -1189,43 +865,35 @@ export type AggregateDonor = {
 
 export type DonorAvgAggregateOutputType = {
   id: number
-  initialDonationAmount: number
 }
 
 export type DonorSumAggregateOutputType = {
   id: number
-  initialDonationAmount: number | null
 }
 
 export type DonorMinAggregateOutputType = {
   id: number
-  initialDonationAmount: number | null
 }
 
 export type DonorMaxAggregateOutputType = {
   id: number
-  initialDonationAmount: number | null
 }
 
 
 export type DonorAvgAggregateInputType = {
   id?: true
-  initialDonationAmount?: true
 }
 
 export type DonorSumAggregateInputType = {
   id?: true
-  initialDonationAmount?: true
 }
 
 export type DonorMinAggregateInputType = {
   id?: true
-  initialDonationAmount?: true
 }
 
 export type DonorMaxAggregateInputType = {
   id?: true
-  initialDonationAmount?: true
 }
 
 export type AggregateDonorArgs = {
@@ -1255,18 +923,16 @@ export type GetDonorAggregateScalarType<T extends any> = {
 export type DonorSelect = {
   id?: boolean
   companyName?: boolean
-  typeOfsupport?: boolean
-  initialDonationAmount?: boolean
   initialReportPreparationDate?: boolean
   finalReportPreparationDate?: boolean
   initialDataCollectionDate?: boolean
   finalDataCollectionDate?: boolean
   reportDueDate?: boolean
-  groupsOfOrphans?: boolean | FindManyGroupOfOrphansArgs
+  sponsoredgroups?: boolean | FindManySponsoredGroupArgs
 }
 
 export type DonorInclude = {
-  groupsOfOrphans?: boolean | FindManyGroupOfOrphansArgs
+  sponsoredgroups?: boolean | FindManySponsoredGroupArgs
 }
 
 export type DonorGetPayload<
@@ -1280,15 +946,15 @@ export type DonorGetPayload<
   ? 'include' extends U
     ? Donor  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'groupsOfOrphans'
-      ? Array<GroupOfOrphansGetPayload<S['include'][P]>> : never
+      P extends 'sponsoredgroups'
+      ? Array<SponsoredGroupGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Donor ? Donor[P]
 : 
-      P extends 'groupsOfOrphans'
-      ? Array<GroupOfOrphansGetPayload<S['select'][P]>> : never
+      P extends 'sponsoredgroups'
+      ? Array<SponsoredGroupGetPayload<S['select'][P]>> : never
     }
   : Donor
 : Donor
@@ -1460,7 +1126,7 @@ export declare class Prisma__DonorClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  groupsOfOrphans<T extends FindManyGroupOfOrphansArgs = {}>(args?: Subset<T, FindManyGroupOfOrphansArgs>): CheckSelect<T, Promise<Array<GroupOfOrphans>>, Promise<Array<GroupOfOrphansGetPayload<T>>>>;
+  sponsoredgroups<T extends FindManySponsoredGroupArgs = {}>(args?: Subset<T, FindManySponsoredGroupArgs>): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -1669,9 +1335,9 @@ export type DonorArgs = {
 
 export type Education = {
   id: number
-  enrollmentStatus: educationEnrollmentStatus
+  enrollmentStatus: education_enrollmentStatus
   schoolName: string | null
-  typeOfSchool: educationTypeOfSchool | null
+  typeOfSchool: education_typeOfSchool | null
   grade: string | null
   reason: string | null
   hobbies: string | null
@@ -1751,11 +1417,11 @@ export type EducationSelect = {
   grade?: boolean
   reason?: boolean
   hobbies?: boolean
-  orphans?: boolean | FindManyOrphanArgs
+  orphan?: boolean | OrphanArgs
 }
 
 export type EducationInclude = {
-  orphans?: boolean | FindManyOrphanArgs
+  orphan?: boolean | OrphanArgs
 }
 
 export type EducationGetPayload<
@@ -1769,15 +1435,15 @@ export type EducationGetPayload<
   ? 'include' extends U
     ? Education  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'orphans'
-      ? Array<OrphanGetPayload<S['include'][P]>> : never
+      P extends 'orphan'
+      ? OrphanGetPayload<S['include'][P]> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Education ? Education[P]
 : 
-      P extends 'orphans'
-      ? Array<OrphanGetPayload<S['select'][P]>> : never
+      P extends 'orphan'
+      ? OrphanGetPayload<S['select'][P]> : never
     }
   : Education
 : Education
@@ -1949,7 +1615,7 @@ export declare class Prisma__EducationClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphan<T extends OrphanArgs = {}>(args?: Subset<T, OrphanArgs>): CheckSelect<T, Prisma__OrphanClient<Orphan | null>, Prisma__OrphanClient<OrphanGetPayload<T> | null>>;
 
   private get _document();
   /**
@@ -2148,6 +1814,483 @@ export type EducationArgs = {
    * Choose, which related nodes to fetch as well.
   **/
   include?: EducationInclude | null
+}
+
+
+
+/**
+ * Model EducationalSupport
+ */
+
+export type EducationalSupport = {
+  id: number
+}
+
+
+export type AggregateEducationalSupport = {
+  count: number
+  avg: EducationalSupportAvgAggregateOutputType | null
+  sum: EducationalSupportSumAggregateOutputType | null
+  min: EducationalSupportMinAggregateOutputType | null
+  max: EducationalSupportMaxAggregateOutputType | null
+}
+
+export type EducationalSupportAvgAggregateOutputType = {
+  id: number
+}
+
+export type EducationalSupportSumAggregateOutputType = {
+  id: number
+}
+
+export type EducationalSupportMinAggregateOutputType = {
+  id: number
+}
+
+export type EducationalSupportMaxAggregateOutputType = {
+  id: number
+}
+
+
+export type EducationalSupportAvgAggregateInputType = {
+  id?: true
+}
+
+export type EducationalSupportSumAggregateInputType = {
+  id?: true
+}
+
+export type EducationalSupportMinAggregateInputType = {
+  id?: true
+}
+
+export type EducationalSupportMaxAggregateInputType = {
+  id?: true
+}
+
+export type AggregateEducationalSupportArgs = {
+  where?: EducationalSupportWhereInput
+  orderBy?: Enumerable<EducationalSupportOrderByInput>
+  cursor?: EducationalSupportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<EducationalSupportDistinctFieldEnum>
+  count?: true
+  avg?: EducationalSupportAvgAggregateInputType
+  sum?: EducationalSupportSumAggregateInputType
+  min?: EducationalSupportMinAggregateInputType
+  max?: EducationalSupportMaxAggregateInputType
+}
+
+export type GetEducationalSupportAggregateType<T extends AggregateEducationalSupportArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetEducationalSupportAggregateScalarType<T[P]>
+}
+
+export type GetEducationalSupportAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof EducationalSupportAvgAggregateOutputType ? EducationalSupportAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type EducationalSupportSelect = {
+  id?: boolean
+  support?: boolean | FindManySupportArgs
+}
+
+export type EducationalSupportInclude = {
+  support?: boolean | FindManySupportArgs
+}
+
+export type EducationalSupportGetPayload<
+  S extends boolean | null | undefined | EducationalSupportArgs,
+  U = keyof S
+> = S extends true
+  ? EducationalSupport
+  : S extends undefined
+  ? never
+  : S extends EducationalSupportArgs | FindManyEducationalSupportArgs
+  ? 'include' extends U
+    ? EducationalSupport  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'support'
+      ? Array<SupportGetPayload<S['include'][P]>> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof EducationalSupport ? EducationalSupport[P]
+: 
+      P extends 'support'
+      ? Array<SupportGetPayload<S['select'][P]>> : never
+    }
+  : EducationalSupport
+: EducationalSupport
+
+
+export interface EducationalSupportDelegate {
+  /**
+   * Find zero or one EducationalSupport.
+   * @param {FindOneEducationalSupportArgs} args - Arguments to find a EducationalSupport
+   * @example
+   * // Get one EducationalSupport
+   * const educationalSupport = await prisma.educationalSupport.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneEducationalSupportArgs>(
+    args: Subset<T, FindOneEducationalSupportArgs>
+  ): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport | null>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T> | null>>
+  /**
+   * Find zero or more EducationalSupports.
+   * @param {FindManyEducationalSupportArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all EducationalSupports
+   * const educationalSupports = await prisma.educationalSupport.findMany()
+   * 
+   * // Get first 10 EducationalSupports
+   * const educationalSupports = await prisma.educationalSupport.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const educationalSupportWithIdOnly = await prisma.educationalSupport.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManyEducationalSupportArgs>(
+    args?: Subset<T, FindManyEducationalSupportArgs>
+  ): CheckSelect<T, Promise<Array<EducationalSupport>>, Promise<Array<EducationalSupportGetPayload<T>>>>
+  /**
+   * Create a EducationalSupport.
+   * @param {EducationalSupportCreateArgs} args - Arguments to create a EducationalSupport.
+   * @example
+   * // Create one EducationalSupport
+   * const EducationalSupport = await prisma.educationalSupport.create({
+   *   data: {
+   *     // ... data to create a EducationalSupport
+   *   }
+   * })
+   * 
+  **/
+  create<T extends EducationalSupportCreateArgs>(
+    args: Subset<T, EducationalSupportCreateArgs>
+  ): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T>>>
+  /**
+   * Delete a EducationalSupport.
+   * @param {EducationalSupportDeleteArgs} args - Arguments to delete one EducationalSupport.
+   * @example
+   * // Delete one EducationalSupport
+   * const EducationalSupport = await prisma.educationalSupport.delete({
+   *   where: {
+   *     // ... filter to delete one EducationalSupport
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends EducationalSupportDeleteArgs>(
+    args: Subset<T, EducationalSupportDeleteArgs>
+  ): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T>>>
+  /**
+   * Update one EducationalSupport.
+   * @param {EducationalSupportUpdateArgs} args - Arguments to update one EducationalSupport.
+   * @example
+   * // Update one EducationalSupport
+   * const educationalSupport = await prisma.educationalSupport.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends EducationalSupportUpdateArgs>(
+    args: Subset<T, EducationalSupportUpdateArgs>
+  ): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T>>>
+  /**
+   * Delete zero or more EducationalSupports.
+   * @param {EducationalSupportDeleteManyArgs} args - Arguments to filter EducationalSupports to delete.
+   * @example
+   * // Delete a few EducationalSupports
+   * const { count } = await prisma.educationalSupport.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends EducationalSupportDeleteManyArgs>(
+    args: Subset<T, EducationalSupportDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more EducationalSupports.
+   * @param {EducationalSupportUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many EducationalSupports
+   * const educationalSupport = await prisma.educationalSupport.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends EducationalSupportUpdateManyArgs>(
+    args: Subset<T, EducationalSupportUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one EducationalSupport.
+   * @param {EducationalSupportUpsertArgs} args - Arguments to update or create a EducationalSupport.
+   * @example
+   * // Update or create a EducationalSupport
+   * const educationalSupport = await prisma.educationalSupport.upsert({
+   *   create: {
+   *     // ... data to create a EducationalSupport
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the EducationalSupport we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends EducationalSupportUpsertArgs>(
+    args: Subset<T, EducationalSupportUpsertArgs>
+  ): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManyEducationalSupportArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateEducationalSupportArgs>(args: Subset<T, AggregateEducationalSupportArgs>): Promise<GetEducationalSupportAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for EducationalSupport.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__EducationalSupportClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  support<T extends FindManySupportArgs = {}>(args?: Subset<T, FindManySupportArgs>): CheckSelect<T, Promise<Array<Support>>, Promise<Array<SupportGetPayload<T>>>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * EducationalSupport findOne
+ */
+export type FindOneEducationalSupportArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * Filter, which EducationalSupport to fetch.
+  **/
+  where: EducationalSupportWhereUniqueInput
+}
+
+
+/**
+ * EducationalSupport findMany
+ */
+export type FindManyEducationalSupportArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * Filter, which EducationalSupports to fetch.
+  **/
+  where?: EducationalSupportWhereInput
+  /**
+   * Determine the order of the EducationalSupports to fetch.
+  **/
+  orderBy?: Enumerable<EducationalSupportOrderByInput>
+  /**
+   * Sets the position for listing EducationalSupports.
+  **/
+  cursor?: EducationalSupportWhereUniqueInput
+  /**
+   * The number of EducationalSupports to fetch. If negative number, it will take EducationalSupports before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` EducationalSupports.
+  **/
+  skip?: number
+  distinct?: Enumerable<EducationalSupportDistinctFieldEnum>
+}
+
+
+/**
+ * EducationalSupport create
+ */
+export type EducationalSupportCreateArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * The data needed to create a EducationalSupport.
+  **/
+  data: EducationalSupportCreateInput
+}
+
+
+/**
+ * EducationalSupport update
+ */
+export type EducationalSupportUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * The data needed to update a EducationalSupport.
+  **/
+  data: EducationalSupportUpdateInput
+  /**
+   * Choose, which EducationalSupport to update.
+  **/
+  where: EducationalSupportWhereUniqueInput
+}
+
+
+/**
+ * EducationalSupport updateMany
+ */
+export type EducationalSupportUpdateManyArgs = {
+  data: EducationalSupportUpdateManyMutationInput
+  where?: EducationalSupportWhereInput
+}
+
+
+/**
+ * EducationalSupport upsert
+ */
+export type EducationalSupportUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * The filter to search for the EducationalSupport to update in case it exists.
+  **/
+  where: EducationalSupportWhereUniqueInput
+  /**
+   * In case the EducationalSupport found by the `where` argument doesn't exist, create a new EducationalSupport with this data.
+  **/
+  create: EducationalSupportCreateInput
+  /**
+   * In case the EducationalSupport was found with the provided `where` argument, update it with this data.
+  **/
+  update: EducationalSupportUpdateInput
+}
+
+
+/**
+ * EducationalSupport delete
+ */
+export type EducationalSupportDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
+  /**
+   * Filter which EducationalSupport to delete.
+  **/
+  where: EducationalSupportWhereUniqueInput
+}
+
+
+/**
+ * EducationalSupport deleteMany
+ */
+export type EducationalSupportDeleteManyArgs = {
+  where?: EducationalSupportWhereInput
+}
+
+
+/**
+ * EducationalSupport without action
+ */
+export type EducationalSupportArgs = {
+  /**
+   * Select specific fields to fetch from the EducationalSupport
+  **/
+  select?: EducationalSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: EducationalSupportInclude | null
 }
 
 
@@ -2648,231 +2791,181 @@ export type FatherArgs = {
 
 
 /**
- * Model GroupOfOrphans
+ * Model FinancialSupport
  */
 
-export type GroupOfOrphans = {
+export type FinancialSupport = {
   id: number
-  registrationDate: Date
-  donorId: number
-  socialWorkerId: number
-  siteId: number
 }
 
 
-export type AggregateGroupOfOrphans = {
+export type AggregateFinancialSupport = {
   count: number
-  avg: GroupOfOrphansAvgAggregateOutputType | null
-  sum: GroupOfOrphansSumAggregateOutputType | null
-  min: GroupOfOrphansMinAggregateOutputType | null
-  max: GroupOfOrphansMaxAggregateOutputType | null
+  avg: FinancialSupportAvgAggregateOutputType | null
+  sum: FinancialSupportSumAggregateOutputType | null
+  min: FinancialSupportMinAggregateOutputType | null
+  max: FinancialSupportMaxAggregateOutputType | null
 }
 
-export type GroupOfOrphansAvgAggregateOutputType = {
+export type FinancialSupportAvgAggregateOutputType = {
   id: number
-  donorId: number
-  socialWorkerId: number
-  siteId: number
 }
 
-export type GroupOfOrphansSumAggregateOutputType = {
+export type FinancialSupportSumAggregateOutputType = {
   id: number
-  donorId: number
-  socialWorkerId: number
-  siteId: number
 }
 
-export type GroupOfOrphansMinAggregateOutputType = {
+export type FinancialSupportMinAggregateOutputType = {
   id: number
-  donorId: number
-  socialWorkerId: number
-  siteId: number
 }
 
-export type GroupOfOrphansMaxAggregateOutputType = {
+export type FinancialSupportMaxAggregateOutputType = {
   id: number
-  donorId: number
-  socialWorkerId: number
-  siteId: number
 }
 
 
-export type GroupOfOrphansAvgAggregateInputType = {
+export type FinancialSupportAvgAggregateInputType = {
   id?: true
-  donorId?: true
-  socialWorkerId?: true
-  siteId?: true
 }
 
-export type GroupOfOrphansSumAggregateInputType = {
+export type FinancialSupportSumAggregateInputType = {
   id?: true
-  donorId?: true
-  socialWorkerId?: true
-  siteId?: true
 }
 
-export type GroupOfOrphansMinAggregateInputType = {
+export type FinancialSupportMinAggregateInputType = {
   id?: true
-  donorId?: true
-  socialWorkerId?: true
-  siteId?: true
 }
 
-export type GroupOfOrphansMaxAggregateInputType = {
+export type FinancialSupportMaxAggregateInputType = {
   id?: true
-  donorId?: true
-  socialWorkerId?: true
-  siteId?: true
 }
 
-export type AggregateGroupOfOrphansArgs = {
-  where?: GroupOfOrphansWhereInput
-  orderBy?: Enumerable<GroupOfOrphansOrderByInput>
-  cursor?: GroupOfOrphansWhereUniqueInput
+export type AggregateFinancialSupportArgs = {
+  where?: FinancialSupportWhereInput
+  orderBy?: Enumerable<FinancialSupportOrderByInput>
+  cursor?: FinancialSupportWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Enumerable<GroupOfOrphansDistinctFieldEnum>
+  distinct?: Enumerable<FinancialSupportDistinctFieldEnum>
   count?: true
-  avg?: GroupOfOrphansAvgAggregateInputType
-  sum?: GroupOfOrphansSumAggregateInputType
-  min?: GroupOfOrphansMinAggregateInputType
-  max?: GroupOfOrphansMaxAggregateInputType
+  avg?: FinancialSupportAvgAggregateInputType
+  sum?: FinancialSupportSumAggregateInputType
+  min?: FinancialSupportMinAggregateInputType
+  max?: FinancialSupportMaxAggregateInputType
 }
 
-export type GetGroupOfOrphansAggregateType<T extends AggregateGroupOfOrphansArgs> = {
-  [P in keyof T]: P extends 'count' ? number : GetGroupOfOrphansAggregateScalarType<T[P]>
+export type GetFinancialSupportAggregateType<T extends AggregateFinancialSupportArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetFinancialSupportAggregateScalarType<T[P]>
 }
 
-export type GetGroupOfOrphansAggregateScalarType<T extends any> = {
-  [P in keyof T]: P extends keyof GroupOfOrphansAvgAggregateOutputType ? GroupOfOrphansAvgAggregateOutputType[P] : never
+export type GetFinancialSupportAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof FinancialSupportAvgAggregateOutputType ? FinancialSupportAvgAggregateOutputType[P] : never
 }
     
     
 
-export type GroupOfOrphansSelect = {
+export type FinancialSupportSelect = {
   id?: boolean
-  registrationDate?: boolean
-  donorId?: boolean
-  socialWorkerId?: boolean
-  siteId?: boolean
-  donor?: boolean | DonorArgs
-  site?: boolean | SiteArgs
-  socialworker?: boolean | SocialWorkerArgs
-  orphans?: boolean | FindManyOrphanArgs
+  support?: boolean | FindManySupportArgs
 }
 
-export type GroupOfOrphansInclude = {
-  donor?: boolean | DonorArgs
-  site?: boolean | SiteArgs
-  socialworker?: boolean | SocialWorkerArgs
-  orphans?: boolean | FindManyOrphanArgs
+export type FinancialSupportInclude = {
+  support?: boolean | FindManySupportArgs
 }
 
-export type GroupOfOrphansGetPayload<
-  S extends boolean | null | undefined | GroupOfOrphansArgs,
+export type FinancialSupportGetPayload<
+  S extends boolean | null | undefined | FinancialSupportArgs,
   U = keyof S
 > = S extends true
-  ? GroupOfOrphans
+  ? FinancialSupport
   : S extends undefined
   ? never
-  : S extends GroupOfOrphansArgs | FindManyGroupOfOrphansArgs
+  : S extends FinancialSupportArgs | FindManyFinancialSupportArgs
   ? 'include' extends U
-    ? GroupOfOrphans  & {
+    ? FinancialSupport  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'donor'
-      ? DonorGetPayload<S['include'][P]> :
-      P extends 'site'
-      ? SiteGetPayload<S['include'][P]> :
-      P extends 'socialworker'
-      ? SocialWorkerGetPayload<S['include'][P]> :
-      P extends 'orphans'
-      ? Array<OrphanGetPayload<S['include'][P]>> : never
+      P extends 'support'
+      ? Array<SupportGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
-      [P in TrueKeys<S['select']>]:P extends keyof GroupOfOrphans ? GroupOfOrphans[P]
+      [P in TrueKeys<S['select']>]:P extends keyof FinancialSupport ? FinancialSupport[P]
 : 
-      P extends 'donor'
-      ? DonorGetPayload<S['select'][P]> :
-      P extends 'site'
-      ? SiteGetPayload<S['select'][P]> :
-      P extends 'socialworker'
-      ? SocialWorkerGetPayload<S['select'][P]> :
-      P extends 'orphans'
-      ? Array<OrphanGetPayload<S['select'][P]>> : never
+      P extends 'support'
+      ? Array<SupportGetPayload<S['select'][P]>> : never
     }
-  : GroupOfOrphans
-: GroupOfOrphans
+  : FinancialSupport
+: FinancialSupport
 
 
-export interface GroupOfOrphansDelegate {
+export interface FinancialSupportDelegate {
   /**
-   * Find zero or one GroupOfOrphans.
-   * @param {FindOneGroupOfOrphansArgs} args - Arguments to find a GroupOfOrphans
+   * Find zero or one FinancialSupport.
+   * @param {FindOneFinancialSupportArgs} args - Arguments to find a FinancialSupport
    * @example
-   * // Get one GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.findOne({
+   * // Get one FinancialSupport
+   * const financialSupport = await prisma.financialSupport.findOne({
    *   where: {
    *     // ... provide filter here
    *   }
    * })
   **/
-  findOne<T extends FindOneGroupOfOrphansArgs>(
-    args: Subset<T, FindOneGroupOfOrphansArgs>
-  ): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans | null>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T> | null>>
+  findOne<T extends FindOneFinancialSupportArgs>(
+    args: Subset<T, FindOneFinancialSupportArgs>
+  ): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport | null>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T> | null>>
   /**
-   * Find zero or more GroupOfOrphans.
-   * @param {FindManyGroupOfOrphansArgs=} args - Arguments to filter and select certain fields only.
+   * Find zero or more FinancialSupports.
+   * @param {FindManyFinancialSupportArgs=} args - Arguments to filter and select certain fields only.
    * @example
-   * // Get all GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.findMany()
+   * // Get all FinancialSupports
+   * const financialSupports = await prisma.financialSupport.findMany()
    * 
-   * // Get first 10 GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.findMany({ take: 10 })
+   * // Get first 10 FinancialSupports
+   * const financialSupports = await prisma.financialSupport.findMany({ take: 10 })
    * 
    * // Only select the `id`
-   * const groupOfOrphansWithIdOnly = await prisma.groupOfOrphans.findMany({ select: { id: true } })
+   * const financialSupportWithIdOnly = await prisma.financialSupport.findMany({ select: { id: true } })
    * 
   **/
-  findMany<T extends FindManyGroupOfOrphansArgs>(
-    args?: Subset<T, FindManyGroupOfOrphansArgs>
-  ): CheckSelect<T, Promise<Array<GroupOfOrphans>>, Promise<Array<GroupOfOrphansGetPayload<T>>>>
+  findMany<T extends FindManyFinancialSupportArgs>(
+    args?: Subset<T, FindManyFinancialSupportArgs>
+  ): CheckSelect<T, Promise<Array<FinancialSupport>>, Promise<Array<FinancialSupportGetPayload<T>>>>
   /**
-   * Create a GroupOfOrphans.
-   * @param {GroupOfOrphansCreateArgs} args - Arguments to create a GroupOfOrphans.
+   * Create a FinancialSupport.
+   * @param {FinancialSupportCreateArgs} args - Arguments to create a FinancialSupport.
    * @example
-   * // Create one GroupOfOrphans
-   * const GroupOfOrphans = await prisma.groupOfOrphans.create({
+   * // Create one FinancialSupport
+   * const FinancialSupport = await prisma.financialSupport.create({
    *   data: {
-   *     // ... data to create a GroupOfOrphans
+   *     // ... data to create a FinancialSupport
    *   }
    * })
    * 
   **/
-  create<T extends GroupOfOrphansCreateArgs>(
-    args: Subset<T, GroupOfOrphansCreateArgs>
-  ): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T>>>
+  create<T extends FinancialSupportCreateArgs>(
+    args: Subset<T, FinancialSupportCreateArgs>
+  ): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T>>>
   /**
-   * Delete a GroupOfOrphans.
-   * @param {GroupOfOrphansDeleteArgs} args - Arguments to delete one GroupOfOrphans.
+   * Delete a FinancialSupport.
+   * @param {FinancialSupportDeleteArgs} args - Arguments to delete one FinancialSupport.
    * @example
-   * // Delete one GroupOfOrphans
-   * const GroupOfOrphans = await prisma.groupOfOrphans.delete({
+   * // Delete one FinancialSupport
+   * const FinancialSupport = await prisma.financialSupport.delete({
    *   where: {
-   *     // ... filter to delete one GroupOfOrphans
+   *     // ... filter to delete one FinancialSupport
    *   }
    * })
    * 
   **/
-  delete<T extends GroupOfOrphansDeleteArgs>(
-    args: Subset<T, GroupOfOrphansDeleteArgs>
-  ): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T>>>
+  delete<T extends FinancialSupportDeleteArgs>(
+    args: Subset<T, FinancialSupportDeleteArgs>
+  ): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T>>>
   /**
-   * Update one GroupOfOrphans.
-   * @param {GroupOfOrphansUpdateArgs} args - Arguments to update one GroupOfOrphans.
+   * Update one FinancialSupport.
+   * @param {FinancialSupportUpdateArgs} args - Arguments to update one FinancialSupport.
    * @example
-   * // Update one GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.update({
+   * // Update one FinancialSupport
+   * const financialSupport = await prisma.financialSupport.update({
    *   where: {
    *     // ... provide filter here
    *   },
@@ -2882,30 +2975,30 @@ export interface GroupOfOrphansDelegate {
    * })
    * 
   **/
-  update<T extends GroupOfOrphansUpdateArgs>(
-    args: Subset<T, GroupOfOrphansUpdateArgs>
-  ): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T>>>
+  update<T extends FinancialSupportUpdateArgs>(
+    args: Subset<T, FinancialSupportUpdateArgs>
+  ): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T>>>
   /**
-   * Delete zero or more GroupOfOrphans.
-   * @param {GroupOfOrphansDeleteManyArgs} args - Arguments to filter GroupOfOrphans to delete.
+   * Delete zero or more FinancialSupports.
+   * @param {FinancialSupportDeleteManyArgs} args - Arguments to filter FinancialSupports to delete.
    * @example
-   * // Delete a few GroupOfOrphans
-   * const { count } = await prisma.groupOfOrphans.deleteMany({
+   * // Delete a few FinancialSupports
+   * const { count } = await prisma.financialSupport.deleteMany({
    *   where: {
    *     // ... provide filter here
    *   }
    * })
    * 
   **/
-  deleteMany<T extends GroupOfOrphansDeleteManyArgs>(
-    args: Subset<T, GroupOfOrphansDeleteManyArgs>
+  deleteMany<T extends FinancialSupportDeleteManyArgs>(
+    args: Subset<T, FinancialSupportDeleteManyArgs>
   ): Promise<BatchPayload>
   /**
-   * Update zero or more GroupOfOrphans.
-   * @param {GroupOfOrphansUpdateManyArgs} args - Arguments to update one or more rows.
+   * Update zero or more FinancialSupports.
+   * @param {FinancialSupportUpdateManyArgs} args - Arguments to update one or more rows.
    * @example
-   * // Update many GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.updateMany({
+   * // Update many FinancialSupports
+   * const financialSupport = await prisma.financialSupport.updateMany({
    *   where: {
    *     // ... provide filter here
    *   },
@@ -2915,47 +3008,47 @@ export interface GroupOfOrphansDelegate {
    * })
    * 
   **/
-  updateMany<T extends GroupOfOrphansUpdateManyArgs>(
-    args: Subset<T, GroupOfOrphansUpdateManyArgs>
+  updateMany<T extends FinancialSupportUpdateManyArgs>(
+    args: Subset<T, FinancialSupportUpdateManyArgs>
   ): Promise<BatchPayload>
   /**
-   * Create or update one GroupOfOrphans.
-   * @param {GroupOfOrphansUpsertArgs} args - Arguments to update or create a GroupOfOrphans.
+   * Create or update one FinancialSupport.
+   * @param {FinancialSupportUpsertArgs} args - Arguments to update or create a FinancialSupport.
    * @example
-   * // Update or create a GroupOfOrphans
-   * const groupOfOrphans = await prisma.groupOfOrphans.upsert({
+   * // Update or create a FinancialSupport
+   * const financialSupport = await prisma.financialSupport.upsert({
    *   create: {
-   *     // ... data to create a GroupOfOrphans
+   *     // ... data to create a FinancialSupport
    *   },
    *   update: {
    *     // ... in case it already exists, update
    *   },
    *   where: {
-   *     // ... the filter for the GroupOfOrphans we want to update
+   *     // ... the filter for the FinancialSupport we want to update
    *   }
    * })
   **/
-  upsert<T extends GroupOfOrphansUpsertArgs>(
-    args: Subset<T, GroupOfOrphansUpsertArgs>
-  ): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T>>>
+  upsert<T extends FinancialSupportUpsertArgs>(
+    args: Subset<T, FinancialSupportUpsertArgs>
+  ): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T>>>
   /**
    * Count
    */
-  count(args?: Omit<FindManyGroupOfOrphansArgs, 'select' | 'include'>): Promise<number>
+  count(args?: Omit<FindManyFinancialSupportArgs, 'select' | 'include'>): Promise<number>
 
   /**
    * Aggregate
    */
-  aggregate<T extends AggregateGroupOfOrphansArgs>(args: Subset<T, AggregateGroupOfOrphansArgs>): Promise<GetGroupOfOrphansAggregateType<T>>
+  aggregate<T extends AggregateFinancialSupportArgs>(args: Subset<T, AggregateFinancialSupportArgs>): Promise<GetFinancialSupportAggregateType<T>>
 }
 
 /**
- * The delegate class that acts as a "Promise-like" for GroupOfOrphans.
+ * The delegate class that acts as a "Promise-like" for FinancialSupport.
  * Why is this prefixed with `Prisma__`?
  * Because we want to prevent naming conflicts as mentioned in 
  * https://github.com/prisma/prisma-client-js/issues/707
  */
-export declare class Prisma__GroupOfOrphansClient<T> implements Promise<T> {
+export declare class Prisma__FinancialSupportClient<T> implements Promise<T> {
   private readonly _dmmf;
   private readonly _fetcher;
   private readonly _queryType;
@@ -2971,13 +3064,7 @@ export declare class Prisma__GroupOfOrphansClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  donor<T extends DonorArgs = {}>(args?: Subset<T, DonorArgs>): CheckSelect<T, Prisma__DonorClient<Donor | null>, Prisma__DonorClient<DonorGetPayload<T> | null>>;
-
-  site<T extends SiteArgs = {}>(args?: Subset<T, SiteArgs>): CheckSelect<T, Prisma__SiteClient<Site | null>, Prisma__SiteClient<SiteGetPayload<T> | null>>;
-
-  socialworker<T extends SocialWorkerArgs = {}>(args?: Subset<T, SocialWorkerArgs>): CheckSelect<T, Prisma__SocialWorkerClient<SocialWorker | null>, Prisma__SocialWorkerClient<SocialWorkerGetPayload<T> | null>>;
-
-  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  support<T extends FindManySupportArgs = {}>(args?: Subset<T, FindManySupportArgs>): CheckSelect<T, Promise<Array<Support>>, Promise<Array<SupportGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -3005,177 +3092,177 @@ export declare class Prisma__GroupOfOrphansClient<T> implements Promise<T> {
 // Custom InputTypes
 
 /**
- * GroupOfOrphans findOne
+ * FinancialSupport findOne
  */
-export type FindOneGroupOfOrphansArgs = {
+export type FindOneFinancialSupportArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * Filter, which GroupOfOrphans to fetch.
+   * Filter, which FinancialSupport to fetch.
   **/
-  where: GroupOfOrphansWhereUniqueInput
+  where: FinancialSupportWhereUniqueInput
 }
 
 
 /**
- * GroupOfOrphans findMany
+ * FinancialSupport findMany
  */
-export type FindManyGroupOfOrphansArgs = {
+export type FindManyFinancialSupportArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * Filter, which GroupOfOrphans to fetch.
+   * Filter, which FinancialSupports to fetch.
   **/
-  where?: GroupOfOrphansWhereInput
+  where?: FinancialSupportWhereInput
   /**
-   * Determine the order of the GroupOfOrphans to fetch.
+   * Determine the order of the FinancialSupports to fetch.
   **/
-  orderBy?: Enumerable<GroupOfOrphansOrderByInput>
+  orderBy?: Enumerable<FinancialSupportOrderByInput>
   /**
-   * Sets the position for listing GroupOfOrphans.
+   * Sets the position for listing FinancialSupports.
   **/
-  cursor?: GroupOfOrphansWhereUniqueInput
+  cursor?: FinancialSupportWhereUniqueInput
   /**
-   * The number of GroupOfOrphans to fetch. If negative number, it will take GroupOfOrphans before the `cursor`.
+   * The number of FinancialSupports to fetch. If negative number, it will take FinancialSupports before the `cursor`.
   **/
   take?: number
   /**
-   * Skip the first `n` GroupOfOrphans.
+   * Skip the first `n` FinancialSupports.
   **/
   skip?: number
-  distinct?: Enumerable<GroupOfOrphansDistinctFieldEnum>
+  distinct?: Enumerable<FinancialSupportDistinctFieldEnum>
 }
 
 
 /**
- * GroupOfOrphans create
+ * FinancialSupport create
  */
-export type GroupOfOrphansCreateArgs = {
+export type FinancialSupportCreateArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * The data needed to create a GroupOfOrphans.
+   * The data needed to create a FinancialSupport.
   **/
-  data: GroupOfOrphansCreateInput
+  data: FinancialSupportCreateInput
 }
 
 
 /**
- * GroupOfOrphans update
+ * FinancialSupport update
  */
-export type GroupOfOrphansUpdateArgs = {
+export type FinancialSupportUpdateArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * The data needed to update a GroupOfOrphans.
+   * The data needed to update a FinancialSupport.
   **/
-  data: GroupOfOrphansUpdateInput
+  data: FinancialSupportUpdateInput
   /**
-   * Choose, which GroupOfOrphans to update.
+   * Choose, which FinancialSupport to update.
   **/
-  where: GroupOfOrphansWhereUniqueInput
+  where: FinancialSupportWhereUniqueInput
 }
 
 
 /**
- * GroupOfOrphans updateMany
+ * FinancialSupport updateMany
  */
-export type GroupOfOrphansUpdateManyArgs = {
-  data: GroupOfOrphansUpdateManyMutationInput
-  where?: GroupOfOrphansWhereInput
+export type FinancialSupportUpdateManyArgs = {
+  data: FinancialSupportUpdateManyMutationInput
+  where?: FinancialSupportWhereInput
 }
 
 
 /**
- * GroupOfOrphans upsert
+ * FinancialSupport upsert
  */
-export type GroupOfOrphansUpsertArgs = {
+export type FinancialSupportUpsertArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * The filter to search for the GroupOfOrphans to update in case it exists.
+   * The filter to search for the FinancialSupport to update in case it exists.
   **/
-  where: GroupOfOrphansWhereUniqueInput
+  where: FinancialSupportWhereUniqueInput
   /**
-   * In case the GroupOfOrphans found by the `where` argument doesn't exist, create a new GroupOfOrphans with this data.
+   * In case the FinancialSupport found by the `where` argument doesn't exist, create a new FinancialSupport with this data.
   **/
-  create: GroupOfOrphansCreateInput
+  create: FinancialSupportCreateInput
   /**
-   * In case the GroupOfOrphans was found with the provided `where` argument, update it with this data.
+   * In case the FinancialSupport was found with the provided `where` argument, update it with this data.
   **/
-  update: GroupOfOrphansUpdateInput
+  update: FinancialSupportUpdateInput
 }
 
 
 /**
- * GroupOfOrphans delete
+ * FinancialSupport delete
  */
-export type GroupOfOrphansDeleteArgs = {
+export type FinancialSupportDeleteArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
   /**
-   * Filter which GroupOfOrphans to delete.
+   * Filter which FinancialSupport to delete.
   **/
-  where: GroupOfOrphansWhereUniqueInput
+  where: FinancialSupportWhereUniqueInput
 }
 
 
 /**
- * GroupOfOrphans deleteMany
+ * FinancialSupport deleteMany
  */
-export type GroupOfOrphansDeleteManyArgs = {
-  where?: GroupOfOrphansWhereInput
+export type FinancialSupportDeleteManyArgs = {
+  where?: FinancialSupportWhereInput
 }
 
 
 /**
- * GroupOfOrphans without action
+ * FinancialSupport without action
  */
-export type GroupOfOrphansArgs = {
+export type FinancialSupportArgs = {
   /**
-   * Select specific fields to fetch from the GroupOfOrphans
+   * Select specific fields to fetch from the FinancialSupport
   **/
-  select?: GroupOfOrphansSelect | null
+  select?: FinancialSupportSelect | null
   /**
    * Choose, which related nodes to fetch as well.
   **/
-  include?: GroupOfOrphansInclude | null
+  include?: FinancialSupportInclude | null
 }
 
 
@@ -3771,11 +3858,11 @@ export type Iga_propertySelect = {
   id?: boolean
   ownershipStatus?: boolean
   otherProperty?: boolean
-  orphans?: boolean | FindManyOrphanArgs
+  orphan?: boolean | FindManyOrphanArgs
 }
 
 export type Iga_propertyInclude = {
-  orphans?: boolean | FindManyOrphanArgs
+  orphan?: boolean | FindManyOrphanArgs
 }
 
 export type Iga_propertyGetPayload<
@@ -3789,14 +3876,14 @@ export type Iga_propertyGetPayload<
   ? 'include' extends U
     ? Iga_property  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'orphans'
+      P extends 'orphan'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Iga_property ? Iga_property[P]
 : 
-      P extends 'orphans'
+      P extends 'orphan'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
   : Iga_property
@@ -3969,7 +4056,7 @@ export declare class Prisma__Iga_propertyClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+  orphan<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -4182,8 +4269,8 @@ export type Mother = {
   middleName: string
   lastName: string
   dateOfBirth: Date
-  phoneNumber: number
-  job: number
+  phoneNumber: string
+  jobId: number | null
   maritalStatus: string
   vitalStatus: string
   monthlyExpense: number
@@ -4200,58 +4287,50 @@ export type AggregateMother = {
 
 export type MotherAvgAggregateOutputType = {
   id: number
-  phoneNumber: number
-  job: number
+  jobId: number
   monthlyExpense: number
 }
 
 export type MotherSumAggregateOutputType = {
   id: number
-  phoneNumber: number
-  job: number
+  jobId: number | null
   monthlyExpense: number
 }
 
 export type MotherMinAggregateOutputType = {
   id: number
-  phoneNumber: number
-  job: number
+  jobId: number | null
   monthlyExpense: number
 }
 
 export type MotherMaxAggregateOutputType = {
   id: number
-  phoneNumber: number
-  job: number
+  jobId: number | null
   monthlyExpense: number
 }
 
 
 export type MotherAvgAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  job?: true
+  jobId?: true
   monthlyExpense?: true
 }
 
 export type MotherSumAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  job?: true
+  jobId?: true
   monthlyExpense?: true
 }
 
 export type MotherMinAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  job?: true
+  jobId?: true
   monthlyExpense?: true
 }
 
 export type MotherMaxAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  job?: true
+  jobId?: true
   monthlyExpense?: true
 }
 
@@ -4286,7 +4365,7 @@ export type MotherSelect = {
   lastName?: boolean
   dateOfBirth?: boolean
   phoneNumber?: boolean
-  job?: boolean
+  jobId?: boolean
   maritalStatus?: boolean
   vitalStatus?: boolean
   monthlyExpense?: boolean
@@ -4311,7 +4390,7 @@ export type MotherGetPayload<
     ? Mother  & {
       [P in TrueKeys<S['include']>]:
       P extends 'motherjob'
-      ? MotherJobGetPayload<S['include'][P]> :
+      ? MotherJobGetPayload<S['include'][P]> | null :
       P extends 'orphans'
       ? Array<OrphanGetPayload<S['include'][P]>> : never
     }
@@ -4320,7 +4399,7 @@ export type MotherGetPayload<
       [P in TrueKeys<S['select']>]:P extends keyof Mother ? Mother[P]
 : 
       P extends 'motherjob'
-      ? MotherJobGetPayload<S['select'][P]> :
+      ? MotherJobGetPayload<S['select'][P]> | null :
       P extends 'orphans'
       ? Array<OrphanGetPayload<S['select'][P]>> : never
     }
@@ -5189,6 +5268,495 @@ export type MotherJobArgs = {
 
 
 /**
+ * Model OfficialDocuments
+ */
+
+export type OfficialDocuments = {
+  id: number
+  photoPortraitUrl: string
+  photoLongUrl: string
+  fatherDeathCertificateUrl: string
+  birthCertificateUrl: string
+  guardianIDCardUrl: string
+  guardianConfirmationLetterUrl: string
+}
+
+
+export type AggregateOfficialDocuments = {
+  count: number
+  avg: OfficialDocumentsAvgAggregateOutputType | null
+  sum: OfficialDocumentsSumAggregateOutputType | null
+  min: OfficialDocumentsMinAggregateOutputType | null
+  max: OfficialDocumentsMaxAggregateOutputType | null
+}
+
+export type OfficialDocumentsAvgAggregateOutputType = {
+  id: number
+}
+
+export type OfficialDocumentsSumAggregateOutputType = {
+  id: number
+}
+
+export type OfficialDocumentsMinAggregateOutputType = {
+  id: number
+}
+
+export type OfficialDocumentsMaxAggregateOutputType = {
+  id: number
+}
+
+
+export type OfficialDocumentsAvgAggregateInputType = {
+  id?: true
+}
+
+export type OfficialDocumentsSumAggregateInputType = {
+  id?: true
+}
+
+export type OfficialDocumentsMinAggregateInputType = {
+  id?: true
+}
+
+export type OfficialDocumentsMaxAggregateInputType = {
+  id?: true
+}
+
+export type AggregateOfficialDocumentsArgs = {
+  where?: OfficialDocumentsWhereInput
+  orderBy?: Enumerable<OfficialDocumentsOrderByInput>
+  cursor?: OfficialDocumentsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<OfficialDocumentsDistinctFieldEnum>
+  count?: true
+  avg?: OfficialDocumentsAvgAggregateInputType
+  sum?: OfficialDocumentsSumAggregateInputType
+  min?: OfficialDocumentsMinAggregateInputType
+  max?: OfficialDocumentsMaxAggregateInputType
+}
+
+export type GetOfficialDocumentsAggregateType<T extends AggregateOfficialDocumentsArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetOfficialDocumentsAggregateScalarType<T[P]>
+}
+
+export type GetOfficialDocumentsAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof OfficialDocumentsAvgAggregateOutputType ? OfficialDocumentsAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type OfficialDocumentsSelect = {
+  id?: boolean
+  photoPortraitUrl?: boolean
+  photoLongUrl?: boolean
+  fatherDeathCertificateUrl?: boolean
+  birthCertificateUrl?: boolean
+  guardianIDCardUrl?: boolean
+  guardianConfirmationLetterUrl?: boolean
+  orphan?: boolean | OrphanArgs
+}
+
+export type OfficialDocumentsInclude = {
+  orphan?: boolean | OrphanArgs
+}
+
+export type OfficialDocumentsGetPayload<
+  S extends boolean | null | undefined | OfficialDocumentsArgs,
+  U = keyof S
+> = S extends true
+  ? OfficialDocuments
+  : S extends undefined
+  ? never
+  : S extends OfficialDocumentsArgs | FindManyOfficialDocumentsArgs
+  ? 'include' extends U
+    ? OfficialDocuments  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'orphan'
+      ? OrphanGetPayload<S['include'][P]> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof OfficialDocuments ? OfficialDocuments[P]
+: 
+      P extends 'orphan'
+      ? OrphanGetPayload<S['select'][P]> : never
+    }
+  : OfficialDocuments
+: OfficialDocuments
+
+
+export interface OfficialDocumentsDelegate {
+  /**
+   * Find zero or one OfficialDocuments.
+   * @param {FindOneOfficialDocumentsArgs} args - Arguments to find a OfficialDocuments
+   * @example
+   * // Get one OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneOfficialDocumentsArgs>(
+    args: Subset<T, FindOneOfficialDocumentsArgs>
+  ): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments | null>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T> | null>>
+  /**
+   * Find zero or more OfficialDocuments.
+   * @param {FindManyOfficialDocumentsArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.findMany()
+   * 
+   * // Get first 10 OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const officialDocumentsWithIdOnly = await prisma.officialDocuments.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManyOfficialDocumentsArgs>(
+    args?: Subset<T, FindManyOfficialDocumentsArgs>
+  ): CheckSelect<T, Promise<Array<OfficialDocuments>>, Promise<Array<OfficialDocumentsGetPayload<T>>>>
+  /**
+   * Create a OfficialDocuments.
+   * @param {OfficialDocumentsCreateArgs} args - Arguments to create a OfficialDocuments.
+   * @example
+   * // Create one OfficialDocuments
+   * const OfficialDocuments = await prisma.officialDocuments.create({
+   *   data: {
+   *     // ... data to create a OfficialDocuments
+   *   }
+   * })
+   * 
+  **/
+  create<T extends OfficialDocumentsCreateArgs>(
+    args: Subset<T, OfficialDocumentsCreateArgs>
+  ): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T>>>
+  /**
+   * Delete a OfficialDocuments.
+   * @param {OfficialDocumentsDeleteArgs} args - Arguments to delete one OfficialDocuments.
+   * @example
+   * // Delete one OfficialDocuments
+   * const OfficialDocuments = await prisma.officialDocuments.delete({
+   *   where: {
+   *     // ... filter to delete one OfficialDocuments
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends OfficialDocumentsDeleteArgs>(
+    args: Subset<T, OfficialDocumentsDeleteArgs>
+  ): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T>>>
+  /**
+   * Update one OfficialDocuments.
+   * @param {OfficialDocumentsUpdateArgs} args - Arguments to update one OfficialDocuments.
+   * @example
+   * // Update one OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends OfficialDocumentsUpdateArgs>(
+    args: Subset<T, OfficialDocumentsUpdateArgs>
+  ): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T>>>
+  /**
+   * Delete zero or more OfficialDocuments.
+   * @param {OfficialDocumentsDeleteManyArgs} args - Arguments to filter OfficialDocuments to delete.
+   * @example
+   * // Delete a few OfficialDocuments
+   * const { count } = await prisma.officialDocuments.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends OfficialDocumentsDeleteManyArgs>(
+    args: Subset<T, OfficialDocumentsDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more OfficialDocuments.
+   * @param {OfficialDocumentsUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends OfficialDocumentsUpdateManyArgs>(
+    args: Subset<T, OfficialDocumentsUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one OfficialDocuments.
+   * @param {OfficialDocumentsUpsertArgs} args - Arguments to update or create a OfficialDocuments.
+   * @example
+   * // Update or create a OfficialDocuments
+   * const officialDocuments = await prisma.officialDocuments.upsert({
+   *   create: {
+   *     // ... data to create a OfficialDocuments
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the OfficialDocuments we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends OfficialDocumentsUpsertArgs>(
+    args: Subset<T, OfficialDocumentsUpsertArgs>
+  ): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManyOfficialDocumentsArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateOfficialDocumentsArgs>(args: Subset<T, AggregateOfficialDocumentsArgs>): Promise<GetOfficialDocumentsAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for OfficialDocuments.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__OfficialDocumentsClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  orphan<T extends OrphanArgs = {}>(args?: Subset<T, OrphanArgs>): CheckSelect<T, Prisma__OrphanClient<Orphan | null>, Prisma__OrphanClient<OrphanGetPayload<T> | null>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * OfficialDocuments findOne
+ */
+export type FindOneOfficialDocumentsArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * Filter, which OfficialDocuments to fetch.
+  **/
+  where: OfficialDocumentsWhereUniqueInput
+}
+
+
+/**
+ * OfficialDocuments findMany
+ */
+export type FindManyOfficialDocumentsArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * Filter, which OfficialDocuments to fetch.
+  **/
+  where?: OfficialDocumentsWhereInput
+  /**
+   * Determine the order of the OfficialDocuments to fetch.
+  **/
+  orderBy?: Enumerable<OfficialDocumentsOrderByInput>
+  /**
+   * Sets the position for listing OfficialDocuments.
+  **/
+  cursor?: OfficialDocumentsWhereUniqueInput
+  /**
+   * The number of OfficialDocuments to fetch. If negative number, it will take OfficialDocuments before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` OfficialDocuments.
+  **/
+  skip?: number
+  distinct?: Enumerable<OfficialDocumentsDistinctFieldEnum>
+}
+
+
+/**
+ * OfficialDocuments create
+ */
+export type OfficialDocumentsCreateArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * The data needed to create a OfficialDocuments.
+  **/
+  data: OfficialDocumentsCreateInput
+}
+
+
+/**
+ * OfficialDocuments update
+ */
+export type OfficialDocumentsUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * The data needed to update a OfficialDocuments.
+  **/
+  data: OfficialDocumentsUpdateInput
+  /**
+   * Choose, which OfficialDocuments to update.
+  **/
+  where: OfficialDocumentsWhereUniqueInput
+}
+
+
+/**
+ * OfficialDocuments updateMany
+ */
+export type OfficialDocumentsUpdateManyArgs = {
+  data: OfficialDocumentsUpdateManyMutationInput
+  where?: OfficialDocumentsWhereInput
+}
+
+
+/**
+ * OfficialDocuments upsert
+ */
+export type OfficialDocumentsUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * The filter to search for the OfficialDocuments to update in case it exists.
+  **/
+  where: OfficialDocumentsWhereUniqueInput
+  /**
+   * In case the OfficialDocuments found by the `where` argument doesn't exist, create a new OfficialDocuments with this data.
+  **/
+  create: OfficialDocumentsCreateInput
+  /**
+   * In case the OfficialDocuments was found with the provided `where` argument, update it with this data.
+  **/
+  update: OfficialDocumentsUpdateInput
+}
+
+
+/**
+ * OfficialDocuments delete
+ */
+export type OfficialDocumentsDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+  /**
+   * Filter which OfficialDocuments to delete.
+  **/
+  where: OfficialDocumentsWhereUniqueInput
+}
+
+
+/**
+ * OfficialDocuments deleteMany
+ */
+export type OfficialDocumentsDeleteManyArgs = {
+  where?: OfficialDocumentsWhereInput
+}
+
+
+/**
+ * OfficialDocuments without action
+ */
+export type OfficialDocumentsArgs = {
+  /**
+   * Select specific fields to fetch from the OfficialDocuments
+  **/
+  select?: OfficialDocumentsSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OfficialDocumentsInclude | null
+}
+
+
+
+/**
  * Model Orphan
  */
 
@@ -5198,22 +5766,21 @@ export type Orphan = {
   fatherName: string
   grandFatherName: string
   greatGrandFatherName: string
-  gender: orphanGender
+  gender: orphan_gender
   placeOfBirth: string
   dateOfBirth: Date
   numberOfSponserdSiblings: number
   physicalHealthStatus: string
   psychologicalHealthStatus: string
-  otherHealthIssues: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  fatherId: number
-  motherId: number
-  guardianId: number
-  groupId: number
-  siblingId: number
-  IGA_PropertyId: number
-  educationId: number
+  otherHealthIssues: string
+  fatherId: number | null
+  motherId: number | null
+  guardianId: number | null
+  IGA_PropertyId: number | null
+  educationId: number | null
+  docsId: number | null
+  regGroupId: number | null
+  sponsrGroupId: number | null
 }
 
 
@@ -5231,46 +5798,50 @@ export type OrphanAvgAggregateOutputType = {
   fatherId: number
   motherId: number
   guardianId: number
-  groupId: number
-  siblingId: number
   IGA_PropertyId: number
   educationId: number
+  docsId: number
+  regGroupId: number
+  sponsrGroupId: number
 }
 
 export type OrphanSumAggregateOutputType = {
   id: number
   numberOfSponserdSiblings: number
-  fatherId: number
-  motherId: number
-  guardianId: number
-  groupId: number
-  siblingId: number
-  IGA_PropertyId: number
-  educationId: number
+  fatherId: number | null
+  motherId: number | null
+  guardianId: number | null
+  IGA_PropertyId: number | null
+  educationId: number | null
+  docsId: number | null
+  regGroupId: number | null
+  sponsrGroupId: number | null
 }
 
 export type OrphanMinAggregateOutputType = {
   id: number
   numberOfSponserdSiblings: number
-  fatherId: number
-  motherId: number
-  guardianId: number
-  groupId: number
-  siblingId: number
-  IGA_PropertyId: number
-  educationId: number
+  fatherId: number | null
+  motherId: number | null
+  guardianId: number | null
+  IGA_PropertyId: number | null
+  educationId: number | null
+  docsId: number | null
+  regGroupId: number | null
+  sponsrGroupId: number | null
 }
 
 export type OrphanMaxAggregateOutputType = {
   id: number
   numberOfSponserdSiblings: number
-  fatherId: number
-  motherId: number
-  guardianId: number
-  groupId: number
-  siblingId: number
-  IGA_PropertyId: number
-  educationId: number
+  fatherId: number | null
+  motherId: number | null
+  guardianId: number | null
+  IGA_PropertyId: number | null
+  educationId: number | null
+  docsId: number | null
+  regGroupId: number | null
+  sponsrGroupId: number | null
 }
 
 
@@ -5280,10 +5851,11 @@ export type OrphanAvgAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  groupId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
+  docsId?: true
+  regGroupId?: true
+  sponsrGroupId?: true
 }
 
 export type OrphanSumAggregateInputType = {
@@ -5292,10 +5864,11 @@ export type OrphanSumAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  groupId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
+  docsId?: true
+  regGroupId?: true
+  sponsrGroupId?: true
 }
 
 export type OrphanMinAggregateInputType = {
@@ -5304,10 +5877,11 @@ export type OrphanMinAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  groupId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
+  docsId?: true
+  regGroupId?: true
+  sponsrGroupId?: true
 }
 
 export type OrphanMaxAggregateInputType = {
@@ -5316,10 +5890,11 @@ export type OrphanMaxAggregateInputType = {
   fatherId?: true
   motherId?: true
   guardianId?: true
-  groupId?: true
-  siblingId?: true
   IGA_PropertyId?: true
   educationId?: true
+  docsId?: true
+  regGroupId?: true
+  sponsrGroupId?: true
 }
 
 export type AggregateOrphanArgs = {
@@ -5359,32 +5934,35 @@ export type OrphanSelect = {
   physicalHealthStatus?: boolean
   psychologicalHealthStatus?: boolean
   otherHealthIssues?: boolean
-  photoPortraitUrl?: boolean
-  photoLongUrl?: boolean
   fatherId?: boolean
   motherId?: boolean
   guardianId?: boolean
-  groupId?: boolean
-  siblingId?: boolean
   IGA_PropertyId?: boolean
   educationId?: boolean
-  siblings?: boolean | FindManySiblingArgs
+  docsId?: boolean
+  regGroupId?: boolean
+  sponsrGroupId?: boolean
   iga_property?: boolean | Iga_propertyArgs
+  officialdocuments?: boolean | OfficialDocumentsArgs
   education?: boolean | EducationArgs
   father?: boolean | FatherArgs
-  groupoforphans?: boolean | GroupOfOrphansArgs
   guardian?: boolean | GuardianArgs
   mother?: boolean | MotherArgs
+  registeredgroup?: boolean | RegisteredGroupArgs
+  sponsoredgroup?: boolean | SponsoredGroupArgs
+  siblings?: boolean | FindManySiblingArgs
 }
 
 export type OrphanInclude = {
-  siblings?: boolean | FindManySiblingArgs
   iga_property?: boolean | Iga_propertyArgs
+  officialdocuments?: boolean | OfficialDocumentsArgs
   education?: boolean | EducationArgs
   father?: boolean | FatherArgs
-  groupoforphans?: boolean | GroupOfOrphansArgs
   guardian?: boolean | GuardianArgs
   mother?: boolean | MotherArgs
+  registeredgroup?: boolean | RegisteredGroupArgs
+  sponsoredgroup?: boolean | SponsoredGroupArgs
+  siblings?: boolean | FindManySiblingArgs
 }
 
 export type OrphanGetPayload<
@@ -5398,39 +5976,47 @@ export type OrphanGetPayload<
   ? 'include' extends U
     ? Orphan  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'siblings'
-      ? Array<SiblingGetPayload<S['include'][P]>> :
       P extends 'iga_property'
-      ? Iga_propertyGetPayload<S['include'][P]> :
+      ? Iga_propertyGetPayload<S['include'][P]> | null :
+      P extends 'officialdocuments'
+      ? OfficialDocumentsGetPayload<S['include'][P]> | null :
       P extends 'education'
-      ? EducationGetPayload<S['include'][P]> :
+      ? EducationGetPayload<S['include'][P]> | null :
       P extends 'father'
-      ? FatherGetPayload<S['include'][P]> :
-      P extends 'groupoforphans'
-      ? GroupOfOrphansGetPayload<S['include'][P]> :
+      ? FatherGetPayload<S['include'][P]> | null :
       P extends 'guardian'
-      ? GuardianGetPayload<S['include'][P]> :
+      ? GuardianGetPayload<S['include'][P]> | null :
       P extends 'mother'
-      ? MotherGetPayload<S['include'][P]> : never
+      ? MotherGetPayload<S['include'][P]> | null :
+      P extends 'registeredgroup'
+      ? RegisteredGroupGetPayload<S['include'][P]> | null :
+      P extends 'sponsoredgroup'
+      ? SponsoredGroupGetPayload<S['include'][P]> | null :
+      P extends 'siblings'
+      ? Array<SiblingGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Orphan ? Orphan[P]
 : 
-      P extends 'siblings'
-      ? Array<SiblingGetPayload<S['select'][P]>> :
       P extends 'iga_property'
-      ? Iga_propertyGetPayload<S['select'][P]> :
+      ? Iga_propertyGetPayload<S['select'][P]> | null :
+      P extends 'officialdocuments'
+      ? OfficialDocumentsGetPayload<S['select'][P]> | null :
       P extends 'education'
-      ? EducationGetPayload<S['select'][P]> :
+      ? EducationGetPayload<S['select'][P]> | null :
       P extends 'father'
-      ? FatherGetPayload<S['select'][P]> :
-      P extends 'groupoforphans'
-      ? GroupOfOrphansGetPayload<S['select'][P]> :
+      ? FatherGetPayload<S['select'][P]> | null :
       P extends 'guardian'
-      ? GuardianGetPayload<S['select'][P]> :
+      ? GuardianGetPayload<S['select'][P]> | null :
       P extends 'mother'
-      ? MotherGetPayload<S['select'][P]> : never
+      ? MotherGetPayload<S['select'][P]> | null :
+      P extends 'registeredgroup'
+      ? RegisteredGroupGetPayload<S['select'][P]> | null :
+      P extends 'sponsoredgroup'
+      ? SponsoredGroupGetPayload<S['select'][P]> | null :
+      P extends 'siblings'
+      ? Array<SiblingGetPayload<S['select'][P]>> : never
     }
   : Orphan
 : Orphan
@@ -5602,19 +6188,23 @@ export declare class Prisma__OrphanClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  siblings<T extends FindManySiblingArgs = {}>(args?: Subset<T, FindManySiblingArgs>): CheckSelect<T, Promise<Array<Sibling>>, Promise<Array<SiblingGetPayload<T>>>>;
-
   iga_property<T extends Iga_propertyArgs = {}>(args?: Subset<T, Iga_propertyArgs>): CheckSelect<T, Prisma__Iga_propertyClient<Iga_property | null>, Prisma__Iga_propertyClient<Iga_propertyGetPayload<T> | null>>;
+
+  officialdocuments<T extends OfficialDocumentsArgs = {}>(args?: Subset<T, OfficialDocumentsArgs>): CheckSelect<T, Prisma__OfficialDocumentsClient<OfficialDocuments | null>, Prisma__OfficialDocumentsClient<OfficialDocumentsGetPayload<T> | null>>;
 
   education<T extends EducationArgs = {}>(args?: Subset<T, EducationArgs>): CheckSelect<T, Prisma__EducationClient<Education | null>, Prisma__EducationClient<EducationGetPayload<T> | null>>;
 
   father<T extends FatherArgs = {}>(args?: Subset<T, FatherArgs>): CheckSelect<T, Prisma__FatherClient<Father | null>, Prisma__FatherClient<FatherGetPayload<T> | null>>;
 
-  groupoforphans<T extends GroupOfOrphansArgs = {}>(args?: Subset<T, GroupOfOrphansArgs>): CheckSelect<T, Prisma__GroupOfOrphansClient<GroupOfOrphans | null>, Prisma__GroupOfOrphansClient<GroupOfOrphansGetPayload<T> | null>>;
-
   guardian<T extends GuardianArgs = {}>(args?: Subset<T, GuardianArgs>): CheckSelect<T, Prisma__GuardianClient<Guardian | null>, Prisma__GuardianClient<GuardianGetPayload<T> | null>>;
 
   mother<T extends MotherArgs = {}>(args?: Subset<T, MotherArgs>): CheckSelect<T, Prisma__MotherClient<Mother | null>, Prisma__MotherClient<MotherGetPayload<T> | null>>;
+
+  registeredgroup<T extends RegisteredGroupArgs = {}>(args?: Subset<T, RegisteredGroupArgs>): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup | null>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T> | null>>;
+
+  sponsoredgroup<T extends SponsoredGroupArgs = {}>(args?: Subset<T, SponsoredGroupArgs>): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup | null>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T> | null>>;
+
+  siblings<T extends FindManySiblingArgs = {}>(args?: Subset<T, FindManySiblingArgs>): CheckSelect<T, Promise<Array<Sibling>>, Promise<Array<SiblingGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -5818,6 +6408,972 @@ export type OrphanArgs = {
 
 
 /**
+ * Model OtherSupport
+ */
+
+export type OtherSupport = {
+  id: number
+}
+
+
+export type AggregateOtherSupport = {
+  count: number
+  avg: OtherSupportAvgAggregateOutputType | null
+  sum: OtherSupportSumAggregateOutputType | null
+  min: OtherSupportMinAggregateOutputType | null
+  max: OtherSupportMaxAggregateOutputType | null
+}
+
+export type OtherSupportAvgAggregateOutputType = {
+  id: number
+}
+
+export type OtherSupportSumAggregateOutputType = {
+  id: number
+}
+
+export type OtherSupportMinAggregateOutputType = {
+  id: number
+}
+
+export type OtherSupportMaxAggregateOutputType = {
+  id: number
+}
+
+
+export type OtherSupportAvgAggregateInputType = {
+  id?: true
+}
+
+export type OtherSupportSumAggregateInputType = {
+  id?: true
+}
+
+export type OtherSupportMinAggregateInputType = {
+  id?: true
+}
+
+export type OtherSupportMaxAggregateInputType = {
+  id?: true
+}
+
+export type AggregateOtherSupportArgs = {
+  where?: OtherSupportWhereInput
+  orderBy?: Enumerable<OtherSupportOrderByInput>
+  cursor?: OtherSupportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<OtherSupportDistinctFieldEnum>
+  count?: true
+  avg?: OtherSupportAvgAggregateInputType
+  sum?: OtherSupportSumAggregateInputType
+  min?: OtherSupportMinAggregateInputType
+  max?: OtherSupportMaxAggregateInputType
+}
+
+export type GetOtherSupportAggregateType<T extends AggregateOtherSupportArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetOtherSupportAggregateScalarType<T[P]>
+}
+
+export type GetOtherSupportAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof OtherSupportAvgAggregateOutputType ? OtherSupportAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type OtherSupportSelect = {
+  id?: boolean
+  support?: boolean | FindManySupportArgs
+}
+
+export type OtherSupportInclude = {
+  support?: boolean | FindManySupportArgs
+}
+
+export type OtherSupportGetPayload<
+  S extends boolean | null | undefined | OtherSupportArgs,
+  U = keyof S
+> = S extends true
+  ? OtherSupport
+  : S extends undefined
+  ? never
+  : S extends OtherSupportArgs | FindManyOtherSupportArgs
+  ? 'include' extends U
+    ? OtherSupport  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'support'
+      ? Array<SupportGetPayload<S['include'][P]>> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof OtherSupport ? OtherSupport[P]
+: 
+      P extends 'support'
+      ? Array<SupportGetPayload<S['select'][P]>> : never
+    }
+  : OtherSupport
+: OtherSupport
+
+
+export interface OtherSupportDelegate {
+  /**
+   * Find zero or one OtherSupport.
+   * @param {FindOneOtherSupportArgs} args - Arguments to find a OtherSupport
+   * @example
+   * // Get one OtherSupport
+   * const otherSupport = await prisma.otherSupport.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneOtherSupportArgs>(
+    args: Subset<T, FindOneOtherSupportArgs>
+  ): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport | null>, Prisma__OtherSupportClient<OtherSupportGetPayload<T> | null>>
+  /**
+   * Find zero or more OtherSupports.
+   * @param {FindManyOtherSupportArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all OtherSupports
+   * const otherSupports = await prisma.otherSupport.findMany()
+   * 
+   * // Get first 10 OtherSupports
+   * const otherSupports = await prisma.otherSupport.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const otherSupportWithIdOnly = await prisma.otherSupport.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManyOtherSupportArgs>(
+    args?: Subset<T, FindManyOtherSupportArgs>
+  ): CheckSelect<T, Promise<Array<OtherSupport>>, Promise<Array<OtherSupportGetPayload<T>>>>
+  /**
+   * Create a OtherSupport.
+   * @param {OtherSupportCreateArgs} args - Arguments to create a OtherSupport.
+   * @example
+   * // Create one OtherSupport
+   * const OtherSupport = await prisma.otherSupport.create({
+   *   data: {
+   *     // ... data to create a OtherSupport
+   *   }
+   * })
+   * 
+  **/
+  create<T extends OtherSupportCreateArgs>(
+    args: Subset<T, OtherSupportCreateArgs>
+  ): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport>, Prisma__OtherSupportClient<OtherSupportGetPayload<T>>>
+  /**
+   * Delete a OtherSupport.
+   * @param {OtherSupportDeleteArgs} args - Arguments to delete one OtherSupport.
+   * @example
+   * // Delete one OtherSupport
+   * const OtherSupport = await prisma.otherSupport.delete({
+   *   where: {
+   *     // ... filter to delete one OtherSupport
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends OtherSupportDeleteArgs>(
+    args: Subset<T, OtherSupportDeleteArgs>
+  ): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport>, Prisma__OtherSupportClient<OtherSupportGetPayload<T>>>
+  /**
+   * Update one OtherSupport.
+   * @param {OtherSupportUpdateArgs} args - Arguments to update one OtherSupport.
+   * @example
+   * // Update one OtherSupport
+   * const otherSupport = await prisma.otherSupport.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends OtherSupportUpdateArgs>(
+    args: Subset<T, OtherSupportUpdateArgs>
+  ): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport>, Prisma__OtherSupportClient<OtherSupportGetPayload<T>>>
+  /**
+   * Delete zero or more OtherSupports.
+   * @param {OtherSupportDeleteManyArgs} args - Arguments to filter OtherSupports to delete.
+   * @example
+   * // Delete a few OtherSupports
+   * const { count } = await prisma.otherSupport.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends OtherSupportDeleteManyArgs>(
+    args: Subset<T, OtherSupportDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more OtherSupports.
+   * @param {OtherSupportUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many OtherSupports
+   * const otherSupport = await prisma.otherSupport.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends OtherSupportUpdateManyArgs>(
+    args: Subset<T, OtherSupportUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one OtherSupport.
+   * @param {OtherSupportUpsertArgs} args - Arguments to update or create a OtherSupport.
+   * @example
+   * // Update or create a OtherSupport
+   * const otherSupport = await prisma.otherSupport.upsert({
+   *   create: {
+   *     // ... data to create a OtherSupport
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the OtherSupport we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends OtherSupportUpsertArgs>(
+    args: Subset<T, OtherSupportUpsertArgs>
+  ): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport>, Prisma__OtherSupportClient<OtherSupportGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManyOtherSupportArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateOtherSupportArgs>(args: Subset<T, AggregateOtherSupportArgs>): Promise<GetOtherSupportAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for OtherSupport.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__OtherSupportClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  support<T extends FindManySupportArgs = {}>(args?: Subset<T, FindManySupportArgs>): CheckSelect<T, Promise<Array<Support>>, Promise<Array<SupportGetPayload<T>>>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * OtherSupport findOne
+ */
+export type FindOneOtherSupportArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * Filter, which OtherSupport to fetch.
+  **/
+  where: OtherSupportWhereUniqueInput
+}
+
+
+/**
+ * OtherSupport findMany
+ */
+export type FindManyOtherSupportArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * Filter, which OtherSupports to fetch.
+  **/
+  where?: OtherSupportWhereInput
+  /**
+   * Determine the order of the OtherSupports to fetch.
+  **/
+  orderBy?: Enumerable<OtherSupportOrderByInput>
+  /**
+   * Sets the position for listing OtherSupports.
+  **/
+  cursor?: OtherSupportWhereUniqueInput
+  /**
+   * The number of OtherSupports to fetch. If negative number, it will take OtherSupports before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` OtherSupports.
+  **/
+  skip?: number
+  distinct?: Enumerable<OtherSupportDistinctFieldEnum>
+}
+
+
+/**
+ * OtherSupport create
+ */
+export type OtherSupportCreateArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * The data needed to create a OtherSupport.
+  **/
+  data: OtherSupportCreateInput
+}
+
+
+/**
+ * OtherSupport update
+ */
+export type OtherSupportUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * The data needed to update a OtherSupport.
+  **/
+  data: OtherSupportUpdateInput
+  /**
+   * Choose, which OtherSupport to update.
+  **/
+  where: OtherSupportWhereUniqueInput
+}
+
+
+/**
+ * OtherSupport updateMany
+ */
+export type OtherSupportUpdateManyArgs = {
+  data: OtherSupportUpdateManyMutationInput
+  where?: OtherSupportWhereInput
+}
+
+
+/**
+ * OtherSupport upsert
+ */
+export type OtherSupportUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * The filter to search for the OtherSupport to update in case it exists.
+  **/
+  where: OtherSupportWhereUniqueInput
+  /**
+   * In case the OtherSupport found by the `where` argument doesn't exist, create a new OtherSupport with this data.
+  **/
+  create: OtherSupportCreateInput
+  /**
+   * In case the OtherSupport was found with the provided `where` argument, update it with this data.
+  **/
+  update: OtherSupportUpdateInput
+}
+
+
+/**
+ * OtherSupport delete
+ */
+export type OtherSupportDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+  /**
+   * Filter which OtherSupport to delete.
+  **/
+  where: OtherSupportWhereUniqueInput
+}
+
+
+/**
+ * OtherSupport deleteMany
+ */
+export type OtherSupportDeleteManyArgs = {
+  where?: OtherSupportWhereInput
+}
+
+
+/**
+ * OtherSupport without action
+ */
+export type OtherSupportArgs = {
+  /**
+   * Select specific fields to fetch from the OtherSupport
+  **/
+  select?: OtherSupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: OtherSupportInclude | null
+}
+
+
+
+/**
+ * Model RegisteredGroup
+ */
+
+export type RegisteredGroup = {
+  id: number
+  registrationDate: Date
+  siteName: string
+  state: string
+  zone: string
+  district: string
+  kebele: string
+}
+
+
+export type AggregateRegisteredGroup = {
+  count: number
+  avg: RegisteredGroupAvgAggregateOutputType | null
+  sum: RegisteredGroupSumAggregateOutputType | null
+  min: RegisteredGroupMinAggregateOutputType | null
+  max: RegisteredGroupMaxAggregateOutputType | null
+}
+
+export type RegisteredGroupAvgAggregateOutputType = {
+  id: number
+}
+
+export type RegisteredGroupSumAggregateOutputType = {
+  id: number
+}
+
+export type RegisteredGroupMinAggregateOutputType = {
+  id: number
+}
+
+export type RegisteredGroupMaxAggregateOutputType = {
+  id: number
+}
+
+
+export type RegisteredGroupAvgAggregateInputType = {
+  id?: true
+}
+
+export type RegisteredGroupSumAggregateInputType = {
+  id?: true
+}
+
+export type RegisteredGroupMinAggregateInputType = {
+  id?: true
+}
+
+export type RegisteredGroupMaxAggregateInputType = {
+  id?: true
+}
+
+export type AggregateRegisteredGroupArgs = {
+  where?: RegisteredGroupWhereInput
+  orderBy?: Enumerable<RegisteredGroupOrderByInput>
+  cursor?: RegisteredGroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<RegisteredGroupDistinctFieldEnum>
+  count?: true
+  avg?: RegisteredGroupAvgAggregateInputType
+  sum?: RegisteredGroupSumAggregateInputType
+  min?: RegisteredGroupMinAggregateInputType
+  max?: RegisteredGroupMaxAggregateInputType
+}
+
+export type GetRegisteredGroupAggregateType<T extends AggregateRegisteredGroupArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetRegisteredGroupAggregateScalarType<T[P]>
+}
+
+export type GetRegisteredGroupAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof RegisteredGroupAvgAggregateOutputType ? RegisteredGroupAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type RegisteredGroupSelect = {
+  id?: boolean
+  registrationDate?: boolean
+  siteName?: boolean
+  state?: boolean
+  zone?: boolean
+  district?: boolean
+  kebele?: boolean
+  orphans?: boolean | FindManyOrphanArgs
+}
+
+export type RegisteredGroupInclude = {
+  orphans?: boolean | FindManyOrphanArgs
+}
+
+export type RegisteredGroupGetPayload<
+  S extends boolean | null | undefined | RegisteredGroupArgs,
+  U = keyof S
+> = S extends true
+  ? RegisteredGroup
+  : S extends undefined
+  ? never
+  : S extends RegisteredGroupArgs | FindManyRegisteredGroupArgs
+  ? 'include' extends U
+    ? RegisteredGroup  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'orphans'
+      ? Array<OrphanGetPayload<S['include'][P]>> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof RegisteredGroup ? RegisteredGroup[P]
+: 
+      P extends 'orphans'
+      ? Array<OrphanGetPayload<S['select'][P]>> : never
+    }
+  : RegisteredGroup
+: RegisteredGroup
+
+
+export interface RegisteredGroupDelegate {
+  /**
+   * Find zero or one RegisteredGroup.
+   * @param {FindOneRegisteredGroupArgs} args - Arguments to find a RegisteredGroup
+   * @example
+   * // Get one RegisteredGroup
+   * const registeredGroup = await prisma.registeredGroup.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneRegisteredGroupArgs>(
+    args: Subset<T, FindOneRegisteredGroupArgs>
+  ): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup | null>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T> | null>>
+  /**
+   * Find zero or more RegisteredGroups.
+   * @param {FindManyRegisteredGroupArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all RegisteredGroups
+   * const registeredGroups = await prisma.registeredGroup.findMany()
+   * 
+   * // Get first 10 RegisteredGroups
+   * const registeredGroups = await prisma.registeredGroup.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const registeredGroupWithIdOnly = await prisma.registeredGroup.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManyRegisteredGroupArgs>(
+    args?: Subset<T, FindManyRegisteredGroupArgs>
+  ): CheckSelect<T, Promise<Array<RegisteredGroup>>, Promise<Array<RegisteredGroupGetPayload<T>>>>
+  /**
+   * Create a RegisteredGroup.
+   * @param {RegisteredGroupCreateArgs} args - Arguments to create a RegisteredGroup.
+   * @example
+   * // Create one RegisteredGroup
+   * const RegisteredGroup = await prisma.registeredGroup.create({
+   *   data: {
+   *     // ... data to create a RegisteredGroup
+   *   }
+   * })
+   * 
+  **/
+  create<T extends RegisteredGroupCreateArgs>(
+    args: Subset<T, RegisteredGroupCreateArgs>
+  ): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T>>>
+  /**
+   * Delete a RegisteredGroup.
+   * @param {RegisteredGroupDeleteArgs} args - Arguments to delete one RegisteredGroup.
+   * @example
+   * // Delete one RegisteredGroup
+   * const RegisteredGroup = await prisma.registeredGroup.delete({
+   *   where: {
+   *     // ... filter to delete one RegisteredGroup
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends RegisteredGroupDeleteArgs>(
+    args: Subset<T, RegisteredGroupDeleteArgs>
+  ): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T>>>
+  /**
+   * Update one RegisteredGroup.
+   * @param {RegisteredGroupUpdateArgs} args - Arguments to update one RegisteredGroup.
+   * @example
+   * // Update one RegisteredGroup
+   * const registeredGroup = await prisma.registeredGroup.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends RegisteredGroupUpdateArgs>(
+    args: Subset<T, RegisteredGroupUpdateArgs>
+  ): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T>>>
+  /**
+   * Delete zero or more RegisteredGroups.
+   * @param {RegisteredGroupDeleteManyArgs} args - Arguments to filter RegisteredGroups to delete.
+   * @example
+   * // Delete a few RegisteredGroups
+   * const { count } = await prisma.registeredGroup.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends RegisteredGroupDeleteManyArgs>(
+    args: Subset<T, RegisteredGroupDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more RegisteredGroups.
+   * @param {RegisteredGroupUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many RegisteredGroups
+   * const registeredGroup = await prisma.registeredGroup.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends RegisteredGroupUpdateManyArgs>(
+    args: Subset<T, RegisteredGroupUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one RegisteredGroup.
+   * @param {RegisteredGroupUpsertArgs} args - Arguments to update or create a RegisteredGroup.
+   * @example
+   * // Update or create a RegisteredGroup
+   * const registeredGroup = await prisma.registeredGroup.upsert({
+   *   create: {
+   *     // ... data to create a RegisteredGroup
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the RegisteredGroup we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends RegisteredGroupUpsertArgs>(
+    args: Subset<T, RegisteredGroupUpsertArgs>
+  ): CheckSelect<T, Prisma__RegisteredGroupClient<RegisteredGroup>, Prisma__RegisteredGroupClient<RegisteredGroupGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManyRegisteredGroupArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateRegisteredGroupArgs>(args: Subset<T, AggregateRegisteredGroupArgs>): Promise<GetRegisteredGroupAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for RegisteredGroup.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__RegisteredGroupClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * RegisteredGroup findOne
+ */
+export type FindOneRegisteredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * Filter, which RegisteredGroup to fetch.
+  **/
+  where: RegisteredGroupWhereUniqueInput
+}
+
+
+/**
+ * RegisteredGroup findMany
+ */
+export type FindManyRegisteredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * Filter, which RegisteredGroups to fetch.
+  **/
+  where?: RegisteredGroupWhereInput
+  /**
+   * Determine the order of the RegisteredGroups to fetch.
+  **/
+  orderBy?: Enumerable<RegisteredGroupOrderByInput>
+  /**
+   * Sets the position for listing RegisteredGroups.
+  **/
+  cursor?: RegisteredGroupWhereUniqueInput
+  /**
+   * The number of RegisteredGroups to fetch. If negative number, it will take RegisteredGroups before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` RegisteredGroups.
+  **/
+  skip?: number
+  distinct?: Enumerable<RegisteredGroupDistinctFieldEnum>
+}
+
+
+/**
+ * RegisteredGroup create
+ */
+export type RegisteredGroupCreateArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * The data needed to create a RegisteredGroup.
+  **/
+  data: RegisteredGroupCreateInput
+}
+
+
+/**
+ * RegisteredGroup update
+ */
+export type RegisteredGroupUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * The data needed to update a RegisteredGroup.
+  **/
+  data: RegisteredGroupUpdateInput
+  /**
+   * Choose, which RegisteredGroup to update.
+  **/
+  where: RegisteredGroupWhereUniqueInput
+}
+
+
+/**
+ * RegisteredGroup updateMany
+ */
+export type RegisteredGroupUpdateManyArgs = {
+  data: RegisteredGroupUpdateManyMutationInput
+  where?: RegisteredGroupWhereInput
+}
+
+
+/**
+ * RegisteredGroup upsert
+ */
+export type RegisteredGroupUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * The filter to search for the RegisteredGroup to update in case it exists.
+  **/
+  where: RegisteredGroupWhereUniqueInput
+  /**
+   * In case the RegisteredGroup found by the `where` argument doesn't exist, create a new RegisteredGroup with this data.
+  **/
+  create: RegisteredGroupCreateInput
+  /**
+   * In case the RegisteredGroup was found with the provided `where` argument, update it with this data.
+  **/
+  update: RegisteredGroupUpdateInput
+}
+
+
+/**
+ * RegisteredGroup delete
+ */
+export type RegisteredGroupDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+  /**
+   * Filter which RegisteredGroup to delete.
+  **/
+  where: RegisteredGroupWhereUniqueInput
+}
+
+
+/**
+ * RegisteredGroup deleteMany
+ */
+export type RegisteredGroupDeleteManyArgs = {
+  where?: RegisteredGroupWhereInput
+}
+
+
+/**
+ * RegisteredGroup without action
+ */
+export type RegisteredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the RegisteredGroup
+  **/
+  select?: RegisteredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: RegisteredGroupInclude | null
+}
+
+
+
+/**
  * Model Sibling
  */
 
@@ -5829,7 +7385,7 @@ export type Sibling = {
   schoolGrade: string | null
   job: string | null
   maritalStatus: string
-  orphanId: number
+  orphanId: number | null
 }
 
 
@@ -5850,19 +7406,19 @@ export type SiblingAvgAggregateOutputType = {
 export type SiblingSumAggregateOutputType = {
   id: number
   age: number
-  orphanId: number
+  orphanId: number | null
 }
 
 export type SiblingMinAggregateOutputType = {
   id: number
   age: number
-  orphanId: number
+  orphanId: number | null
 }
 
 export type SiblingMaxAggregateOutputType = {
   id: number
   age: number
-  orphanId: number
+  orphanId: number | null
 }
 
 
@@ -5942,14 +7498,14 @@ export type SiblingGetPayload<
     ? Sibling  & {
       [P in TrueKeys<S['include']>]:
       P extends 'orphan'
-      ? OrphanGetPayload<S['include'][P]> : never
+      ? OrphanGetPayload<S['include'][P]> | null : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Sibling ? Sibling[P]
 : 
       P extends 'orphan'
-      ? OrphanGetPayload<S['select'][P]> : never
+      ? OrphanGetPayload<S['select'][P]> | null : never
     }
   : Sibling
 : Sibling
@@ -6325,522 +7881,14 @@ export type SiblingArgs = {
 
 
 /**
- * Model Site
- */
-
-export type Site = {
-  id: number
-  siteName: string
-  donationAmount: number
-  addressId: string
-}
-
-
-export type AggregateSite = {
-  count: number
-  avg: SiteAvgAggregateOutputType | null
-  sum: SiteSumAggregateOutputType | null
-  min: SiteMinAggregateOutputType | null
-  max: SiteMaxAggregateOutputType | null
-}
-
-export type SiteAvgAggregateOutputType = {
-  id: number
-  donationAmount: number
-}
-
-export type SiteSumAggregateOutputType = {
-  id: number
-  donationAmount: number
-}
-
-export type SiteMinAggregateOutputType = {
-  id: number
-  donationAmount: number
-}
-
-export type SiteMaxAggregateOutputType = {
-  id: number
-  donationAmount: number
-}
-
-
-export type SiteAvgAggregateInputType = {
-  id?: true
-  donationAmount?: true
-}
-
-export type SiteSumAggregateInputType = {
-  id?: true
-  donationAmount?: true
-}
-
-export type SiteMinAggregateInputType = {
-  id?: true
-  donationAmount?: true
-}
-
-export type SiteMaxAggregateInputType = {
-  id?: true
-  donationAmount?: true
-}
-
-export type AggregateSiteArgs = {
-  where?: SiteWhereInput
-  orderBy?: Enumerable<SiteOrderByInput>
-  cursor?: SiteWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Enumerable<SiteDistinctFieldEnum>
-  count?: true
-  avg?: SiteAvgAggregateInputType
-  sum?: SiteSumAggregateInputType
-  min?: SiteMinAggregateInputType
-  max?: SiteMaxAggregateInputType
-}
-
-export type GetSiteAggregateType<T extends AggregateSiteArgs> = {
-  [P in keyof T]: P extends 'count' ? number : GetSiteAggregateScalarType<T[P]>
-}
-
-export type GetSiteAggregateScalarType<T extends any> = {
-  [P in keyof T]: P extends keyof SiteAvgAggregateOutputType ? SiteAvgAggregateOutputType[P] : never
-}
-    
-    
-
-export type SiteSelect = {
-  id?: boolean
-  siteName?: boolean
-  donationAmount?: boolean
-  addressId?: boolean
-  address?: boolean | AddressArgs
-  groupoforphans?: boolean | FindManyGroupOfOrphansArgs
-  socialworker?: boolean | FindManySocialWorkerArgs
-}
-
-export type SiteInclude = {
-  address?: boolean | AddressArgs
-  groupoforphans?: boolean | FindManyGroupOfOrphansArgs
-  socialworker?: boolean | FindManySocialWorkerArgs
-}
-
-export type SiteGetPayload<
-  S extends boolean | null | undefined | SiteArgs,
-  U = keyof S
-> = S extends true
-  ? Site
-  : S extends undefined
-  ? never
-  : S extends SiteArgs | FindManySiteArgs
-  ? 'include' extends U
-    ? Site  & {
-      [P in TrueKeys<S['include']>]:
-      P extends 'address'
-      ? AddressGetPayload<S['include'][P]> :
-      P extends 'groupoforphans'
-      ? Array<GroupOfOrphansGetPayload<S['include'][P]>> :
-      P extends 'socialworker'
-      ? Array<SocialWorkerGetPayload<S['include'][P]>> : never
-    }
-  : 'select' extends U
-    ? {
-      [P in TrueKeys<S['select']>]:P extends keyof Site ? Site[P]
-: 
-      P extends 'address'
-      ? AddressGetPayload<S['select'][P]> :
-      P extends 'groupoforphans'
-      ? Array<GroupOfOrphansGetPayload<S['select'][P]>> :
-      P extends 'socialworker'
-      ? Array<SocialWorkerGetPayload<S['select'][P]>> : never
-    }
-  : Site
-: Site
-
-
-export interface SiteDelegate {
-  /**
-   * Find zero or one Site.
-   * @param {FindOneSiteArgs} args - Arguments to find a Site
-   * @example
-   * // Get one Site
-   * const site = await prisma.site.findOne({
-   *   where: {
-   *     // ... provide filter here
-   *   }
-   * })
-  **/
-  findOne<T extends FindOneSiteArgs>(
-    args: Subset<T, FindOneSiteArgs>
-  ): CheckSelect<T, Prisma__SiteClient<Site | null>, Prisma__SiteClient<SiteGetPayload<T> | null>>
-  /**
-   * Find zero or more Sites.
-   * @param {FindManySiteArgs=} args - Arguments to filter and select certain fields only.
-   * @example
-   * // Get all Sites
-   * const sites = await prisma.site.findMany()
-   * 
-   * // Get first 10 Sites
-   * const sites = await prisma.site.findMany({ take: 10 })
-   * 
-   * // Only select the `id`
-   * const siteWithIdOnly = await prisma.site.findMany({ select: { id: true } })
-   * 
-  **/
-  findMany<T extends FindManySiteArgs>(
-    args?: Subset<T, FindManySiteArgs>
-  ): CheckSelect<T, Promise<Array<Site>>, Promise<Array<SiteGetPayload<T>>>>
-  /**
-   * Create a Site.
-   * @param {SiteCreateArgs} args - Arguments to create a Site.
-   * @example
-   * // Create one Site
-   * const Site = await prisma.site.create({
-   *   data: {
-   *     // ... data to create a Site
-   *   }
-   * })
-   * 
-  **/
-  create<T extends SiteCreateArgs>(
-    args: Subset<T, SiteCreateArgs>
-  ): CheckSelect<T, Prisma__SiteClient<Site>, Prisma__SiteClient<SiteGetPayload<T>>>
-  /**
-   * Delete a Site.
-   * @param {SiteDeleteArgs} args - Arguments to delete one Site.
-   * @example
-   * // Delete one Site
-   * const Site = await prisma.site.delete({
-   *   where: {
-   *     // ... filter to delete one Site
-   *   }
-   * })
-   * 
-  **/
-  delete<T extends SiteDeleteArgs>(
-    args: Subset<T, SiteDeleteArgs>
-  ): CheckSelect<T, Prisma__SiteClient<Site>, Prisma__SiteClient<SiteGetPayload<T>>>
-  /**
-   * Update one Site.
-   * @param {SiteUpdateArgs} args - Arguments to update one Site.
-   * @example
-   * // Update one Site
-   * const site = await prisma.site.update({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: {
-   *     // ... provide data here
-   *   }
-   * })
-   * 
-  **/
-  update<T extends SiteUpdateArgs>(
-    args: Subset<T, SiteUpdateArgs>
-  ): CheckSelect<T, Prisma__SiteClient<Site>, Prisma__SiteClient<SiteGetPayload<T>>>
-  /**
-   * Delete zero or more Sites.
-   * @param {SiteDeleteManyArgs} args - Arguments to filter Sites to delete.
-   * @example
-   * // Delete a few Sites
-   * const { count } = await prisma.site.deleteMany({
-   *   where: {
-   *     // ... provide filter here
-   *   }
-   * })
-   * 
-  **/
-  deleteMany<T extends SiteDeleteManyArgs>(
-    args: Subset<T, SiteDeleteManyArgs>
-  ): Promise<BatchPayload>
-  /**
-   * Update zero or more Sites.
-   * @param {SiteUpdateManyArgs} args - Arguments to update one or more rows.
-   * @example
-   * // Update many Sites
-   * const site = await prisma.site.updateMany({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: {
-   *     // ... provide data here
-   *   }
-   * })
-   * 
-  **/
-  updateMany<T extends SiteUpdateManyArgs>(
-    args: Subset<T, SiteUpdateManyArgs>
-  ): Promise<BatchPayload>
-  /**
-   * Create or update one Site.
-   * @param {SiteUpsertArgs} args - Arguments to update or create a Site.
-   * @example
-   * // Update or create a Site
-   * const site = await prisma.site.upsert({
-   *   create: {
-   *     // ... data to create a Site
-   *   },
-   *   update: {
-   *     // ... in case it already exists, update
-   *   },
-   *   where: {
-   *     // ... the filter for the Site we want to update
-   *   }
-   * })
-  **/
-  upsert<T extends SiteUpsertArgs>(
-    args: Subset<T, SiteUpsertArgs>
-  ): CheckSelect<T, Prisma__SiteClient<Site>, Prisma__SiteClient<SiteGetPayload<T>>>
-  /**
-   * Count
-   */
-  count(args?: Omit<FindManySiteArgs, 'select' | 'include'>): Promise<number>
-
-  /**
-   * Aggregate
-   */
-  aggregate<T extends AggregateSiteArgs>(args: Subset<T, AggregateSiteArgs>): Promise<GetSiteAggregateType<T>>
-}
-
-/**
- * The delegate class that acts as a "Promise-like" for Site.
- * Why is this prefixed with `Prisma__`?
- * Because we want to prevent naming conflicts as mentioned in 
- * https://github.com/prisma/prisma-client-js/issues/707
- */
-export declare class Prisma__SiteClient<T> implements Promise<T> {
-  private readonly _dmmf;
-  private readonly _fetcher;
-  private readonly _queryType;
-  private readonly _rootField;
-  private readonly _clientMethod;
-  private readonly _args;
-  private readonly _dataPath;
-  private readonly _errorFormat;
-  private readonly _measurePerformance?;
-  private _isList;
-  private _callsite;
-  private _requestPromise?;
-  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
-  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-  address<T extends AddressArgs = {}>(args?: Subset<T, AddressArgs>): CheckSelect<T, Prisma__AddressClient<Address | null>, Prisma__AddressClient<AddressGetPayload<T> | null>>;
-
-  groupoforphans<T extends FindManyGroupOfOrphansArgs = {}>(args?: Subset<T, FindManyGroupOfOrphansArgs>): CheckSelect<T, Promise<Array<GroupOfOrphans>>, Promise<Array<GroupOfOrphansGetPayload<T>>>>;
-
-  socialworker<T extends FindManySocialWorkerArgs = {}>(args?: Subset<T, FindManySocialWorkerArgs>): CheckSelect<T, Promise<Array<SocialWorker>>, Promise<Array<SocialWorkerGetPayload<T>>>>;
-
-  private get _document();
-  /**
-   * Attaches callbacks for the resolution and/or rejection of the Promise.
-   * @param onfulfilled The callback to execute when the Promise is resolved.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of which ever callback is executed.
-   */
-  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-  /**
-   * Attaches a callback for only the rejection of the Promise.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of the callback.
-   */
-  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
-  /**
-   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-   * resolved value cannot be modified from the callback.
-   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-   * @returns A Promise for the completion of the callback.
-   */
-  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-}
-
-// Custom InputTypes
-
-/**
- * Site findOne
- */
-export type FindOneSiteArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * Filter, which Site to fetch.
-  **/
-  where: SiteWhereUniqueInput
-}
-
-
-/**
- * Site findMany
- */
-export type FindManySiteArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * Filter, which Sites to fetch.
-  **/
-  where?: SiteWhereInput
-  /**
-   * Determine the order of the Sites to fetch.
-  **/
-  orderBy?: Enumerable<SiteOrderByInput>
-  /**
-   * Sets the position for listing Sites.
-  **/
-  cursor?: SiteWhereUniqueInput
-  /**
-   * The number of Sites to fetch. If negative number, it will take Sites before the `cursor`.
-  **/
-  take?: number
-  /**
-   * Skip the first `n` Sites.
-  **/
-  skip?: number
-  distinct?: Enumerable<SiteDistinctFieldEnum>
-}
-
-
-/**
- * Site create
- */
-export type SiteCreateArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * The data needed to create a Site.
-  **/
-  data: SiteCreateInput
-}
-
-
-/**
- * Site update
- */
-export type SiteUpdateArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * The data needed to update a Site.
-  **/
-  data: SiteUpdateInput
-  /**
-   * Choose, which Site to update.
-  **/
-  where: SiteWhereUniqueInput
-}
-
-
-/**
- * Site updateMany
- */
-export type SiteUpdateManyArgs = {
-  data: SiteUpdateManyMutationInput
-  where?: SiteWhereInput
-}
-
-
-/**
- * Site upsert
- */
-export type SiteUpsertArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * The filter to search for the Site to update in case it exists.
-  **/
-  where: SiteWhereUniqueInput
-  /**
-   * In case the Site found by the `where` argument doesn't exist, create a new Site with this data.
-  **/
-  create: SiteCreateInput
-  /**
-   * In case the Site was found with the provided `where` argument, update it with this data.
-  **/
-  update: SiteUpdateInput
-}
-
-
-/**
- * Site delete
- */
-export type SiteDeleteArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-  /**
-   * Filter which Site to delete.
-  **/
-  where: SiteWhereUniqueInput
-}
-
-
-/**
- * Site deleteMany
- */
-export type SiteDeleteManyArgs = {
-  where?: SiteWhereInput
-}
-
-
-/**
- * Site without action
- */
-export type SiteArgs = {
-  /**
-   * Select specific fields to fetch from the Site
-  **/
-  select?: SiteSelect | null
-  /**
-   * Choose, which related nodes to fetch as well.
-  **/
-  include?: SiteInclude | null
-}
-
-
-
-/**
  * Model SocialWorker
  */
 
 export type SocialWorker = {
   id: number
   fullName: string
-  phoneNumber: number
+  phoneNumber: string
   email: string
-  siteId: number
 }
 
 
@@ -6854,51 +7902,35 @@ export type AggregateSocialWorker = {
 
 export type SocialWorkerAvgAggregateOutputType = {
   id: number
-  phoneNumber: number
-  siteId: number
 }
 
 export type SocialWorkerSumAggregateOutputType = {
   id: number
-  phoneNumber: number
-  siteId: number
 }
 
 export type SocialWorkerMinAggregateOutputType = {
   id: number
-  phoneNumber: number
-  siteId: number
 }
 
 export type SocialWorkerMaxAggregateOutputType = {
   id: number
-  phoneNumber: number
-  siteId: number
 }
 
 
 export type SocialWorkerAvgAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  siteId?: true
 }
 
 export type SocialWorkerSumAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  siteId?: true
 }
 
 export type SocialWorkerMinAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  siteId?: true
 }
 
 export type SocialWorkerMaxAggregateInputType = {
   id?: true
-  phoneNumber?: true
-  siteId?: true
 }
 
 export type AggregateSocialWorkerArgs = {
@@ -6930,14 +7962,11 @@ export type SocialWorkerSelect = {
   fullName?: boolean
   phoneNumber?: boolean
   email?: boolean
-  siteId?: boolean
-  site?: boolean | SiteArgs
-  groupoforphans?: boolean | FindManyGroupOfOrphansArgs
+  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
 }
 
 export type SocialWorkerInclude = {
-  site?: boolean | SiteArgs
-  groupoforphans?: boolean | FindManyGroupOfOrphansArgs
+  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
 }
 
 export type SocialWorkerGetPayload<
@@ -6951,19 +7980,15 @@ export type SocialWorkerGetPayload<
   ? 'include' extends U
     ? SocialWorker  & {
       [P in TrueKeys<S['include']>]:
-      P extends 'site'
-      ? SiteGetPayload<S['include'][P]> :
-      P extends 'groupoforphans'
-      ? Array<GroupOfOrphansGetPayload<S['include'][P]>> : never
+      P extends 'sponsoredgroup'
+      ? Array<SponsoredGroupGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof SocialWorker ? SocialWorker[P]
 : 
-      P extends 'site'
-      ? SiteGetPayload<S['select'][P]> :
-      P extends 'groupoforphans'
-      ? Array<GroupOfOrphansGetPayload<S['select'][P]>> : never
+      P extends 'sponsoredgroup'
+      ? Array<SponsoredGroupGetPayload<S['select'][P]>> : never
     }
   : SocialWorker
 : SocialWorker
@@ -7135,9 +8160,7 @@ export declare class Prisma__SocialWorkerClient<T> implements Promise<T> {
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-  site<T extends SiteArgs = {}>(args?: Subset<T, SiteArgs>): CheckSelect<T, Prisma__SiteClient<Site | null>, Prisma__SiteClient<SiteGetPayload<T> | null>>;
-
-  groupoforphans<T extends FindManyGroupOfOrphansArgs = {}>(args?: Subset<T, FindManyGroupOfOrphansArgs>): CheckSelect<T, Promise<Array<GroupOfOrphans>>, Promise<Array<GroupOfOrphansGetPayload<T>>>>;
+  sponsoredgroup<T extends FindManySponsoredGroupArgs = {}>(args?: Subset<T, FindManySponsoredGroupArgs>): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -7341,158 +8364,1549 @@ export type SocialWorkerArgs = {
 
 
 /**
+ * Model SponsoredGroup
+ */
+
+export type SponsoredGroup = {
+  id: number
+  sponsorshipDate: Date
+  supportId: number | null
+  donorId: number | null
+  socialWorkerId: number | null
+}
+
+
+export type AggregateSponsoredGroup = {
+  count: number
+  avg: SponsoredGroupAvgAggregateOutputType | null
+  sum: SponsoredGroupSumAggregateOutputType | null
+  min: SponsoredGroupMinAggregateOutputType | null
+  max: SponsoredGroupMaxAggregateOutputType | null
+}
+
+export type SponsoredGroupAvgAggregateOutputType = {
+  id: number
+  supportId: number
+  donorId: number
+  socialWorkerId: number
+}
+
+export type SponsoredGroupSumAggregateOutputType = {
+  id: number
+  supportId: number | null
+  donorId: number | null
+  socialWorkerId: number | null
+}
+
+export type SponsoredGroupMinAggregateOutputType = {
+  id: number
+  supportId: number | null
+  donorId: number | null
+  socialWorkerId: number | null
+}
+
+export type SponsoredGroupMaxAggregateOutputType = {
+  id: number
+  supportId: number | null
+  donorId: number | null
+  socialWorkerId: number | null
+}
+
+
+export type SponsoredGroupAvgAggregateInputType = {
+  id?: true
+  supportId?: true
+  donorId?: true
+  socialWorkerId?: true
+}
+
+export type SponsoredGroupSumAggregateInputType = {
+  id?: true
+  supportId?: true
+  donorId?: true
+  socialWorkerId?: true
+}
+
+export type SponsoredGroupMinAggregateInputType = {
+  id?: true
+  supportId?: true
+  donorId?: true
+  socialWorkerId?: true
+}
+
+export type SponsoredGroupMaxAggregateInputType = {
+  id?: true
+  supportId?: true
+  donorId?: true
+  socialWorkerId?: true
+}
+
+export type AggregateSponsoredGroupArgs = {
+  where?: SponsoredGroupWhereInput
+  orderBy?: Enumerable<SponsoredGroupOrderByInput>
+  cursor?: SponsoredGroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<SponsoredGroupDistinctFieldEnum>
+  count?: true
+  avg?: SponsoredGroupAvgAggregateInputType
+  sum?: SponsoredGroupSumAggregateInputType
+  min?: SponsoredGroupMinAggregateInputType
+  max?: SponsoredGroupMaxAggregateInputType
+}
+
+export type GetSponsoredGroupAggregateType<T extends AggregateSponsoredGroupArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetSponsoredGroupAggregateScalarType<T[P]>
+}
+
+export type GetSponsoredGroupAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof SponsoredGroupAvgAggregateOutputType ? SponsoredGroupAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type SponsoredGroupSelect = {
+  id?: boolean
+  sponsorshipDate?: boolean
+  supportId?: boolean
+  donorId?: boolean
+  socialWorkerId?: boolean
+  donor?: boolean | DonorArgs
+  socialworkers?: boolean | SocialWorkerArgs
+  support?: boolean | SupportArgs
+  orphans?: boolean | FindManyOrphanArgs
+}
+
+export type SponsoredGroupInclude = {
+  donor?: boolean | DonorArgs
+  socialworkers?: boolean | SocialWorkerArgs
+  support?: boolean | SupportArgs
+  orphans?: boolean | FindManyOrphanArgs
+}
+
+export type SponsoredGroupGetPayload<
+  S extends boolean | null | undefined | SponsoredGroupArgs,
+  U = keyof S
+> = S extends true
+  ? SponsoredGroup
+  : S extends undefined
+  ? never
+  : S extends SponsoredGroupArgs | FindManySponsoredGroupArgs
+  ? 'include' extends U
+    ? SponsoredGroup  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'donor'
+      ? DonorGetPayload<S['include'][P]> | null :
+      P extends 'socialworkers'
+      ? SocialWorkerGetPayload<S['include'][P]> | null :
+      P extends 'support'
+      ? SupportGetPayload<S['include'][P]> | null :
+      P extends 'orphans'
+      ? Array<OrphanGetPayload<S['include'][P]>> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof SponsoredGroup ? SponsoredGroup[P]
+: 
+      P extends 'donor'
+      ? DonorGetPayload<S['select'][P]> | null :
+      P extends 'socialworkers'
+      ? SocialWorkerGetPayload<S['select'][P]> | null :
+      P extends 'support'
+      ? SupportGetPayload<S['select'][P]> | null :
+      P extends 'orphans'
+      ? Array<OrphanGetPayload<S['select'][P]>> : never
+    }
+  : SponsoredGroup
+: SponsoredGroup
+
+
+export interface SponsoredGroupDelegate {
+  /**
+   * Find zero or one SponsoredGroup.
+   * @param {FindOneSponsoredGroupArgs} args - Arguments to find a SponsoredGroup
+   * @example
+   * // Get one SponsoredGroup
+   * const sponsoredGroup = await prisma.sponsoredGroup.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneSponsoredGroupArgs>(
+    args: Subset<T, FindOneSponsoredGroupArgs>
+  ): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup | null>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T> | null>>
+  /**
+   * Find zero or more SponsoredGroups.
+   * @param {FindManySponsoredGroupArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all SponsoredGroups
+   * const sponsoredGroups = await prisma.sponsoredGroup.findMany()
+   * 
+   * // Get first 10 SponsoredGroups
+   * const sponsoredGroups = await prisma.sponsoredGroup.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const sponsoredGroupWithIdOnly = await prisma.sponsoredGroup.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManySponsoredGroupArgs>(
+    args?: Subset<T, FindManySponsoredGroupArgs>
+  ): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>
+  /**
+   * Create a SponsoredGroup.
+   * @param {SponsoredGroupCreateArgs} args - Arguments to create a SponsoredGroup.
+   * @example
+   * // Create one SponsoredGroup
+   * const SponsoredGroup = await prisma.sponsoredGroup.create({
+   *   data: {
+   *     // ... data to create a SponsoredGroup
+   *   }
+   * })
+   * 
+  **/
+  create<T extends SponsoredGroupCreateArgs>(
+    args: Subset<T, SponsoredGroupCreateArgs>
+  ): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T>>>
+  /**
+   * Delete a SponsoredGroup.
+   * @param {SponsoredGroupDeleteArgs} args - Arguments to delete one SponsoredGroup.
+   * @example
+   * // Delete one SponsoredGroup
+   * const SponsoredGroup = await prisma.sponsoredGroup.delete({
+   *   where: {
+   *     // ... filter to delete one SponsoredGroup
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends SponsoredGroupDeleteArgs>(
+    args: Subset<T, SponsoredGroupDeleteArgs>
+  ): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T>>>
+  /**
+   * Update one SponsoredGroup.
+   * @param {SponsoredGroupUpdateArgs} args - Arguments to update one SponsoredGroup.
+   * @example
+   * // Update one SponsoredGroup
+   * const sponsoredGroup = await prisma.sponsoredGroup.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends SponsoredGroupUpdateArgs>(
+    args: Subset<T, SponsoredGroupUpdateArgs>
+  ): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T>>>
+  /**
+   * Delete zero or more SponsoredGroups.
+   * @param {SponsoredGroupDeleteManyArgs} args - Arguments to filter SponsoredGroups to delete.
+   * @example
+   * // Delete a few SponsoredGroups
+   * const { count } = await prisma.sponsoredGroup.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends SponsoredGroupDeleteManyArgs>(
+    args: Subset<T, SponsoredGroupDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more SponsoredGroups.
+   * @param {SponsoredGroupUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many SponsoredGroups
+   * const sponsoredGroup = await prisma.sponsoredGroup.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends SponsoredGroupUpdateManyArgs>(
+    args: Subset<T, SponsoredGroupUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one SponsoredGroup.
+   * @param {SponsoredGroupUpsertArgs} args - Arguments to update or create a SponsoredGroup.
+   * @example
+   * // Update or create a SponsoredGroup
+   * const sponsoredGroup = await prisma.sponsoredGroup.upsert({
+   *   create: {
+   *     // ... data to create a SponsoredGroup
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the SponsoredGroup we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends SponsoredGroupUpsertArgs>(
+    args: Subset<T, SponsoredGroupUpsertArgs>
+  ): CheckSelect<T, Prisma__SponsoredGroupClient<SponsoredGroup>, Prisma__SponsoredGroupClient<SponsoredGroupGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManySponsoredGroupArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateSponsoredGroupArgs>(args: Subset<T, AggregateSponsoredGroupArgs>): Promise<GetSponsoredGroupAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for SponsoredGroup.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__SponsoredGroupClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  donor<T extends DonorArgs = {}>(args?: Subset<T, DonorArgs>): CheckSelect<T, Prisma__DonorClient<Donor | null>, Prisma__DonorClient<DonorGetPayload<T> | null>>;
+
+  socialworkers<T extends SocialWorkerArgs = {}>(args?: Subset<T, SocialWorkerArgs>): CheckSelect<T, Prisma__SocialWorkerClient<SocialWorker | null>, Prisma__SocialWorkerClient<SocialWorkerGetPayload<T> | null>>;
+
+  support<T extends SupportArgs = {}>(args?: Subset<T, SupportArgs>): CheckSelect<T, Prisma__SupportClient<Support | null>, Prisma__SupportClient<SupportGetPayload<T> | null>>;
+
+  orphans<T extends FindManyOrphanArgs = {}>(args?: Subset<T, FindManyOrphanArgs>): CheckSelect<T, Promise<Array<Orphan>>, Promise<Array<OrphanGetPayload<T>>>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * SponsoredGroup findOne
+ */
+export type FindOneSponsoredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * Filter, which SponsoredGroup to fetch.
+  **/
+  where: SponsoredGroupWhereUniqueInput
+}
+
+
+/**
+ * SponsoredGroup findMany
+ */
+export type FindManySponsoredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * Filter, which SponsoredGroups to fetch.
+  **/
+  where?: SponsoredGroupWhereInput
+  /**
+   * Determine the order of the SponsoredGroups to fetch.
+  **/
+  orderBy?: Enumerable<SponsoredGroupOrderByInput>
+  /**
+   * Sets the position for listing SponsoredGroups.
+  **/
+  cursor?: SponsoredGroupWhereUniqueInput
+  /**
+   * The number of SponsoredGroups to fetch. If negative number, it will take SponsoredGroups before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` SponsoredGroups.
+  **/
+  skip?: number
+  distinct?: Enumerable<SponsoredGroupDistinctFieldEnum>
+}
+
+
+/**
+ * SponsoredGroup create
+ */
+export type SponsoredGroupCreateArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * The data needed to create a SponsoredGroup.
+  **/
+  data: SponsoredGroupCreateInput
+}
+
+
+/**
+ * SponsoredGroup update
+ */
+export type SponsoredGroupUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * The data needed to update a SponsoredGroup.
+  **/
+  data: SponsoredGroupUpdateInput
+  /**
+   * Choose, which SponsoredGroup to update.
+  **/
+  where: SponsoredGroupWhereUniqueInput
+}
+
+
+/**
+ * SponsoredGroup updateMany
+ */
+export type SponsoredGroupUpdateManyArgs = {
+  data: SponsoredGroupUpdateManyMutationInput
+  where?: SponsoredGroupWhereInput
+}
+
+
+/**
+ * SponsoredGroup upsert
+ */
+export type SponsoredGroupUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * The filter to search for the SponsoredGroup to update in case it exists.
+  **/
+  where: SponsoredGroupWhereUniqueInput
+  /**
+   * In case the SponsoredGroup found by the `where` argument doesn't exist, create a new SponsoredGroup with this data.
+  **/
+  create: SponsoredGroupCreateInput
+  /**
+   * In case the SponsoredGroup was found with the provided `where` argument, update it with this data.
+  **/
+  update: SponsoredGroupUpdateInput
+}
+
+
+/**
+ * SponsoredGroup delete
+ */
+export type SponsoredGroupDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+  /**
+   * Filter which SponsoredGroup to delete.
+  **/
+  where: SponsoredGroupWhereUniqueInput
+}
+
+
+/**
+ * SponsoredGroup deleteMany
+ */
+export type SponsoredGroupDeleteManyArgs = {
+  where?: SponsoredGroupWhereInput
+}
+
+
+/**
+ * SponsoredGroup without action
+ */
+export type SponsoredGroupArgs = {
+  /**
+   * Select specific fields to fetch from the SponsoredGroup
+  **/
+  select?: SponsoredGroupSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SponsoredGroupInclude | null
+}
+
+
+
+/**
+ * Model Support
+ */
+
+export type Support = {
+  id: number
+  status: string | null
+  financialId: number | null
+  educationalId: number | null
+  otherId: number | null
+}
+
+
+export type AggregateSupport = {
+  count: number
+  avg: SupportAvgAggregateOutputType | null
+  sum: SupportSumAggregateOutputType | null
+  min: SupportMinAggregateOutputType | null
+  max: SupportMaxAggregateOutputType | null
+}
+
+export type SupportAvgAggregateOutputType = {
+  id: number
+  financialId: number
+  educationalId: number
+  otherId: number
+}
+
+export type SupportSumAggregateOutputType = {
+  id: number
+  financialId: number | null
+  educationalId: number | null
+  otherId: number | null
+}
+
+export type SupportMinAggregateOutputType = {
+  id: number
+  financialId: number | null
+  educationalId: number | null
+  otherId: number | null
+}
+
+export type SupportMaxAggregateOutputType = {
+  id: number
+  financialId: number | null
+  educationalId: number | null
+  otherId: number | null
+}
+
+
+export type SupportAvgAggregateInputType = {
+  id?: true
+  financialId?: true
+  educationalId?: true
+  otherId?: true
+}
+
+export type SupportSumAggregateInputType = {
+  id?: true
+  financialId?: true
+  educationalId?: true
+  otherId?: true
+}
+
+export type SupportMinAggregateInputType = {
+  id?: true
+  financialId?: true
+  educationalId?: true
+  otherId?: true
+}
+
+export type SupportMaxAggregateInputType = {
+  id?: true
+  financialId?: true
+  educationalId?: true
+  otherId?: true
+}
+
+export type AggregateSupportArgs = {
+  where?: SupportWhereInput
+  orderBy?: Enumerable<SupportOrderByInput>
+  cursor?: SupportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<SupportDistinctFieldEnum>
+  count?: true
+  avg?: SupportAvgAggregateInputType
+  sum?: SupportSumAggregateInputType
+  min?: SupportMinAggregateInputType
+  max?: SupportMaxAggregateInputType
+}
+
+export type GetSupportAggregateType<T extends AggregateSupportArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetSupportAggregateScalarType<T[P]>
+}
+
+export type GetSupportAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof SupportAvgAggregateOutputType ? SupportAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type SupportSelect = {
+  id?: boolean
+  status?: boolean
+  financialId?: boolean
+  educationalId?: boolean
+  otherId?: boolean
+  educationalsupport?: boolean | EducationalSupportArgs
+  financialsupport?: boolean | FinancialSupportArgs
+  othersupport?: boolean | OtherSupportArgs
+  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
+}
+
+export type SupportInclude = {
+  educationalsupport?: boolean | EducationalSupportArgs
+  financialsupport?: boolean | FinancialSupportArgs
+  othersupport?: boolean | OtherSupportArgs
+  sponsoredgroup?: boolean | FindManySponsoredGroupArgs
+}
+
+export type SupportGetPayload<
+  S extends boolean | null | undefined | SupportArgs,
+  U = keyof S
+> = S extends true
+  ? Support
+  : S extends undefined
+  ? never
+  : S extends SupportArgs | FindManySupportArgs
+  ? 'include' extends U
+    ? Support  & {
+      [P in TrueKeys<S['include']>]:
+      P extends 'educationalsupport'
+      ? EducationalSupportGetPayload<S['include'][P]> | null :
+      P extends 'financialsupport'
+      ? FinancialSupportGetPayload<S['include'][P]> | null :
+      P extends 'othersupport'
+      ? OtherSupportGetPayload<S['include'][P]> | null :
+      P extends 'sponsoredgroup'
+      ? Array<SponsoredGroupGetPayload<S['include'][P]>> : never
+    }
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof Support ? Support[P]
+: 
+      P extends 'educationalsupport'
+      ? EducationalSupportGetPayload<S['select'][P]> | null :
+      P extends 'financialsupport'
+      ? FinancialSupportGetPayload<S['select'][P]> | null :
+      P extends 'othersupport'
+      ? OtherSupportGetPayload<S['select'][P]> | null :
+      P extends 'sponsoredgroup'
+      ? Array<SponsoredGroupGetPayload<S['select'][P]>> : never
+    }
+  : Support
+: Support
+
+
+export interface SupportDelegate {
+  /**
+   * Find zero or one Support.
+   * @param {FindOneSupportArgs} args - Arguments to find a Support
+   * @example
+   * // Get one Support
+   * const support = await prisma.support.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOneSupportArgs>(
+    args: Subset<T, FindOneSupportArgs>
+  ): CheckSelect<T, Prisma__SupportClient<Support | null>, Prisma__SupportClient<SupportGetPayload<T> | null>>
+  /**
+   * Find zero or more Supports.
+   * @param {FindManySupportArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all Supports
+   * const supports = await prisma.support.findMany()
+   * 
+   * // Get first 10 Supports
+   * const supports = await prisma.support.findMany({ take: 10 })
+   * 
+   * // Only select the `id`
+   * const supportWithIdOnly = await prisma.support.findMany({ select: { id: true } })
+   * 
+  **/
+  findMany<T extends FindManySupportArgs>(
+    args?: Subset<T, FindManySupportArgs>
+  ): CheckSelect<T, Promise<Array<Support>>, Promise<Array<SupportGetPayload<T>>>>
+  /**
+   * Create a Support.
+   * @param {SupportCreateArgs} args - Arguments to create a Support.
+   * @example
+   * // Create one Support
+   * const Support = await prisma.support.create({
+   *   data: {
+   *     // ... data to create a Support
+   *   }
+   * })
+   * 
+  **/
+  create<T extends SupportCreateArgs>(
+    args: Subset<T, SupportCreateArgs>
+  ): CheckSelect<T, Prisma__SupportClient<Support>, Prisma__SupportClient<SupportGetPayload<T>>>
+  /**
+   * Delete a Support.
+   * @param {SupportDeleteArgs} args - Arguments to delete one Support.
+   * @example
+   * // Delete one Support
+   * const Support = await prisma.support.delete({
+   *   where: {
+   *     // ... filter to delete one Support
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends SupportDeleteArgs>(
+    args: Subset<T, SupportDeleteArgs>
+  ): CheckSelect<T, Prisma__SupportClient<Support>, Prisma__SupportClient<SupportGetPayload<T>>>
+  /**
+   * Update one Support.
+   * @param {SupportUpdateArgs} args - Arguments to update one Support.
+   * @example
+   * // Update one Support
+   * const support = await prisma.support.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends SupportUpdateArgs>(
+    args: Subset<T, SupportUpdateArgs>
+  ): CheckSelect<T, Prisma__SupportClient<Support>, Prisma__SupportClient<SupportGetPayload<T>>>
+  /**
+   * Delete zero or more Supports.
+   * @param {SupportDeleteManyArgs} args - Arguments to filter Supports to delete.
+   * @example
+   * // Delete a few Supports
+   * const { count } = await prisma.support.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends SupportDeleteManyArgs>(
+    args: Subset<T, SupportDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more Supports.
+   * @param {SupportUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many Supports
+   * const support = await prisma.support.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends SupportUpdateManyArgs>(
+    args: Subset<T, SupportUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one Support.
+   * @param {SupportUpsertArgs} args - Arguments to update or create a Support.
+   * @example
+   * // Update or create a Support
+   * const support = await prisma.support.upsert({
+   *   create: {
+   *     // ... data to create a Support
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the Support we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends SupportUpsertArgs>(
+    args: Subset<T, SupportUpsertArgs>
+  ): CheckSelect<T, Prisma__SupportClient<Support>, Prisma__SupportClient<SupportGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManySupportArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateSupportArgs>(args: Subset<T, AggregateSupportArgs>): Promise<GetSupportAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for Support.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__SupportClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  educationalsupport<T extends EducationalSupportArgs = {}>(args?: Subset<T, EducationalSupportArgs>): CheckSelect<T, Prisma__EducationalSupportClient<EducationalSupport | null>, Prisma__EducationalSupportClient<EducationalSupportGetPayload<T> | null>>;
+
+  financialsupport<T extends FinancialSupportArgs = {}>(args?: Subset<T, FinancialSupportArgs>): CheckSelect<T, Prisma__FinancialSupportClient<FinancialSupport | null>, Prisma__FinancialSupportClient<FinancialSupportGetPayload<T> | null>>;
+
+  othersupport<T extends OtherSupportArgs = {}>(args?: Subset<T, OtherSupportArgs>): CheckSelect<T, Prisma__OtherSupportClient<OtherSupport | null>, Prisma__OtherSupportClient<OtherSupportGetPayload<T> | null>>;
+
+  sponsoredgroup<T extends FindManySponsoredGroupArgs = {}>(args?: Subset<T, FindManySponsoredGroupArgs>): CheckSelect<T, Promise<Array<SponsoredGroup>>, Promise<Array<SponsoredGroupGetPayload<T>>>>;
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * Support findOne
+ */
+export type FindOneSupportArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * Filter, which Support to fetch.
+  **/
+  where: SupportWhereUniqueInput
+}
+
+
+/**
+ * Support findMany
+ */
+export type FindManySupportArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * Filter, which Supports to fetch.
+  **/
+  where?: SupportWhereInput
+  /**
+   * Determine the order of the Supports to fetch.
+  **/
+  orderBy?: Enumerable<SupportOrderByInput>
+  /**
+   * Sets the position for listing Supports.
+  **/
+  cursor?: SupportWhereUniqueInput
+  /**
+   * The number of Supports to fetch. If negative number, it will take Supports before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` Supports.
+  **/
+  skip?: number
+  distinct?: Enumerable<SupportDistinctFieldEnum>
+}
+
+
+/**
+ * Support create
+ */
+export type SupportCreateArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * The data needed to create a Support.
+  **/
+  data: SupportCreateInput
+}
+
+
+/**
+ * Support update
+ */
+export type SupportUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * The data needed to update a Support.
+  **/
+  data: SupportUpdateInput
+  /**
+   * Choose, which Support to update.
+  **/
+  where: SupportWhereUniqueInput
+}
+
+
+/**
+ * Support updateMany
+ */
+export type SupportUpdateManyArgs = {
+  data: SupportUpdateManyMutationInput
+  where?: SupportWhereInput
+}
+
+
+/**
+ * Support upsert
+ */
+export type SupportUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * The filter to search for the Support to update in case it exists.
+  **/
+  where: SupportWhereUniqueInput
+  /**
+   * In case the Support found by the `where` argument doesn't exist, create a new Support with this data.
+  **/
+  create: SupportCreateInput
+  /**
+   * In case the Support was found with the provided `where` argument, update it with this data.
+  **/
+  update: SupportUpdateInput
+}
+
+
+/**
+ * Support delete
+ */
+export type SupportDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+  /**
+   * Filter which Support to delete.
+  **/
+  where: SupportWhereUniqueInput
+}
+
+
+/**
+ * Support deleteMany
+ */
+export type SupportDeleteManyArgs = {
+  where?: SupportWhereInput
+}
+
+
+/**
+ * Support without action
+ */
+export type SupportArgs = {
+  /**
+   * Select specific fields to fetch from the Support
+  **/
+  select?: SupportSelect | null
+  /**
+   * Choose, which related nodes to fetch as well.
+  **/
+  include?: SupportInclude | null
+}
+
+
+
+/**
+ * Model migration
+ */
+
+export type migration = {
+  revision: number
+  name: string
+  datamodel: string
+  status: string
+  applied: number
+  rolled_back: number
+  datamodel_steps: string
+  database_migration: string
+  errors: string
+  started_at: Date
+  finished_at: Date | null
+}
+
+
+export type AggregateMigration = {
+  count: number
+  avg: MigrationAvgAggregateOutputType | null
+  sum: MigrationSumAggregateOutputType | null
+  min: MigrationMinAggregateOutputType | null
+  max: MigrationMaxAggregateOutputType | null
+}
+
+export type MigrationAvgAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationSumAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationMinAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+export type MigrationMaxAggregateOutputType = {
+  revision: number
+  applied: number
+  rolled_back: number
+}
+
+
+export type MigrationAvgAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationSumAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationMinAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type MigrationMaxAggregateInputType = {
+  revision?: true
+  applied?: true
+  rolled_back?: true
+}
+
+export type AggregateMigrationArgs = {
+  where?: migrationWhereInput
+  orderBy?: Enumerable<migrationOrderByInput>
+  cursor?: migrationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Enumerable<MigrationDistinctFieldEnum>
+  count?: true
+  avg?: MigrationAvgAggregateInputType
+  sum?: MigrationSumAggregateInputType
+  min?: MigrationMinAggregateInputType
+  max?: MigrationMaxAggregateInputType
+}
+
+export type GetMigrationAggregateType<T extends AggregateMigrationArgs> = {
+  [P in keyof T]: P extends 'count' ? number : GetMigrationAggregateScalarType<T[P]>
+}
+
+export type GetMigrationAggregateScalarType<T extends any> = {
+  [P in keyof T]: P extends keyof MigrationAvgAggregateOutputType ? MigrationAvgAggregateOutputType[P] : never
+}
+    
+    
+
+export type migrationSelect = {
+  revision?: boolean
+  name?: boolean
+  datamodel?: boolean
+  status?: boolean
+  applied?: boolean
+  rolled_back?: boolean
+  datamodel_steps?: boolean
+  database_migration?: boolean
+  errors?: boolean
+  started_at?: boolean
+  finished_at?: boolean
+}
+
+export type migrationGetPayload<
+  S extends boolean | null | undefined | migrationArgs,
+  U = keyof S
+> = S extends true
+  ? migration
+  : S extends undefined
+  ? never
+  : S extends migrationArgs | FindManymigrationArgs
+  ? 'include' extends U
+    ? migration 
+  : 'select' extends U
+    ? {
+      [P in TrueKeys<S['select']>]:P extends keyof migration ? migration[P]
+: 
+ never
+    }
+  : migration
+: migration
+
+
+export interface migrationDelegate {
+  /**
+   * Find zero or one Migration.
+   * @param {FindOnemigrationArgs} args - Arguments to find a Migration
+   * @example
+   * // Get one Migration
+   * const migration = await prisma.migration.findOne({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+  **/
+  findOne<T extends FindOnemigrationArgs>(
+    args: Subset<T, FindOnemigrationArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration | null>, Prisma__migrationClient<migrationGetPayload<T> | null>>
+  /**
+   * Find zero or more Migrations.
+   * @param {FindManymigrationArgs=} args - Arguments to filter and select certain fields only.
+   * @example
+   * // Get all Migrations
+   * const migrations = await prisma.migration.findMany()
+   * 
+   * // Get first 10 Migrations
+   * const migrations = await prisma.migration.findMany({ take: 10 })
+   * 
+   * // Only select the `revision`
+   * const migrationWithRevisionOnly = await prisma.migration.findMany({ select: { revision: true } })
+   * 
+  **/
+  findMany<T extends FindManymigrationArgs>(
+    args?: Subset<T, FindManymigrationArgs>
+  ): CheckSelect<T, Promise<Array<migration>>, Promise<Array<migrationGetPayload<T>>>>
+  /**
+   * Create a Migration.
+   * @param {migrationCreateArgs} args - Arguments to create a Migration.
+   * @example
+   * // Create one Migration
+   * const Migration = await prisma.migration.create({
+   *   data: {
+   *     // ... data to create a Migration
+   *   }
+   * })
+   * 
+  **/
+  create<T extends migrationCreateArgs>(
+    args: Subset<T, migrationCreateArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Delete a Migration.
+   * @param {migrationDeleteArgs} args - Arguments to delete one Migration.
+   * @example
+   * // Delete one Migration
+   * const Migration = await prisma.migration.delete({
+   *   where: {
+   *     // ... filter to delete one Migration
+   *   }
+   * })
+   * 
+  **/
+  delete<T extends migrationDeleteArgs>(
+    args: Subset<T, migrationDeleteArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Update one Migration.
+   * @param {migrationUpdateArgs} args - Arguments to update one Migration.
+   * @example
+   * // Update one Migration
+   * const migration = await prisma.migration.update({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  update<T extends migrationUpdateArgs>(
+    args: Subset<T, migrationUpdateArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Delete zero or more Migrations.
+   * @param {migrationDeleteManyArgs} args - Arguments to filter Migrations to delete.
+   * @example
+   * // Delete a few Migrations
+   * const { count } = await prisma.migration.deleteMany({
+   *   where: {
+   *     // ... provide filter here
+   *   }
+   * })
+   * 
+  **/
+  deleteMany<T extends migrationDeleteManyArgs>(
+    args: Subset<T, migrationDeleteManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Update zero or more Migrations.
+   * @param {migrationUpdateManyArgs} args - Arguments to update one or more rows.
+   * @example
+   * // Update many Migrations
+   * const migration = await prisma.migration.updateMany({
+   *   where: {
+   *     // ... provide filter here
+   *   },
+   *   data: {
+   *     // ... provide data here
+   *   }
+   * })
+   * 
+  **/
+  updateMany<T extends migrationUpdateManyArgs>(
+    args: Subset<T, migrationUpdateManyArgs>
+  ): Promise<BatchPayload>
+  /**
+   * Create or update one Migration.
+   * @param {migrationUpsertArgs} args - Arguments to update or create a Migration.
+   * @example
+   * // Update or create a Migration
+   * const migration = await prisma.migration.upsert({
+   *   create: {
+   *     // ... data to create a Migration
+   *   },
+   *   update: {
+   *     // ... in case it already exists, update
+   *   },
+   *   where: {
+   *     // ... the filter for the Migration we want to update
+   *   }
+   * })
+  **/
+  upsert<T extends migrationUpsertArgs>(
+    args: Subset<T, migrationUpsertArgs>
+  ): CheckSelect<T, Prisma__migrationClient<migration>, Prisma__migrationClient<migrationGetPayload<T>>>
+  /**
+   * Count
+   */
+  count(args?: Omit<FindManymigrationArgs, 'select' | 'include'>): Promise<number>
+
+  /**
+   * Aggregate
+   */
+  aggregate<T extends AggregateMigrationArgs>(args: Subset<T, AggregateMigrationArgs>): Promise<GetMigrationAggregateType<T>>
+}
+
+/**
+ * The delegate class that acts as a "Promise-like" for migration.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in 
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export declare class Prisma__migrationClient<T> implements Promise<T> {
+  private readonly _dmmf;
+  private readonly _fetcher;
+  private readonly _queryType;
+  private readonly _rootField;
+  private readonly _clientMethod;
+  private readonly _args;
+  private readonly _dataPath;
+  private readonly _errorFormat;
+  private readonly _measurePerformance?;
+  private _isList;
+  private _callsite;
+  private _requestPromise?;
+  constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+  readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+  private get _document();
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+  /**
+   * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+   * resolved value cannot be modified from the callback.
+   * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+   * @returns A Promise for the completion of the callback.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}
+
+// Custom InputTypes
+
+/**
+ * migration findOne
+ */
+export type FindOnemigrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter, which migration to fetch.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration findMany
+ */
+export type FindManymigrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter, which migrations to fetch.
+  **/
+  where?: migrationWhereInput
+  /**
+   * Determine the order of the migrations to fetch.
+  **/
+  orderBy?: Enumerable<migrationOrderByInput>
+  /**
+   * Sets the position for listing migrations.
+  **/
+  cursor?: migrationWhereUniqueInput
+  /**
+   * The number of migrations to fetch. If negative number, it will take migrations before the `cursor`.
+  **/
+  take?: number
+  /**
+   * Skip the first `n` migrations.
+  **/
+  skip?: number
+  distinct?: Enumerable<MigrationDistinctFieldEnum>
+}
+
+
+/**
+ * migration create
+ */
+export type migrationCreateArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The data needed to create a migration.
+  **/
+  data: migrationCreateInput
+}
+
+
+/**
+ * migration update
+ */
+export type migrationUpdateArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The data needed to update a migration.
+  **/
+  data: migrationUpdateInput
+  /**
+   * Choose, which migration to update.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration updateMany
+ */
+export type migrationUpdateManyArgs = {
+  data: migrationUpdateManyMutationInput
+  where?: migrationWhereInput
+}
+
+
+/**
+ * migration upsert
+ */
+export type migrationUpsertArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * The filter to search for the migration to update in case it exists.
+  **/
+  where: migrationWhereUniqueInput
+  /**
+   * In case the migration found by the `where` argument doesn't exist, create a new migration with this data.
+  **/
+  create: migrationCreateInput
+  /**
+   * In case the migration was found with the provided `where` argument, update it with this data.
+  **/
+  update: migrationUpdateInput
+}
+
+
+/**
+ * migration delete
+ */
+export type migrationDeleteArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+  /**
+   * Filter which migration to delete.
+  **/
+  where: migrationWhereUniqueInput
+}
+
+
+/**
+ * migration deleteMany
+ */
+export type migrationDeleteManyArgs = {
+  where?: migrationWhereInput
+}
+
+
+/**
+ * migration without action
+ */
+export type migrationArgs = {
+  /**
+   * Select specific fields to fetch from the migration
+  **/
+  select?: migrationSelect | null
+}
+
+
+
+/**
  * Deep Input Types
  */
 
-
-export type NestedStringFilter = {
-  equals?: string
-  in?: Enumerable<string>
-  notIn?: Enumerable<string>
-  lt?: string
-  lte?: string
-  gt?: string
-  gte?: string
-  contains?: string
-  startsWith?: string
-  endsWith?: string
-  not?: NestedStringFilter | null
-}
-
-export type StringFilter = {
-  equals?: string
-  in?: Enumerable<string>
-  notIn?: Enumerable<string>
-  lt?: string
-  lte?: string
-  gt?: string
-  gte?: string
-  contains?: string
-  startsWith?: string
-  endsWith?: string
-  not?: string | NestedStringFilter
-}
-
-export type NestedIntFilter = {
-  equals?: number
-  in?: Enumerable<number>
-  notIn?: Enumerable<number>
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: NestedIntFilter | null
-}
-
-export type IntFilter = {
-  equals?: number
-  in?: Enumerable<number>
-  notIn?: Enumerable<number>
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: number | NestedIntFilter
-}
-
-export type AddressRelationFilter = {
-  is?: AddressWhereInput | null
-  isNot?: AddressWhereInput | null
-}
-
-export type NestedDateTimeFilter = {
-  equals?: Date | string
-  in?: Enumerable<Date | string>
-  notIn?: Enumerable<Date | string>
-  lt?: Date | string
-  lte?: Date | string
-  gt?: Date | string
-  gte?: Date | string
-  not?: NestedDateTimeFilter | null
-}
-
-export type DateTimeFilter = {
-  equals?: Date | string
-  in?: Enumerable<Date | string>
-  notIn?: Enumerable<Date | string>
-  lt?: Date | string
-  lte?: Date | string
-  gt?: Date | string
-  gte?: Date | string
-  not?: Date | string | NestedDateTimeFilter
-}
-
-export type NestedStringNullableFilter = {
-  equals?: string | null
-  in?: Enumerable<string> | null
-  notIn?: Enumerable<string> | null
-  lt?: string | null
-  lte?: string | null
-  gt?: string | null
-  gte?: string | null
-  contains?: string | null
-  startsWith?: string | null
-  endsWith?: string | null
-  not?: NestedStringNullableFilter | null
-}
-
-export type StringNullableFilter = {
-  equals?: string | null
-  in?: Enumerable<string> | null
-  notIn?: Enumerable<string> | null
-  lt?: string | null
-  lte?: string | null
-  gt?: string | null
-  gte?: string | null
-  contains?: string | null
-  startsWith?: string | null
-  endsWith?: string | null
-  not?: string | NestedStringNullableFilter | null
-}
-
-export type NestedFloatNullableFilter = {
-  equals?: number | null
-  in?: Enumerable<number> | null
-  notIn?: Enumerable<number> | null
-  lt?: number | null
-  lte?: number | null
-  gt?: number | null
-  gte?: number | null
-  not?: NestedFloatNullableFilter | null
-}
-
-export type FloatNullableFilter = {
-  equals?: number | null
-  in?: Enumerable<number> | null
-  notIn?: Enumerable<number> | null
-  lt?: number | null
-  lte?: number | null
-  gt?: number | null
-  gte?: number | null
-  not?: number | NestedFloatNullableFilter | null
-}
-
-export type NestedDateTimeNullableFilter = {
-  equals?: Date | string | null
-  in?: Enumerable<Date | string> | null
-  notIn?: Enumerable<Date | string> | null
-  lt?: Date | string | null
-  lte?: Date | string | null
-  gt?: Date | string | null
-  gte?: Date | string | null
-  not?: NestedDateTimeNullableFilter | null
-}
-
-export type DateTimeNullableFilter = {
-  equals?: Date | string | null
-  in?: Enumerable<Date | string> | null
-  notIn?: Enumerable<Date | string> | null
-  lt?: Date | string | null
-  lte?: Date | string | null
-  gt?: Date | string | null
-  gte?: Date | string | null
-  not?: Date | string | NestedDateTimeNullableFilter | null
-}
 
 export type DonorWhereInput = {
   AND?: Enumerable<DonorWhereInput>
@@ -7500,120 +9914,26 @@ export type DonorWhereInput = {
   NOT?: Enumerable<DonorWhereInput>
   id?: number | IntFilter
   companyName?: string | StringFilter
-  typeOfsupport?: string | StringNullableFilter | null
-  initialDonationAmount?: number | FloatNullableFilter | null
   initialReportPreparationDate?: Date | string | DateTimeNullableFilter | null
   finalReportPreparationDate?: Date | string | DateTimeNullableFilter | null
   initialDataCollectionDate?: Date | string | DateTimeNullableFilter | null
   finalDataCollectionDate?: Date | string | DateTimeNullableFilter | null
   reportDueDate?: Date | string | DateTimeNullableFilter | null
-  groupsOfOrphans?: GroupOfOrphansListRelationFilter
+  sponsoredgroups?: SponsoredGroupListRelationFilter
 }
 
-export type DonorRelationFilter = {
-  is?: DonorWhereInput | null
-  isNot?: DonorWhereInput | null
+export type DonorOrderByInput = {
+  id?: SortOrder
+  companyName?: SortOrder
+  initialReportPreparationDate?: SortOrder
+  finalReportPreparationDate?: SortOrder
+  initialDataCollectionDate?: SortOrder
+  finalDataCollectionDate?: SortOrder
+  reportDueDate?: SortOrder
 }
 
-export type SocialWorkerWhereInput = {
-  AND?: Enumerable<SocialWorkerWhereInput>
-  OR?: Array<SocialWorkerWhereInput>
-  NOT?: Enumerable<SocialWorkerWhereInput>
-  id?: number | IntFilter
-  fullName?: string | StringFilter
-  phoneNumber?: number | IntFilter
-  email?: string | StringFilter
-  siteId?: number | IntFilter
-  site?: SiteWhereInput | null
-  groupoforphans?: GroupOfOrphansListRelationFilter
-}
-
-export type SocialWorkerRelationFilter = {
-  is?: SocialWorkerWhereInput | null
-  isNot?: SocialWorkerWhereInput | null
-}
-
-export type NestedEnumorphanGenderFilter = {
-  equals?: orphanGender
-  in?: Enumerable<orphanGender>
-  notIn?: Enumerable<orphanGender>
-  not?: NestedEnumorphanGenderFilter | null
-}
-
-export type EnumorphanGenderFilter = {
-  equals?: orphanGender
-  in?: Enumerable<orphanGender>
-  notIn?: Enumerable<orphanGender>
-  not?: orphanGender | NestedEnumorphanGenderFilter
-}
-
-export type OrphanRelationFilter = {
-  is?: OrphanWhereInput | null
-  isNot?: OrphanWhereInput | null
-}
-
-export type SiblingWhereInput = {
-  AND?: Enumerable<SiblingWhereInput>
-  OR?: Array<SiblingWhereInput>
-  NOT?: Enumerable<SiblingWhereInput>
-  id?: number | IntFilter
-  fullName?: string | StringFilter
-  gender?: string | StringFilter
-  age?: number | IntFilter
-  schoolGrade?: string | StringNullableFilter | null
-  job?: string | StringNullableFilter | null
-  maritalStatus?: string | StringFilter
-  orphanId?: number | IntFilter
-  orphan?: OrphanWhereInput | null
-}
-
-export type SiblingListRelationFilter = {
-  every?: SiblingWhereInput
-  some?: SiblingWhereInput
-  none?: SiblingWhereInput
-}
-
-export type Iga_propertyWhereInput = {
-  AND?: Enumerable<Iga_propertyWhereInput>
-  OR?: Array<Iga_propertyWhereInput>
-  NOT?: Enumerable<Iga_propertyWhereInput>
-  id?: number | IntFilter
-  ownershipStatus?: string | StringFilter
-  otherProperty?: string | StringNullableFilter | null
-  orphans?: OrphanListRelationFilter
-}
-
-export type Iga_propertyRelationFilter = {
-  is?: Iga_propertyWhereInput | null
-  isNot?: Iga_propertyWhereInput | null
-}
-
-export type NestedEnumeducationEnrollmentStatusFilter = {
-  equals?: educationEnrollmentStatus
-  in?: Enumerable<educationEnrollmentStatus>
-  notIn?: Enumerable<educationEnrollmentStatus>
-  not?: NestedEnumeducationEnrollmentStatusFilter | null
-}
-
-export type EnumeducationEnrollmentStatusFilter = {
-  equals?: educationEnrollmentStatus
-  in?: Enumerable<educationEnrollmentStatus>
-  notIn?: Enumerable<educationEnrollmentStatus>
-  not?: educationEnrollmentStatus | NestedEnumeducationEnrollmentStatusFilter
-}
-
-export type NestedEnumeducationTypeOfSchoolNullableFilter = {
-  equals?: educationTypeOfSchool | null
-  in?: Enumerable<educationTypeOfSchool> | null
-  notIn?: Enumerable<educationTypeOfSchool> | null
-  not?: NestedEnumeducationTypeOfSchoolNullableFilter | null
-}
-
-export type EnumeducationTypeOfSchoolNullableFilter = {
-  equals?: educationTypeOfSchool | null
-  in?: Enumerable<educationTypeOfSchool> | null
-  notIn?: Enumerable<educationTypeOfSchool> | null
-  not?: educationTypeOfSchool | NestedEnumeducationTypeOfSchoolNullableFilter | null
+export type DonorWhereUniqueInput = {
+  id?: number
 }
 
 export type EducationWhereInput = {
@@ -7621,18 +9941,43 @@ export type EducationWhereInput = {
   OR?: Array<EducationWhereInput>
   NOT?: Enumerable<EducationWhereInput>
   id?: number | IntFilter
-  enrollmentStatus?: educationEnrollmentStatus | EnumeducationEnrollmentStatusFilter
+  enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFilter
   schoolName?: string | StringNullableFilter | null
-  typeOfSchool?: educationTypeOfSchool | EnumeducationTypeOfSchoolNullableFilter | null
+  typeOfSchool?: education_typeOfSchool | Enumeducation_typeOfSchoolNullableFilter | null
   grade?: string | StringNullableFilter | null
   reason?: string | StringNullableFilter | null
   hobbies?: string | StringNullableFilter | null
-  orphans?: OrphanListRelationFilter
+  orphan?: OrphanWhereInput | null
 }
 
-export type EducationRelationFilter = {
-  is?: EducationWhereInput | null
-  isNot?: EducationWhereInput | null
+export type EducationOrderByInput = {
+  id?: SortOrder
+  enrollmentStatus?: SortOrder
+  schoolName?: SortOrder
+  typeOfSchool?: SortOrder
+  grade?: SortOrder
+  reason?: SortOrder
+  hobbies?: SortOrder
+}
+
+export type EducationWhereUniqueInput = {
+  id?: number
+}
+
+export type EducationalSupportWhereInput = {
+  AND?: Enumerable<EducationalSupportWhereInput>
+  OR?: Array<EducationalSupportWhereInput>
+  NOT?: Enumerable<EducationalSupportWhereInput>
+  id?: number | IntFilter
+  support?: SupportListRelationFilter
+}
+
+export type EducationalSupportOrderByInput = {
+  id?: SortOrder
+}
+
+export type EducationalSupportWhereUniqueInput = {
+  id?: number
 }
 
 export type FatherWhereInput = {
@@ -7648,14 +9993,33 @@ export type FatherWhereInput = {
   orphans?: OrphanListRelationFilter
 }
 
-export type FatherRelationFilter = {
-  is?: FatherWhereInput | null
-  isNot?: FatherWhereInput | null
+export type FatherOrderByInput = {
+  id?: SortOrder
+  dateOfDeath?: SortOrder
+  causeOfDeath?: SortOrder
+  job?: SortOrder
+  monthlyIncome?: SortOrder
+  dateOfBirth?: SortOrder
 }
 
-export type GroupOfOrphansRelationFilter = {
-  is?: GroupOfOrphansWhereInput | null
-  isNot?: GroupOfOrphansWhereInput | null
+export type FatherWhereUniqueInput = {
+  id?: number
+}
+
+export type FinancialSupportWhereInput = {
+  AND?: Enumerable<FinancialSupportWhereInput>
+  OR?: Array<FinancialSupportWhereInput>
+  NOT?: Enumerable<FinancialSupportWhereInput>
+  id?: number | IntFilter
+  support?: SupportListRelationFilter
+}
+
+export type FinancialSupportOrderByInput = {
+  id?: SortOrder
+}
+
+export type FinancialSupportWhereUniqueInput = {
+  id?: number
 }
 
 export type GuardianWhereInput = {
@@ -7679,299 +10043,6 @@ export type GuardianWhereInput = {
   orphans?: OrphanListRelationFilter
 }
 
-export type GuardianRelationFilter = {
-  is?: GuardianWhereInput | null
-  isNot?: GuardianWhereInput | null
-}
-
-export type NestedFloatFilter = {
-  equals?: number
-  in?: Enumerable<number>
-  notIn?: Enumerable<number>
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: NestedFloatFilter | null
-}
-
-export type FloatFilter = {
-  equals?: number
-  in?: Enumerable<number>
-  notIn?: Enumerable<number>
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: number | NestedFloatFilter
-}
-
-export type MotherJobWhereInput = {
-  AND?: Enumerable<MotherJobWhereInput>
-  OR?: Array<MotherJobWhereInput>
-  NOT?: Enumerable<MotherJobWhereInput>
-  id?: number | IntFilter
-  currentJobTitle?: string | StringNullableFilter | null
-  monthlyIncome?: number | FloatNullableFilter | null
-  mother?: MotherWhereInput | null
-}
-
-export type MotherJobRelationFilter = {
-  is?: MotherJobWhereInput | null
-  isNot?: MotherJobWhereInput | null
-}
-
-export type MotherWhereInput = {
-  AND?: Enumerable<MotherWhereInput>
-  OR?: Array<MotherWhereInput>
-  NOT?: Enumerable<MotherWhereInput>
-  id?: number | IntFilter
-  firstName?: string | StringFilter
-  middleName?: string | StringFilter
-  lastName?: string | StringFilter
-  dateOfBirth?: Date | string | DateTimeFilter
-  phoneNumber?: number | IntFilter
-  job?: number | IntFilter
-  maritalStatus?: string | StringFilter
-  vitalStatus?: string | StringFilter
-  monthlyExpense?: number | FloatFilter
-  motherjob?: MotherJobWhereInput | null
-  orphans?: OrphanListRelationFilter
-}
-
-export type MotherRelationFilter = {
-  is?: MotherWhereInput | null
-  isNot?: MotherWhereInput | null
-}
-
-export type OrphanWhereInput = {
-  AND?: Enumerable<OrphanWhereInput>
-  OR?: Array<OrphanWhereInput>
-  NOT?: Enumerable<OrphanWhereInput>
-  id?: number | IntFilter
-  firstName?: string | StringFilter
-  fatherName?: string | StringFilter
-  grandFatherName?: string | StringFilter
-  greatGrandFatherName?: string | StringFilter
-  gender?: orphanGender | EnumorphanGenderFilter
-  placeOfBirth?: string | StringFilter
-  dateOfBirth?: Date | string | DateTimeFilter
-  numberOfSponserdSiblings?: number | IntFilter
-  physicalHealthStatus?: string | StringFilter
-  psychologicalHealthStatus?: string | StringFilter
-  otherHealthIssues?: string | StringNullableFilter | null
-  photoPortraitUrl?: string | StringFilter
-  photoLongUrl?: string | StringFilter
-  fatherId?: number | IntFilter
-  motherId?: number | IntFilter
-  guardianId?: number | IntFilter
-  groupId?: number | IntFilter
-  siblingId?: number | IntFilter
-  IGA_PropertyId?: number | IntFilter
-  educationId?: number | IntFilter
-  siblings?: SiblingListRelationFilter
-  iga_property?: Iga_propertyWhereInput | null
-  education?: EducationWhereInput | null
-  father?: FatherWhereInput | null
-  groupoforphans?: GroupOfOrphansWhereInput | null
-  guardian?: GuardianWhereInput | null
-  mother?: MotherWhereInput | null
-}
-
-export type OrphanListRelationFilter = {
-  every?: OrphanWhereInput
-  some?: OrphanWhereInput
-  none?: OrphanWhereInput
-}
-
-export type GroupOfOrphansWhereInput = {
-  AND?: Enumerable<GroupOfOrphansWhereInput>
-  OR?: Array<GroupOfOrphansWhereInput>
-  NOT?: Enumerable<GroupOfOrphansWhereInput>
-  id?: number | IntFilter
-  registrationDate?: Date | string | DateTimeFilter
-  donorId?: number | IntFilter
-  socialWorkerId?: number | IntFilter
-  siteId?: number | IntFilter
-  donor?: DonorWhereInput | null
-  site?: SiteWhereInput | null
-  socialworker?: SocialWorkerWhereInput | null
-  orphans?: OrphanListRelationFilter
-}
-
-export type GroupOfOrphansListRelationFilter = {
-  every?: GroupOfOrphansWhereInput
-  some?: GroupOfOrphansWhereInput
-  none?: GroupOfOrphansWhereInput
-}
-
-export type SocialWorkerListRelationFilter = {
-  every?: SocialWorkerWhereInput
-  some?: SocialWorkerWhereInput
-  none?: SocialWorkerWhereInput
-}
-
-export type SiteWhereInput = {
-  AND?: Enumerable<SiteWhereInput>
-  OR?: Array<SiteWhereInput>
-  NOT?: Enumerable<SiteWhereInput>
-  id?: number | IntFilter
-  siteName?: string | StringFilter
-  donationAmount?: number | IntFilter
-  addressId?: string | StringFilter
-  address?: AddressWhereInput | null
-  groupoforphans?: GroupOfOrphansListRelationFilter
-  socialworker?: SocialWorkerListRelationFilter
-}
-
-export type SiteRelationFilter = {
-  is?: SiteWhereInput | null
-  isNot?: SiteWhereInput | null
-}
-
-export type AddressWhereInput = {
-  AND?: Enumerable<AddressWhereInput>
-  OR?: Array<AddressWhereInput>
-  NOT?: Enumerable<AddressWhereInput>
-  state?: string | StringFilter
-  zone?: string | StringFilter
-  district?: string | StringFilter
-  kebele?: string | StringFilter
-  site?: SiteWhereInput | null
-}
-
-export type AddressOrderByInput = {
-  state?: SortOrder
-  zone?: SortOrder
-  district?: SortOrder
-  kebele?: SortOrder
-}
-
-export type AddressWhereUniqueInput = {
-  state?: string
-}
-
-export type GroupOfOrphansOrderByInput = {
-  id?: SortOrder
-  registrationDate?: SortOrder
-  donorId?: SortOrder
-  socialWorkerId?: SortOrder
-  siteId?: SortOrder
-}
-
-export type GroupOfOrphansWhereUniqueInput = {
-  id?: number
-  donorId?: number
-  socialWorkerId?: number
-  siteId?: number
-}
-
-export type OrphanOrderByInput = {
-  id?: SortOrder
-  firstName?: SortOrder
-  fatherName?: SortOrder
-  grandFatherName?: SortOrder
-  greatGrandFatherName?: SortOrder
-  gender?: SortOrder
-  placeOfBirth?: SortOrder
-  dateOfBirth?: SortOrder
-  numberOfSponserdSiblings?: SortOrder
-  physicalHealthStatus?: SortOrder
-  psychologicalHealthStatus?: SortOrder
-  otherHealthIssues?: SortOrder
-  photoPortraitUrl?: SortOrder
-  photoLongUrl?: SortOrder
-  fatherId?: SortOrder
-  motherId?: SortOrder
-  guardianId?: SortOrder
-  groupId?: SortOrder
-  siblingId?: SortOrder
-  IGA_PropertyId?: SortOrder
-  educationId?: SortOrder
-}
-
-export type OrphanWhereUniqueInput = {
-  id?: number
-  fatherId?: number
-  motherId?: number
-  guardianId?: number
-  groupId?: number
-  IGA_PropertyId?: number
-  educationId?: number
-}
-
-export type SiblingOrderByInput = {
-  id?: SortOrder
-  fullName?: SortOrder
-  gender?: SortOrder
-  age?: SortOrder
-  schoolGrade?: SortOrder
-  job?: SortOrder
-  maritalStatus?: SortOrder
-  orphanId?: SortOrder
-}
-
-export type SiblingWhereUniqueInput = {
-  id?: number
-  orphanId?: number
-}
-
-export type SocialWorkerOrderByInput = {
-  id?: SortOrder
-  fullName?: SortOrder
-  phoneNumber?: SortOrder
-  email?: SortOrder
-  siteId?: SortOrder
-}
-
-export type SocialWorkerWhereUniqueInput = {
-  id?: number
-  siteId?: number
-}
-
-export type DonorOrderByInput = {
-  id?: SortOrder
-  companyName?: SortOrder
-  typeOfsupport?: SortOrder
-  initialDonationAmount?: SortOrder
-  initialReportPreparationDate?: SortOrder
-  finalReportPreparationDate?: SortOrder
-  initialDataCollectionDate?: SortOrder
-  finalDataCollectionDate?: SortOrder
-  reportDueDate?: SortOrder
-}
-
-export type DonorWhereUniqueInput = {
-  id?: number
-}
-
-export type EducationOrderByInput = {
-  id?: SortOrder
-  enrollmentStatus?: SortOrder
-  schoolName?: SortOrder
-  typeOfSchool?: SortOrder
-  grade?: SortOrder
-  reason?: SortOrder
-  hobbies?: SortOrder
-}
-
-export type EducationWhereUniqueInput = {
-  id?: number
-}
-
-export type FatherOrderByInput = {
-  id?: SortOrder
-  dateOfDeath?: SortOrder
-  causeOfDeath?: SortOrder
-  job?: SortOrder
-  monthlyIncome?: SortOrder
-  dateOfBirth?: SortOrder
-}
-
-export type FatherWhereUniqueInput = {
-  id?: number
-}
-
 export type GuardianOrderByInput = {
   id?: SortOrder
   firstName?: SortOrder
@@ -7993,6 +10064,16 @@ export type GuardianWhereUniqueInput = {
   id?: number
 }
 
+export type Iga_propertyWhereInput = {
+  AND?: Enumerable<Iga_propertyWhereInput>
+  OR?: Array<Iga_propertyWhereInput>
+  NOT?: Enumerable<Iga_propertyWhereInput>
+  id?: number | IntFilter
+  ownershipStatus?: string | StringFilter
+  otherProperty?: string | StringNullableFilter | null
+  orphan?: OrphanListRelationFilter
+}
+
 export type Iga_propertyOrderByInput = {
   id?: SortOrder
   ownershipStatus?: SortOrder
@@ -8003,6 +10084,24 @@ export type Iga_propertyWhereUniqueInput = {
   id?: number
 }
 
+export type MotherWhereInput = {
+  AND?: Enumerable<MotherWhereInput>
+  OR?: Array<MotherWhereInput>
+  NOT?: Enumerable<MotherWhereInput>
+  id?: number | IntFilter
+  firstName?: string | StringFilter
+  middleName?: string | StringFilter
+  lastName?: string | StringFilter
+  dateOfBirth?: Date | string | DateTimeFilter
+  phoneNumber?: string | StringFilter
+  jobId?: number | IntNullableFilter | null
+  maritalStatus?: string | StringFilter
+  vitalStatus?: string | StringFilter
+  monthlyExpense?: number | FloatFilter
+  motherjob?: MotherJobWhereInput | null
+  orphans?: OrphanListRelationFilter
+}
+
 export type MotherOrderByInput = {
   id?: SortOrder
   firstName?: SortOrder
@@ -8010,7 +10109,7 @@ export type MotherOrderByInput = {
   lastName?: SortOrder
   dateOfBirth?: SortOrder
   phoneNumber?: SortOrder
-  job?: SortOrder
+  jobId?: SortOrder
   maritalStatus?: SortOrder
   vitalStatus?: SortOrder
   monthlyExpense?: SortOrder
@@ -8018,7 +10117,17 @@ export type MotherOrderByInput = {
 
 export type MotherWhereUniqueInput = {
   id?: number
-  job?: number
+  jobId?: number | null
+}
+
+export type MotherJobWhereInput = {
+  AND?: Enumerable<MotherJobWhereInput>
+  OR?: Array<MotherJobWhereInput>
+  NOT?: Enumerable<MotherJobWhereInput>
+  id?: number | IntFilter
+  currentJobTitle?: string | StringNullableFilter | null
+  monthlyIncome?: number | FloatNullableFilter | null
+  mother?: MotherWhereInput | null
 }
 
 export type MotherJobOrderByInput = {
@@ -8031,363 +10140,152 @@ export type MotherJobWhereUniqueInput = {
   id?: number
 }
 
-export type SiteOrderByInput = {
+export type OfficialDocumentsWhereInput = {
+  AND?: Enumerable<OfficialDocumentsWhereInput>
+  OR?: Array<OfficialDocumentsWhereInput>
+  NOT?: Enumerable<OfficialDocumentsWhereInput>
+  id?: number | IntFilter
+  photoPortraitUrl?: string | StringFilter
+  photoLongUrl?: string | StringFilter
+  fatherDeathCertificateUrl?: string | StringFilter
+  birthCertificateUrl?: string | StringFilter
+  guardianIDCardUrl?: string | StringFilter
+  guardianConfirmationLetterUrl?: string | StringFilter
+  orphan?: OrphanWhereInput | null
+}
+
+export type OfficialDocumentsOrderByInput = {
   id?: SortOrder
-  siteName?: SortOrder
-  donationAmount?: SortOrder
-  addressId?: SortOrder
+  photoPortraitUrl?: SortOrder
+  photoLongUrl?: SortOrder
+  fatherDeathCertificateUrl?: SortOrder
+  birthCertificateUrl?: SortOrder
+  guardianIDCardUrl?: SortOrder
+  guardianConfirmationLetterUrl?: SortOrder
 }
 
-export type SiteWhereUniqueInput = {
+export type OfficialDocumentsWhereUniqueInput = {
   id?: number
-  addressId?: string
 }
 
-export type DonorCreateWithoutGroupsOfOrphansInput = {
-  companyName: string
-  typeOfsupport?: string | null
-  initialDonationAmount?: number | null
-  initialReportPreparationDate?: Date | string | null
-  finalReportPreparationDate?: Date | string | null
-  initialDataCollectionDate?: Date | string | null
-  finalDataCollectionDate?: Date | string | null
-  reportDueDate?: Date | string | null
+export type OrphanWhereInput = {
+  AND?: Enumerable<OrphanWhereInput>
+  OR?: Array<OrphanWhereInput>
+  NOT?: Enumerable<OrphanWhereInput>
+  id?: number | IntFilter
+  firstName?: string | StringFilter
+  fatherName?: string | StringFilter
+  grandFatherName?: string | StringFilter
+  greatGrandFatherName?: string | StringFilter
+  gender?: orphan_gender | Enumorphan_genderFilter
+  placeOfBirth?: string | StringFilter
+  dateOfBirth?: Date | string | DateTimeFilter
+  numberOfSponserdSiblings?: number | IntFilter
+  physicalHealthStatus?: string | StringFilter
+  psychologicalHealthStatus?: string | StringFilter
+  otherHealthIssues?: string | StringFilter
+  fatherId?: number | IntNullableFilter | null
+  motherId?: number | IntNullableFilter | null
+  guardianId?: number | IntNullableFilter | null
+  IGA_PropertyId?: number | IntNullableFilter | null
+  educationId?: number | IntNullableFilter | null
+  docsId?: number | IntNullableFilter | null
+  regGroupId?: number | IntNullableFilter | null
+  sponsrGroupId?: number | IntNullableFilter | null
+  iga_property?: Iga_propertyWhereInput | null
+  officialdocuments?: OfficialDocumentsWhereInput | null
+  education?: EducationWhereInput | null
+  father?: FatherWhereInput | null
+  guardian?: GuardianWhereInput | null
+  mother?: MotherWhereInput | null
+  registeredgroup?: RegisteredGroupWhereInput | null
+  sponsoredgroup?: SponsoredGroupWhereInput | null
+  siblings?: SiblingListRelationFilter
 }
 
-export type DonorCreateOneWithoutGroupsOfOrphansInput = {
-  create?: DonorCreateWithoutGroupsOfOrphansInput
-  connect?: DonorWhereUniqueInput
+export type OrphanOrderByInput = {
+  id?: SortOrder
+  firstName?: SortOrder
+  fatherName?: SortOrder
+  grandFatherName?: SortOrder
+  greatGrandFatherName?: SortOrder
+  gender?: SortOrder
+  placeOfBirth?: SortOrder
+  dateOfBirth?: SortOrder
+  numberOfSponserdSiblings?: SortOrder
+  physicalHealthStatus?: SortOrder
+  psychologicalHealthStatus?: SortOrder
+  otherHealthIssues?: SortOrder
+  fatherId?: SortOrder
+  motherId?: SortOrder
+  guardianId?: SortOrder
+  IGA_PropertyId?: SortOrder
+  educationId?: SortOrder
+  docsId?: SortOrder
+  regGroupId?: SortOrder
+  sponsrGroupId?: SortOrder
 }
 
-export type AddressCreateWithoutSiteInput = {
-  state: string
-  zone: string
-  district: string
-  kebele: string
+export type OrphanWhereUniqueInput = {
+  id?: number
+  fatherId?: number | null
+  motherId?: number | null
+  guardianId?: number | null
+  IGA_PropertyId?: number | null
+  educationId?: number | null
+  docsId?: number | null
+  regGroupId?: number | null
+  sponsrGroupId?: number | null
 }
 
-export type AddressCreateOneWithoutSiteInput = {
-  create?: AddressCreateWithoutSiteInput
-  connect?: AddressWhereUniqueInput
+export type OtherSupportWhereInput = {
+  AND?: Enumerable<OtherSupportWhereInput>
+  OR?: Array<OtherSupportWhereInput>
+  NOT?: Enumerable<OtherSupportWhereInput>
+  id?: number | IntFilter
+  support?: SupportListRelationFilter
 }
 
-export type SiteCreateWithoutSocialworkerInput = {
-  siteName: string
-  donationAmount: number
-  address: AddressCreateOneWithoutSiteInput
-  groupoforphans?: GroupOfOrphansCreateManyWithoutSiteInput
+export type OtherSupportOrderByInput = {
+  id?: SortOrder
 }
 
-export type SiteCreateOneWithoutSocialworkerInput = {
-  create?: SiteCreateWithoutSocialworkerInput
-  connect?: SiteWhereUniqueInput
+export type OtherSupportWhereUniqueInput = {
+  id?: number
 }
 
-export type SocialWorkerCreateWithoutGroupoforphansInput = {
-  fullName: string
-  phoneNumber: number
-  email: string
-  site: SiteCreateOneWithoutSocialworkerInput
+export type RegisteredGroupWhereInput = {
+  AND?: Enumerable<RegisteredGroupWhereInput>
+  OR?: Array<RegisteredGroupWhereInput>
+  NOT?: Enumerable<RegisteredGroupWhereInput>
+  id?: number | IntFilter
+  registrationDate?: Date | string | DateTimeFilter
+  siteName?: string | StringFilter
+  state?: string | StringFilter
+  zone?: string | StringFilter
+  district?: string | StringFilter
+  kebele?: string | StringFilter
+  orphans?: OrphanListRelationFilter
 }
 
-export type SocialWorkerCreateOneWithoutGroupoforphansInput = {
-  create?: SocialWorkerCreateWithoutGroupoforphansInput
-  connect?: SocialWorkerWhereUniqueInput
+export type RegisteredGroupOrderByInput = {
+  id?: SortOrder
+  registrationDate?: SortOrder
+  siteName?: SortOrder
+  state?: SortOrder
+  zone?: SortOrder
+  district?: SortOrder
+  kebele?: SortOrder
 }
 
-export type SiblingCreateWithoutOrphanInput = {
-  fullName: string
-  gender: string
-  age: number
-  schoolGrade?: string | null
-  job?: string | null
-  maritalStatus: string
+export type RegisteredGroupWhereUniqueInput = {
+  id?: number
 }
 
-export type SiblingCreateManyWithoutOrphanInput = {
-  create?: Enumerable<SiblingCreateWithoutOrphanInput>
-  connect?: Enumerable<SiblingWhereUniqueInput>
-}
-
-export type Iga_propertyCreateWithoutOrphansInput = {
-  ownershipStatus: string
-  otherProperty?: string | null
-}
-
-export type Iga_propertyCreateOneWithoutOrphansInput = {
-  create?: Iga_propertyCreateWithoutOrphansInput
-  connect?: Iga_propertyWhereUniqueInput
-}
-
-export type EducationCreateWithoutOrphansInput = {
-  enrollmentStatus: educationEnrollmentStatus
-  schoolName?: string | null
-  typeOfSchool?: educationTypeOfSchool | null
-  grade?: string | null
-  reason?: string | null
-  hobbies?: string | null
-}
-
-export type EducationCreateOneWithoutOrphansInput = {
-  create?: EducationCreateWithoutOrphansInput
-  connect?: EducationWhereUniqueInput
-}
-
-export type FatherCreateWithoutOrphansInput = {
-  dateOfDeath: Date | string
-  causeOfDeath: string
-  job?: string | null
-  monthlyIncome: number
-  dateOfBirth: Date | string
-}
-
-export type FatherCreateOneWithoutOrphansInput = {
-  create?: FatherCreateWithoutOrphansInput
-  connect?: FatherWhereUniqueInput
-}
-
-export type GuardianCreateWithoutOrphansInput = {
-  firstName: string
-  middleName: string
-  lastName: string
-  gender: string
-  nationality: string
-  state: string
-  zone: string
-  district: string
-  kebele: string
-  relationToOrphan: string
-  email: string
-  job?: string | null
-  age: number
-}
-
-export type GuardianCreateOneWithoutOrphansInput = {
-  create?: GuardianCreateWithoutOrphansInput
-  connect?: GuardianWhereUniqueInput
-}
-
-export type MotherJobCreateWithoutMotherInput = {
-  currentJobTitle?: string | null
-  monthlyIncome?: number | null
-}
-
-export type MotherJobCreateOneWithoutMotherInput = {
-  create?: MotherJobCreateWithoutMotherInput
-  connect?: MotherJobWhereUniqueInput
-}
-
-export type MotherCreateWithoutOrphansInput = {
-  firstName: string
-  middleName: string
-  lastName: string
-  dateOfBirth: Date | string
-  phoneNumber: number
-  maritalStatus: string
-  vitalStatus: string
-  monthlyExpense: number
-  motherjob: MotherJobCreateOneWithoutMotherInput
-}
-
-export type MotherCreateOneWithoutOrphansInput = {
-  create?: MotherCreateWithoutOrphansInput
-  connect?: MotherWhereUniqueInput
-}
-
-export type OrphanCreateWithoutGroupoforphansInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
-}
-
-export type OrphanCreateManyWithoutGroupoforphansInput = {
-  create?: Enumerable<OrphanCreateWithoutGroupoforphansInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-}
-
-export type GroupOfOrphansCreateWithoutSiteInput = {
-  registrationDate: Date | string
-  donor: DonorCreateOneWithoutGroupsOfOrphansInput
-  socialworker: SocialWorkerCreateOneWithoutGroupoforphansInput
-  orphans?: OrphanCreateManyWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansCreateManyWithoutSiteInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutSiteInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-}
-
-export type SiteCreateWithoutGroupoforphansInput = {
-  siteName: string
-  donationAmount: number
-  address: AddressCreateOneWithoutSiteInput
-  socialworker?: SocialWorkerCreateManyWithoutSiteInput
-}
-
-export type SiteCreateOneWithoutGroupoforphansInput = {
-  create?: SiteCreateWithoutGroupoforphansInput
-  connect?: SiteWhereUniqueInput
-}
-
-export type GroupOfOrphansCreateWithoutSocialworkerInput = {
-  registrationDate: Date | string
-  donor: DonorCreateOneWithoutGroupsOfOrphansInput
-  site: SiteCreateOneWithoutGroupoforphansInput
-  orphans?: OrphanCreateManyWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansCreateManyWithoutSocialworkerInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutSocialworkerInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-}
-
-export type SocialWorkerCreateWithoutSiteInput = {
-  fullName: string
-  phoneNumber: number
-  email: string
-  groupoforphans?: GroupOfOrphansCreateManyWithoutSocialworkerInput
-}
-
-export type SocialWorkerCreateManyWithoutSiteInput = {
-  create?: Enumerable<SocialWorkerCreateWithoutSiteInput>
-  connect?: Enumerable<SocialWorkerWhereUniqueInput>
-}
-
-export type SiteCreateWithoutAddressInput = {
-  siteName: string
-  donationAmount: number
-  groupoforphans?: GroupOfOrphansCreateManyWithoutSiteInput
-  socialworker?: SocialWorkerCreateManyWithoutSiteInput
-}
-
-export type SiteCreateOneWithoutAddressInput = {
-  create?: SiteCreateWithoutAddressInput
-  connect?: SiteWhereUniqueInput
-}
-
-export type AddressCreateInput = {
-  state: string
-  zone: string
-  district: string
-  kebele: string
-  site: SiteCreateOneWithoutAddressInput
-}
-
-export type DonorUpdateWithoutGroupsOfOrphansDataInput = {
-  companyName?: string
-  typeOfsupport?: string | null
-  initialDonationAmount?: number | null
-  initialReportPreparationDate?: Date | string | null
-  finalReportPreparationDate?: Date | string | null
-  initialDataCollectionDate?: Date | string | null
-  finalDataCollectionDate?: Date | string | null
-  reportDueDate?: Date | string | null
-}
-
-export type DonorUpsertWithoutGroupsOfOrphansInput = {
-  update: DonorUpdateWithoutGroupsOfOrphansDataInput
-  create: DonorCreateWithoutGroupsOfOrphansInput
-}
-
-export type DonorUpdateOneRequiredWithoutGroupsOfOrphansInput = {
-  create?: DonorCreateWithoutGroupsOfOrphansInput
-  connect?: DonorWhereUniqueInput
-  update?: DonorUpdateWithoutGroupsOfOrphansDataInput
-  upsert?: DonorUpsertWithoutGroupsOfOrphansInput
-}
-
-export type AddressUpdateWithoutSiteDataInput = {
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
-}
-
-export type AddressUpsertWithoutSiteInput = {
-  update: AddressUpdateWithoutSiteDataInput
-  create: AddressCreateWithoutSiteInput
-}
-
-export type AddressUpdateOneRequiredWithoutSiteInput = {
-  create?: AddressCreateWithoutSiteInput
-  connect?: AddressWhereUniqueInput
-  update?: AddressUpdateWithoutSiteDataInput
-  upsert?: AddressUpsertWithoutSiteInput
-}
-
-export type SiteUpdateWithoutSocialworkerDataInput = {
-  siteName?: string
-  donationAmount?: number
-  address?: AddressUpdateOneRequiredWithoutSiteInput
-  groupoforphans?: GroupOfOrphansUpdateManyWithoutSiteInput
-}
-
-export type SiteUpsertWithoutSocialworkerInput = {
-  update: SiteUpdateWithoutSocialworkerDataInput
-  create: SiteCreateWithoutSocialworkerInput
-}
-
-export type SiteUpdateOneRequiredWithoutSocialworkerInput = {
-  create?: SiteCreateWithoutSocialworkerInput
-  connect?: SiteWhereUniqueInput
-  update?: SiteUpdateWithoutSocialworkerDataInput
-  upsert?: SiteUpsertWithoutSocialworkerInput
-}
-
-export type SocialWorkerUpdateWithoutGroupoforphansDataInput = {
-  fullName?: string
-  phoneNumber?: number
-  email?: string
-  site?: SiteUpdateOneRequiredWithoutSocialworkerInput
-}
-
-export type SocialWorkerUpsertWithoutGroupoforphansInput = {
-  update: SocialWorkerUpdateWithoutGroupoforphansDataInput
-  create: SocialWorkerCreateWithoutGroupoforphansInput
-}
-
-export type SocialWorkerUpdateOneRequiredWithoutGroupoforphansInput = {
-  create?: SocialWorkerCreateWithoutGroupoforphansInput
-  connect?: SocialWorkerWhereUniqueInput
-  update?: SocialWorkerUpdateWithoutGroupoforphansDataInput
-  upsert?: SocialWorkerUpsertWithoutGroupoforphansInput
-}
-
-export type SiblingUpdateWithoutOrphanDataInput = {
-  fullName?: string
-  gender?: string
-  age?: number
-  schoolGrade?: string | null
-  job?: string | null
-  maritalStatus?: string
-}
-
-export type SiblingUpdateWithWhereUniqueWithoutOrphanInput = {
-  where: SiblingWhereUniqueInput
-  data: SiblingUpdateWithoutOrphanDataInput
-}
-
-export type SiblingScalarWhereInput = {
-  AND?: Enumerable<SiblingScalarWhereInput>
-  OR?: Array<SiblingScalarWhereInput>
-  NOT?: Enumerable<SiblingScalarWhereInput>
+export type SiblingWhereInput = {
+  AND?: Enumerable<SiblingWhereInput>
+  OR?: Array<SiblingWhereInput>
+  NOT?: Enumerable<SiblingWhereInput>
   id?: number | IntFilter
   fullName?: string | StringFilter
   gender?: string | StringFilter
@@ -8395,685 +10293,211 @@ export type SiblingScalarWhereInput = {
   schoolGrade?: string | StringNullableFilter | null
   job?: string | StringNullableFilter | null
   maritalStatus?: string | StringFilter
-  orphanId?: number | IntFilter
+  orphanId?: number | IntNullableFilter | null
+  orphan?: OrphanWhereInput | null
 }
 
-export type SiblingUpdateManyDataInput = {
-  fullName?: string
-  gender?: string
-  age?: number
-  schoolGrade?: string | null
-  job?: string | null
-  maritalStatus?: string
+export type SiblingOrderByInput = {
+  id?: SortOrder
+  fullName?: SortOrder
+  gender?: SortOrder
+  age?: SortOrder
+  schoolGrade?: SortOrder
+  job?: SortOrder
+  maritalStatus?: SortOrder
+  orphanId?: SortOrder
 }
 
-export type SiblingUpdateManyWithWhereNestedInput = {
-  where: SiblingScalarWhereInput
-  data: SiblingUpdateManyDataInput
+export type SiblingWhereUniqueInput = {
+  id?: number
+  orphanId?: number | null
 }
 
-export type SiblingUpsertWithWhereUniqueWithoutOrphanInput = {
-  where: SiblingWhereUniqueInput
-  update: SiblingUpdateWithoutOrphanDataInput
-  create: SiblingCreateWithoutOrphanInput
-}
-
-export type SiblingUpdateManyWithoutOrphanInput = {
-  create?: Enumerable<SiblingCreateWithoutOrphanInput>
-  connect?: Enumerable<SiblingWhereUniqueInput>
-  set?: Enumerable<SiblingWhereUniqueInput>
-  disconnect?: Enumerable<SiblingWhereUniqueInput>
-  delete?: Enumerable<SiblingWhereUniqueInput>
-  update?: Enumerable<SiblingUpdateWithWhereUniqueWithoutOrphanInput>
-  updateMany?: Enumerable<SiblingUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<SiblingScalarWhereInput>
-  upsert?: Enumerable<SiblingUpsertWithWhereUniqueWithoutOrphanInput>
-}
-
-export type Iga_propertyUpdateWithoutOrphansDataInput = {
-  ownershipStatus?: string
-  otherProperty?: string | null
-}
-
-export type Iga_propertyUpsertWithoutOrphansInput = {
-  update: Iga_propertyUpdateWithoutOrphansDataInput
-  create: Iga_propertyCreateWithoutOrphansInput
-}
-
-export type Iga_propertyUpdateOneRequiredWithoutOrphansInput = {
-  create?: Iga_propertyCreateWithoutOrphansInput
-  connect?: Iga_propertyWhereUniqueInput
-  update?: Iga_propertyUpdateWithoutOrphansDataInput
-  upsert?: Iga_propertyUpsertWithoutOrphansInput
-}
-
-export type EducationUpdateWithoutOrphansDataInput = {
-  enrollmentStatus?: educationEnrollmentStatus
-  schoolName?: string | null
-  typeOfSchool?: educationTypeOfSchool | null
-  grade?: string | null
-  reason?: string | null
-  hobbies?: string | null
-}
-
-export type EducationUpsertWithoutOrphansInput = {
-  update: EducationUpdateWithoutOrphansDataInput
-  create: EducationCreateWithoutOrphansInput
-}
-
-export type EducationUpdateOneRequiredWithoutOrphansInput = {
-  create?: EducationCreateWithoutOrphansInput
-  connect?: EducationWhereUniqueInput
-  update?: EducationUpdateWithoutOrphansDataInput
-  upsert?: EducationUpsertWithoutOrphansInput
-}
-
-export type FatherUpdateWithoutOrphansDataInput = {
-  dateOfDeath?: Date | string
-  causeOfDeath?: string
-  job?: string | null
-  monthlyIncome?: number
-  dateOfBirth?: Date | string
-}
-
-export type FatherUpsertWithoutOrphansInput = {
-  update: FatherUpdateWithoutOrphansDataInput
-  create: FatherCreateWithoutOrphansInput
-}
-
-export type FatherUpdateOneRequiredWithoutOrphansInput = {
-  create?: FatherCreateWithoutOrphansInput
-  connect?: FatherWhereUniqueInput
-  update?: FatherUpdateWithoutOrphansDataInput
-  upsert?: FatherUpsertWithoutOrphansInput
-}
-
-export type GuardianUpdateWithoutOrphansDataInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  gender?: string
-  nationality?: string
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
-  relationToOrphan?: string
-  email?: string
-  job?: string | null
-  age?: number
-}
-
-export type GuardianUpsertWithoutOrphansInput = {
-  update: GuardianUpdateWithoutOrphansDataInput
-  create: GuardianCreateWithoutOrphansInput
-}
-
-export type GuardianUpdateOneRequiredWithoutOrphansInput = {
-  create?: GuardianCreateWithoutOrphansInput
-  connect?: GuardianWhereUniqueInput
-  update?: GuardianUpdateWithoutOrphansDataInput
-  upsert?: GuardianUpsertWithoutOrphansInput
-}
-
-export type MotherJobUpdateWithoutMotherDataInput = {
-  currentJobTitle?: string | null
-  monthlyIncome?: number | null
-}
-
-export type MotherJobUpsertWithoutMotherInput = {
-  update: MotherJobUpdateWithoutMotherDataInput
-  create: MotherJobCreateWithoutMotherInput
-}
-
-export type MotherJobUpdateOneRequiredWithoutMotherInput = {
-  create?: MotherJobCreateWithoutMotherInput
-  connect?: MotherJobWhereUniqueInput
-  update?: MotherJobUpdateWithoutMotherDataInput
-  upsert?: MotherJobUpsertWithoutMotherInput
-}
-
-export type MotherUpdateWithoutOrphansDataInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  dateOfBirth?: Date | string
-  phoneNumber?: number
-  maritalStatus?: string
-  vitalStatus?: string
-  monthlyExpense?: number
-  motherjob?: MotherJobUpdateOneRequiredWithoutMotherInput
-}
-
-export type MotherUpsertWithoutOrphansInput = {
-  update: MotherUpdateWithoutOrphansDataInput
-  create: MotherCreateWithoutOrphansInput
-}
-
-export type MotherUpdateOneRequiredWithoutOrphansInput = {
-  create?: MotherCreateWithoutOrphansInput
-  connect?: MotherWhereUniqueInput
-  update?: MotherUpdateWithoutOrphansDataInput
-  upsert?: MotherUpsertWithoutOrphansInput
-}
-
-export type OrphanUpdateWithoutGroupoforphansDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
-}
-
-export type OrphanUpdateWithWhereUniqueWithoutGroupoforphansInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutGroupoforphansDataInput
-}
-
-export type OrphanScalarWhereInput = {
-  AND?: Enumerable<OrphanScalarWhereInput>
-  OR?: Array<OrphanScalarWhereInput>
-  NOT?: Enumerable<OrphanScalarWhereInput>
-  id?: number | IntFilter
-  firstName?: string | StringFilter
-  fatherName?: string | StringFilter
-  grandFatherName?: string | StringFilter
-  greatGrandFatherName?: string | StringFilter
-  gender?: orphanGender | EnumorphanGenderFilter
-  placeOfBirth?: string | StringFilter
-  dateOfBirth?: Date | string | DateTimeFilter
-  numberOfSponserdSiblings?: number | IntFilter
-  physicalHealthStatus?: string | StringFilter
-  psychologicalHealthStatus?: string | StringFilter
-  otherHealthIssues?: string | StringNullableFilter | null
-  photoPortraitUrl?: string | StringFilter
-  photoLongUrl?: string | StringFilter
-  fatherId?: number | IntFilter
-  motherId?: number | IntFilter
-  guardianId?: number | IntFilter
-  groupId?: number | IntFilter
-  siblingId?: number | IntFilter
-  IGA_PropertyId?: number | IntFilter
-  educationId?: number | IntFilter
-}
-
-export type OrphanUpdateManyDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-}
-
-export type OrphanUpdateManyWithWhereNestedInput = {
-  where: OrphanScalarWhereInput
-  data: OrphanUpdateManyDataInput
-}
-
-export type OrphanUpsertWithWhereUniqueWithoutGroupoforphansInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutGroupoforphansDataInput
-  create: OrphanCreateWithoutGroupoforphansInput
-}
-
-export type OrphanUpdateManyWithoutGroupoforphansInput = {
-  create?: Enumerable<OrphanCreateWithoutGroupoforphansInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-  set?: Enumerable<OrphanWhereUniqueInput>
-  disconnect?: Enumerable<OrphanWhereUniqueInput>
-  delete?: Enumerable<OrphanWhereUniqueInput>
-  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutGroupoforphansInput>
-  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<OrphanScalarWhereInput>
-  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutGroupoforphansInput>
-}
-
-export type GroupOfOrphansUpdateWithoutSiteDataInput = {
-  registrationDate?: Date | string
-  donor?: DonorUpdateOneRequiredWithoutGroupsOfOrphansInput
-  socialworker?: SocialWorkerUpdateOneRequiredWithoutGroupoforphansInput
-  orphans?: OrphanUpdateManyWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansUpdateWithWhereUniqueWithoutSiteInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  data: GroupOfOrphansUpdateWithoutSiteDataInput
-}
-
-export type GroupOfOrphansScalarWhereInput = {
-  AND?: Enumerable<GroupOfOrphansScalarWhereInput>
-  OR?: Array<GroupOfOrphansScalarWhereInput>
-  NOT?: Enumerable<GroupOfOrphansScalarWhereInput>
-  id?: number | IntFilter
-  registrationDate?: Date | string | DateTimeFilter
-  donorId?: number | IntFilter
-  socialWorkerId?: number | IntFilter
-  siteId?: number | IntFilter
-}
-
-export type GroupOfOrphansUpdateManyDataInput = {
-  registrationDate?: Date | string
-}
-
-export type GroupOfOrphansUpdateManyWithWhereNestedInput = {
-  where: GroupOfOrphansScalarWhereInput
-  data: GroupOfOrphansUpdateManyDataInput
-}
-
-export type GroupOfOrphansUpsertWithWhereUniqueWithoutSiteInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  update: GroupOfOrphansUpdateWithoutSiteDataInput
-  create: GroupOfOrphansCreateWithoutSiteInput
-}
-
-export type GroupOfOrphansUpdateManyWithoutSiteInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutSiteInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  set?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  disconnect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  delete?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  update?: Enumerable<GroupOfOrphansUpdateWithWhereUniqueWithoutSiteInput>
-  updateMany?: Enumerable<GroupOfOrphansUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<GroupOfOrphansScalarWhereInput>
-  upsert?: Enumerable<GroupOfOrphansUpsertWithWhereUniqueWithoutSiteInput>
-}
-
-export type SiteUpdateWithoutGroupoforphansDataInput = {
-  siteName?: string
-  donationAmount?: number
-  address?: AddressUpdateOneRequiredWithoutSiteInput
-  socialworker?: SocialWorkerUpdateManyWithoutSiteInput
-}
-
-export type SiteUpsertWithoutGroupoforphansInput = {
-  update: SiteUpdateWithoutGroupoforphansDataInput
-  create: SiteCreateWithoutGroupoforphansInput
-}
-
-export type SiteUpdateOneRequiredWithoutGroupoforphansInput = {
-  create?: SiteCreateWithoutGroupoforphansInput
-  connect?: SiteWhereUniqueInput
-  update?: SiteUpdateWithoutGroupoforphansDataInput
-  upsert?: SiteUpsertWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansUpdateWithoutSocialworkerDataInput = {
-  registrationDate?: Date | string
-  donor?: DonorUpdateOneRequiredWithoutGroupsOfOrphansInput
-  site?: SiteUpdateOneRequiredWithoutGroupoforphansInput
-  orphans?: OrphanUpdateManyWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansUpdateWithWhereUniqueWithoutSocialworkerInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  data: GroupOfOrphansUpdateWithoutSocialworkerDataInput
-}
-
-export type GroupOfOrphansUpsertWithWhereUniqueWithoutSocialworkerInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  update: GroupOfOrphansUpdateWithoutSocialworkerDataInput
-  create: GroupOfOrphansCreateWithoutSocialworkerInput
-}
-
-export type GroupOfOrphansUpdateManyWithoutSocialworkerInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutSocialworkerInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  set?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  disconnect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  delete?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  update?: Enumerable<GroupOfOrphansUpdateWithWhereUniqueWithoutSocialworkerInput>
-  updateMany?: Enumerable<GroupOfOrphansUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<GroupOfOrphansScalarWhereInput>
-  upsert?: Enumerable<GroupOfOrphansUpsertWithWhereUniqueWithoutSocialworkerInput>
-}
-
-export type SocialWorkerUpdateWithoutSiteDataInput = {
-  fullName?: string
-  phoneNumber?: number
-  email?: string
-  groupoforphans?: GroupOfOrphansUpdateManyWithoutSocialworkerInput
-}
-
-export type SocialWorkerUpdateWithWhereUniqueWithoutSiteInput = {
-  where: SocialWorkerWhereUniqueInput
-  data: SocialWorkerUpdateWithoutSiteDataInput
-}
-
-export type SocialWorkerScalarWhereInput = {
-  AND?: Enumerable<SocialWorkerScalarWhereInput>
-  OR?: Array<SocialWorkerScalarWhereInput>
-  NOT?: Enumerable<SocialWorkerScalarWhereInput>
+export type SocialWorkerWhereInput = {
+  AND?: Enumerable<SocialWorkerWhereInput>
+  OR?: Array<SocialWorkerWhereInput>
+  NOT?: Enumerable<SocialWorkerWhereInput>
   id?: number | IntFilter
   fullName?: string | StringFilter
-  phoneNumber?: number | IntFilter
+  phoneNumber?: string | StringFilter
   email?: string | StringFilter
-  siteId?: number | IntFilter
+  sponsoredgroup?: SponsoredGroupListRelationFilter
 }
 
-export type SocialWorkerUpdateManyDataInput = {
-  fullName?: string
-  phoneNumber?: number
-  email?: string
+export type SocialWorkerOrderByInput = {
+  id?: SortOrder
+  fullName?: SortOrder
+  phoneNumber?: SortOrder
+  email?: SortOrder
 }
 
-export type SocialWorkerUpdateManyWithWhereNestedInput = {
-  where: SocialWorkerScalarWhereInput
-  data: SocialWorkerUpdateManyDataInput
+export type SocialWorkerWhereUniqueInput = {
+  id?: number
 }
 
-export type SocialWorkerUpsertWithWhereUniqueWithoutSiteInput = {
-  where: SocialWorkerWhereUniqueInput
-  update: SocialWorkerUpdateWithoutSiteDataInput
-  create: SocialWorkerCreateWithoutSiteInput
+export type SponsoredGroupWhereInput = {
+  AND?: Enumerable<SponsoredGroupWhereInput>
+  OR?: Array<SponsoredGroupWhereInput>
+  NOT?: Enumerable<SponsoredGroupWhereInput>
+  id?: number | IntFilter
+  sponsorshipDate?: Date | string | DateTimeFilter
+  supportId?: number | IntNullableFilter | null
+  donorId?: number | IntNullableFilter | null
+  socialWorkerId?: number | IntNullableFilter | null
+  donor?: DonorWhereInput | null
+  socialworkers?: SocialWorkerWhereInput | null
+  support?: SupportWhereInput | null
+  orphans?: OrphanListRelationFilter
 }
 
-export type SocialWorkerUpdateManyWithoutSiteInput = {
-  create?: Enumerable<SocialWorkerCreateWithoutSiteInput>
-  connect?: Enumerable<SocialWorkerWhereUniqueInput>
-  set?: Enumerable<SocialWorkerWhereUniqueInput>
-  disconnect?: Enumerable<SocialWorkerWhereUniqueInput>
-  delete?: Enumerable<SocialWorkerWhereUniqueInput>
-  update?: Enumerable<SocialWorkerUpdateWithWhereUniqueWithoutSiteInput>
-  updateMany?: Enumerable<SocialWorkerUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<SocialWorkerScalarWhereInput>
-  upsert?: Enumerable<SocialWorkerUpsertWithWhereUniqueWithoutSiteInput>
+export type SponsoredGroupOrderByInput = {
+  id?: SortOrder
+  sponsorshipDate?: SortOrder
+  supportId?: SortOrder
+  donorId?: SortOrder
+  socialWorkerId?: SortOrder
 }
 
-export type SiteUpdateWithoutAddressDataInput = {
-  siteName?: string
-  donationAmount?: number
-  groupoforphans?: GroupOfOrphansUpdateManyWithoutSiteInput
-  socialworker?: SocialWorkerUpdateManyWithoutSiteInput
+export type SponsoredGroupWhereUniqueInput = {
+  id?: number
+  supportId?: number | null
+  donorId?: number | null
+  socialWorkerId?: number | null
 }
 
-export type SiteUpsertWithoutAddressInput = {
-  update: SiteUpdateWithoutAddressDataInput
-  create: SiteCreateWithoutAddressInput
+export type SupportWhereInput = {
+  AND?: Enumerable<SupportWhereInput>
+  OR?: Array<SupportWhereInput>
+  NOT?: Enumerable<SupportWhereInput>
+  id?: number | IntFilter
+  status?: string | StringNullableFilter | null
+  financialId?: number | IntNullableFilter | null
+  educationalId?: number | IntNullableFilter | null
+  otherId?: number | IntNullableFilter | null
+  educationalsupport?: EducationalSupportWhereInput | null
+  financialsupport?: FinancialSupportWhereInput | null
+  othersupport?: OtherSupportWhereInput | null
+  sponsoredgroup?: SponsoredGroupListRelationFilter
 }
 
-export type SiteUpdateOneRequiredWithoutAddressInput = {
-  create?: SiteCreateWithoutAddressInput
-  connect?: SiteWhereUniqueInput
-  update?: SiteUpdateWithoutAddressDataInput
-  upsert?: SiteUpsertWithoutAddressInput
+export type SupportOrderByInput = {
+  id?: SortOrder
+  status?: SortOrder
+  financialId?: SortOrder
+  educationalId?: SortOrder
+  otherId?: SortOrder
 }
 
-export type AddressUpdateInput = {
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
-  site?: SiteUpdateOneRequiredWithoutAddressInput
+export type SupportWhereUniqueInput = {
+  id?: number
+  financialId?: number | null
+  educationalId?: number | null
+  otherId?: number | null
 }
 
-export type AddressUpdateManyMutationInput = {
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
+export type migrationWhereInput = {
+  AND?: Enumerable<migrationWhereInput>
+  OR?: Array<migrationWhereInput>
+  NOT?: Enumerable<migrationWhereInput>
+  revision?: number | IntFilter
+  name?: string | StringFilter
+  datamodel?: string | StringFilter
+  status?: string | StringFilter
+  applied?: number | IntFilter
+  rolled_back?: number | IntFilter
+  datamodel_steps?: string | StringFilter
+  database_migration?: string | StringFilter
+  errors?: string | StringFilter
+  started_at?: Date | string | DateTimeFilter
+  finished_at?: Date | string | DateTimeNullableFilter | null
 }
 
-export type GroupOfOrphansCreateWithoutDonorInput = {
-  registrationDate: Date | string
-  site: SiteCreateOneWithoutGroupoforphansInput
-  socialworker: SocialWorkerCreateOneWithoutGroupoforphansInput
-  orphans?: OrphanCreateManyWithoutGroupoforphansInput
+export type migrationOrderByInput = {
+  revision?: SortOrder
+  name?: SortOrder
+  datamodel?: SortOrder
+  status?: SortOrder
+  applied?: SortOrder
+  rolled_back?: SortOrder
+  datamodel_steps?: SortOrder
+  database_migration?: SortOrder
+  errors?: SortOrder
+  started_at?: SortOrder
+  finished_at?: SortOrder
 }
 
-export type GroupOfOrphansCreateManyWithoutDonorInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutDonorInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
+export type migrationWhereUniqueInput = {
+  revision?: number
 }
 
 export type DonorCreateInput = {
   companyName: string
-  typeOfsupport?: string | null
-  initialDonationAmount?: number | null
   initialReportPreparationDate?: Date | string | null
   finalReportPreparationDate?: Date | string | null
   initialDataCollectionDate?: Date | string | null
   finalDataCollectionDate?: Date | string | null
   reportDueDate?: Date | string | null
-  groupsOfOrphans?: GroupOfOrphansCreateManyWithoutDonorInput
-}
-
-export type GroupOfOrphansUpdateWithoutDonorDataInput = {
-  registrationDate?: Date | string
-  site?: SiteUpdateOneRequiredWithoutGroupoforphansInput
-  socialworker?: SocialWorkerUpdateOneRequiredWithoutGroupoforphansInput
-  orphans?: OrphanUpdateManyWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansUpdateWithWhereUniqueWithoutDonorInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  data: GroupOfOrphansUpdateWithoutDonorDataInput
-}
-
-export type GroupOfOrphansUpsertWithWhereUniqueWithoutDonorInput = {
-  where: GroupOfOrphansWhereUniqueInput
-  update: GroupOfOrphansUpdateWithoutDonorDataInput
-  create: GroupOfOrphansCreateWithoutDonorInput
-}
-
-export type GroupOfOrphansUpdateManyWithoutDonorInput = {
-  create?: Enumerable<GroupOfOrphansCreateWithoutDonorInput>
-  connect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  set?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  disconnect?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  delete?: Enumerable<GroupOfOrphansWhereUniqueInput>
-  update?: Enumerable<GroupOfOrphansUpdateWithWhereUniqueWithoutDonorInput>
-  updateMany?: Enumerable<GroupOfOrphansUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<GroupOfOrphansScalarWhereInput>
-  upsert?: Enumerable<GroupOfOrphansUpsertWithWhereUniqueWithoutDonorInput>
+  sponsoredgroups?: SponsoredGroupCreateManyWithoutDonorInput
 }
 
 export type DonorUpdateInput = {
-  companyName?: string
-  typeOfsupport?: string | null
-  initialDonationAmount?: number | null
-  initialReportPreparationDate?: Date | string | null
-  finalReportPreparationDate?: Date | string | null
-  initialDataCollectionDate?: Date | string | null
-  finalDataCollectionDate?: Date | string | null
-  reportDueDate?: Date | string | null
-  groupsOfOrphans?: GroupOfOrphansUpdateManyWithoutDonorInput
+  companyName?: string | StringFieldUpdateOperationsInput
+  initialReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  initialDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  reportDueDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  sponsoredgroups?: SponsoredGroupUpdateManyWithoutDonorInput
 }
 
 export type DonorUpdateManyMutationInput = {
-  companyName?: string
-  typeOfsupport?: string | null
-  initialDonationAmount?: number | null
-  initialReportPreparationDate?: Date | string | null
-  finalReportPreparationDate?: Date | string | null
-  initialDataCollectionDate?: Date | string | null
-  finalDataCollectionDate?: Date | string | null
-  reportDueDate?: Date | string | null
-}
-
-export type GroupOfOrphansCreateWithoutOrphansInput = {
-  registrationDate: Date | string
-  donor: DonorCreateOneWithoutGroupsOfOrphansInput
-  site: SiteCreateOneWithoutGroupoforphansInput
-  socialworker: SocialWorkerCreateOneWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansCreateOneWithoutOrphansInput = {
-  create?: GroupOfOrphansCreateWithoutOrphansInput
-  connect?: GroupOfOrphansWhereUniqueInput
-}
-
-export type OrphanCreateWithoutEducationInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
-}
-
-export type OrphanCreateManyWithoutEducationInput = {
-  create?: Enumerable<OrphanCreateWithoutEducationInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
+  companyName?: string | StringFieldUpdateOperationsInput
+  initialReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  initialDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  reportDueDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
 }
 
 export type EducationCreateInput = {
-  enrollmentStatus: educationEnrollmentStatus
+  enrollmentStatus: education_enrollmentStatus
   schoolName?: string | null
-  typeOfSchool?: educationTypeOfSchool | null
+  typeOfSchool?: education_typeOfSchool | null
   grade?: string | null
   reason?: string | null
   hobbies?: string | null
-  orphans?: OrphanCreateManyWithoutEducationInput
-}
-
-export type GroupOfOrphansUpdateWithoutOrphansDataInput = {
-  registrationDate?: Date | string
-  donor?: DonorUpdateOneRequiredWithoutGroupsOfOrphansInput
-  site?: SiteUpdateOneRequiredWithoutGroupoforphansInput
-  socialworker?: SocialWorkerUpdateOneRequiredWithoutGroupoforphansInput
-}
-
-export type GroupOfOrphansUpsertWithoutOrphansInput = {
-  update: GroupOfOrphansUpdateWithoutOrphansDataInput
-  create: GroupOfOrphansCreateWithoutOrphansInput
-}
-
-export type GroupOfOrphansUpdateOneRequiredWithoutOrphansInput = {
-  create?: GroupOfOrphansCreateWithoutOrphansInput
-  connect?: GroupOfOrphansWhereUniqueInput
-  update?: GroupOfOrphansUpdateWithoutOrphansDataInput
-  upsert?: GroupOfOrphansUpsertWithoutOrphansInput
-}
-
-export type OrphanUpdateWithoutEducationDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
-}
-
-export type OrphanUpdateWithWhereUniqueWithoutEducationInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutEducationDataInput
-}
-
-export type OrphanUpsertWithWhereUniqueWithoutEducationInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutEducationDataInput
-  create: OrphanCreateWithoutEducationInput
-}
-
-export type OrphanUpdateManyWithoutEducationInput = {
-  create?: Enumerable<OrphanCreateWithoutEducationInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-  set?: Enumerable<OrphanWhereUniqueInput>
-  disconnect?: Enumerable<OrphanWhereUniqueInput>
-  delete?: Enumerable<OrphanWhereUniqueInput>
-  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutEducationInput>
-  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<OrphanScalarWhereInput>
-  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutEducationInput>
+  orphan?: OrphanCreateOneWithoutEducationInput
 }
 
 export type EducationUpdateInput = {
-  enrollmentStatus?: educationEnrollmentStatus
-  schoolName?: string | null
-  typeOfSchool?: educationTypeOfSchool | null
-  grade?: string | null
-  reason?: string | null
-  hobbies?: string | null
-  orphans?: OrphanUpdateManyWithoutEducationInput
+  enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
+  schoolName?: string | NullableStringFieldUpdateOperationsInput | null
+  typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
+  grade?: string | NullableStringFieldUpdateOperationsInput | null
+  reason?: string | NullableStringFieldUpdateOperationsInput | null
+  hobbies?: string | NullableStringFieldUpdateOperationsInput | null
+  orphan?: OrphanUpdateOneRequiredWithoutEducationInput
 }
 
 export type EducationUpdateManyMutationInput = {
-  enrollmentStatus?: educationEnrollmentStatus
-  schoolName?: string | null
-  typeOfSchool?: educationTypeOfSchool | null
-  grade?: string | null
-  reason?: string | null
-  hobbies?: string | null
+  enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
+  schoolName?: string | NullableStringFieldUpdateOperationsInput | null
+  typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
+  grade?: string | NullableStringFieldUpdateOperationsInput | null
+  reason?: string | NullableStringFieldUpdateOperationsInput | null
+  hobbies?: string | NullableStringFieldUpdateOperationsInput | null
 }
 
-export type OrphanCreateWithoutFatherInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
+export type EducationalSupportCreateInput = {
+  support?: SupportCreateManyWithoutEducationalsupportInput
 }
 
-export type OrphanCreateManyWithoutFatherInput = {
-  create?: Enumerable<OrphanCreateWithoutFatherInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
+export type EducationalSupportUpdateInput = {
+  support?: SupportUpdateManyWithoutEducationalsupportInput
+}
+
+export type EducationalSupportUpdateManyMutationInput = {
+
 }
 
 export type FatherCreateInput = {
@@ -9085,115 +10509,33 @@ export type FatherCreateInput = {
   orphans?: OrphanCreateManyWithoutFatherInput
 }
 
-export type OrphanUpdateWithoutFatherDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
-}
-
-export type OrphanUpdateWithWhereUniqueWithoutFatherInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutFatherDataInput
-}
-
-export type OrphanUpsertWithWhereUniqueWithoutFatherInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutFatherDataInput
-  create: OrphanCreateWithoutFatherInput
-}
-
-export type OrphanUpdateManyWithoutFatherInput = {
-  create?: Enumerable<OrphanCreateWithoutFatherInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
-  set?: Enumerable<OrphanWhereUniqueInput>
-  disconnect?: Enumerable<OrphanWhereUniqueInput>
-  delete?: Enumerable<OrphanWhereUniqueInput>
-  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutFatherInput>
-  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
-  deleteMany?: Enumerable<OrphanScalarWhereInput>
-  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutFatherInput>
-}
-
 export type FatherUpdateInput = {
-  dateOfDeath?: Date | string
-  causeOfDeath?: string
-  job?: string | null
-  monthlyIncome?: number
-  dateOfBirth?: Date | string
+  dateOfDeath?: Date | string | DateTimeFieldUpdateOperationsInput
+  causeOfDeath?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | IntFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
   orphans?: OrphanUpdateManyWithoutFatherInput
 }
 
 export type FatherUpdateManyMutationInput = {
-  dateOfDeath?: Date | string
-  causeOfDeath?: string
-  job?: string | null
-  monthlyIncome?: number
-  dateOfBirth?: Date | string
+  dateOfDeath?: Date | string | DateTimeFieldUpdateOperationsInput
+  causeOfDeath?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | IntFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
 }
 
-export type GroupOfOrphansCreateInput = {
-  registrationDate: Date | string
-  donor: DonorCreateOneWithoutGroupsOfOrphansInput
-  site: SiteCreateOneWithoutGroupoforphansInput
-  socialworker: SocialWorkerCreateOneWithoutGroupoforphansInput
-  orphans?: OrphanCreateManyWithoutGroupoforphansInput
+export type FinancialSupportCreateInput = {
+  support?: SupportCreateManyWithoutFinancialsupportInput
 }
 
-export type GroupOfOrphansUpdateInput = {
-  registrationDate?: Date | string
-  donor?: DonorUpdateOneRequiredWithoutGroupsOfOrphansInput
-  site?: SiteUpdateOneRequiredWithoutGroupoforphansInput
-  socialworker?: SocialWorkerUpdateOneRequiredWithoutGroupoforphansInput
-  orphans?: OrphanUpdateManyWithoutGroupoforphansInput
+export type FinancialSupportUpdateInput = {
+  support?: SupportUpdateManyWithoutFinancialsupportInput
 }
 
-export type GroupOfOrphansUpdateManyMutationInput = {
-  registrationDate?: Date | string
-}
+export type FinancialSupportUpdateManyMutationInput = {
 
-export type OrphanCreateWithoutGuardianInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
-}
-
-export type OrphanCreateManyWithoutGuardianInput = {
-  create?: Enumerable<OrphanCreateWithoutGuardianInput>
-  connect?: Enumerable<OrphanWhereUniqueInput>
 }
 
 export type GuardianCreateInput = {
@@ -9213,38 +10555,698 @@ export type GuardianCreateInput = {
   orphans?: OrphanCreateManyWithoutGuardianInput
 }
 
-export type OrphanUpdateWithoutGuardianDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
+export type GuardianUpdateInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  nationality?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+  relationToOrphan?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  age?: number | IntFieldUpdateOperationsInput
+  orphans?: OrphanUpdateManyWithoutGuardianInput
+}
+
+export type GuardianUpdateManyMutationInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  nationality?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+  relationToOrphan?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  age?: number | IntFieldUpdateOperationsInput
+}
+
+export type Iga_propertyCreateInput = {
+  ownershipStatus: string
+  otherProperty?: string | null
+  orphan?: OrphanCreateManyWithoutIga_propertyInput
+}
+
+export type Iga_propertyUpdateInput = {
+  ownershipStatus?: string | StringFieldUpdateOperationsInput
+  otherProperty?: string | NullableStringFieldUpdateOperationsInput | null
+  orphan?: OrphanUpdateManyWithoutIga_propertyInput
+}
+
+export type Iga_propertyUpdateManyMutationInput = {
+  ownershipStatus?: string | StringFieldUpdateOperationsInput
+  otherProperty?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type MotherCreateInput = {
+  firstName: string
+  middleName: string
+  lastName: string
+  dateOfBirth: Date | string
+  phoneNumber: string
+  maritalStatus: string
+  vitalStatus: string
+  monthlyExpense: number
+  motherjob?: MotherJobCreateOneWithoutMotherInput
+  orphans?: OrphanCreateManyWithoutMotherInput
+}
+
+export type MotherUpdateInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  vitalStatus?: string | StringFieldUpdateOperationsInput
+  monthlyExpense?: number | FloatFieldUpdateOperationsInput
+  motherjob?: MotherJobUpdateOneWithoutMotherInput
+  orphans?: OrphanUpdateManyWithoutMotherInput
+}
+
+export type MotherUpdateManyMutationInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  vitalStatus?: string | StringFieldUpdateOperationsInput
+  monthlyExpense?: number | FloatFieldUpdateOperationsInput
+}
+
+export type MotherJobCreateInput = {
+  currentJobTitle?: string | null
+  monthlyIncome?: number | null
+  mother?: MotherCreateOneWithoutMotherjobInput
+}
+
+export type MotherJobUpdateInput = {
+  currentJobTitle?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | NullableFloatFieldUpdateOperationsInput | null
+  mother?: MotherUpdateOneRequiredWithoutMotherjobInput
+}
+
+export type MotherJobUpdateManyMutationInput = {
+  currentJobTitle?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | NullableFloatFieldUpdateOperationsInput | null
+}
+
+export type OfficialDocumentsCreateInput = {
+  photoPortraitUrl: string
+  photoLongUrl: string
+  fatherDeathCertificateUrl: string
+  birthCertificateUrl: string
+  guardianIDCardUrl: string
+  guardianConfirmationLetterUrl: string
+  orphan?: OrphanCreateOneWithoutOfficialdocumentsInput
+}
+
+export type OfficialDocumentsUpdateInput = {
+  photoPortraitUrl?: string | StringFieldUpdateOperationsInput
+  photoLongUrl?: string | StringFieldUpdateOperationsInput
+  fatherDeathCertificateUrl?: string | StringFieldUpdateOperationsInput
+  birthCertificateUrl?: string | StringFieldUpdateOperationsInput
+  guardianIDCardUrl?: string | StringFieldUpdateOperationsInput
+  guardianConfirmationLetterUrl?: string | StringFieldUpdateOperationsInput
+  orphan?: OrphanUpdateOneRequiredWithoutOfficialdocumentsInput
+}
+
+export type OfficialDocumentsUpdateManyMutationInput = {
+  photoPortraitUrl?: string | StringFieldUpdateOperationsInput
+  photoLongUrl?: string | StringFieldUpdateOperationsInput
+  fatherDeathCertificateUrl?: string | StringFieldUpdateOperationsInput
+  birthCertificateUrl?: string | StringFieldUpdateOperationsInput
+  guardianIDCardUrl?: string | StringFieldUpdateOperationsInput
+  guardianConfirmationLetterUrl?: string | StringFieldUpdateOperationsInput
+}
+
+export type OrphanCreateInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
   siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
 }
 
-export type OrphanUpdateWithWhereUniqueWithoutGuardianInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutGuardianDataInput
+export type OrphanUpdateManyMutationInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
 }
 
-export type OrphanUpsertWithWhereUniqueWithoutGuardianInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutGuardianDataInput
-  create: OrphanCreateWithoutGuardianInput
+export type OtherSupportCreateInput = {
+  support?: SupportCreateManyWithoutOthersupportInput
+}
+
+export type OtherSupportUpdateInput = {
+  support?: SupportUpdateManyWithoutOthersupportInput
+}
+
+export type OtherSupportUpdateManyMutationInput = {
+
+}
+
+export type RegisteredGroupCreateInput = {
+  registrationDate: Date | string
+  siteName: string
+  state: string
+  zone: string
+  district: string
+  kebele: string
+  orphans?: OrphanCreateManyWithoutRegisteredgroupInput
+}
+
+export type RegisteredGroupUpdateInput = {
+  registrationDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  siteName?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+  orphans?: OrphanUpdateManyWithoutRegisteredgroupInput
+}
+
+export type RegisteredGroupUpdateManyMutationInput = {
+  registrationDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  siteName?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+}
+
+export type SiblingCreateInput = {
+  fullName: string
+  gender: string
+  age: number
+  schoolGrade?: string | null
+  job?: string | null
+  maritalStatus: string
+  orphan?: OrphanCreateOneWithoutSiblingsInput
+}
+
+export type SiblingUpdateInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  orphan?: OrphanUpdateOneWithoutSiblingsInput
+}
+
+export type SiblingUpdateManyMutationInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+}
+
+export type SocialWorkerCreateInput = {
+  fullName: string
+  phoneNumber: string
+  email: string
+  sponsoredgroup?: SponsoredGroupCreateManyWithoutSocialworkersInput
+}
+
+export type SocialWorkerUpdateInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+  sponsoredgroup?: SponsoredGroupUpdateManyWithoutSocialworkersInput
+}
+
+export type SocialWorkerUpdateManyMutationInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+}
+
+export type SponsoredGroupCreateInput = {
+  sponsorshipDate: Date | string
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
+  support?: SupportCreateOneWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
+}
+
+export type SponsoredGroupUpdateInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
+  support?: SupportUpdateOneWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
+}
+
+export type SponsoredGroupUpdateManyMutationInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+}
+
+export type SupportCreateInput = {
+  status?: string | null
+  educationalsupport?: EducationalSupportCreateOneWithoutSupportInput
+  financialsupport?: FinancialSupportCreateOneWithoutSupportInput
+  othersupport?: OtherSupportCreateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupCreateManyWithoutSupportInput
+}
+
+export type SupportUpdateInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+  educationalsupport?: EducationalSupportUpdateOneWithoutSupportInput
+  financialsupport?: FinancialSupportUpdateOneWithoutSupportInput
+  othersupport?: OtherSupportUpdateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupUpdateManyWithoutSupportInput
+}
+
+export type SupportUpdateManyMutationInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type migrationCreateInput = {
+  name: string
+  datamodel: string
+  status: string
+  applied: number
+  rolled_back: number
+  datamodel_steps: string
+  database_migration: string
+  errors: string
+  started_at: Date | string
+  finished_at?: Date | string | null
+}
+
+export type migrationUpdateInput = {
+  name?: string | StringFieldUpdateOperationsInput
+  datamodel?: string | StringFieldUpdateOperationsInput
+  status?: string | StringFieldUpdateOperationsInput
+  applied?: number | IntFieldUpdateOperationsInput
+  rolled_back?: number | IntFieldUpdateOperationsInput
+  datamodel_steps?: string | StringFieldUpdateOperationsInput
+  database_migration?: string | StringFieldUpdateOperationsInput
+  errors?: string | StringFieldUpdateOperationsInput
+  started_at?: Date | string | DateTimeFieldUpdateOperationsInput
+  finished_at?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+}
+
+export type migrationUpdateManyMutationInput = {
+  name?: string | StringFieldUpdateOperationsInput
+  datamodel?: string | StringFieldUpdateOperationsInput
+  status?: string | StringFieldUpdateOperationsInput
+  applied?: number | IntFieldUpdateOperationsInput
+  rolled_back?: number | IntFieldUpdateOperationsInput
+  datamodel_steps?: string | StringFieldUpdateOperationsInput
+  database_migration?: string | StringFieldUpdateOperationsInput
+  errors?: string | StringFieldUpdateOperationsInput
+  started_at?: Date | string | DateTimeFieldUpdateOperationsInput
+  finished_at?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+}
+
+export type IntFilter = {
+  equals?: number
+  in?: Enumerable<number>
+  notIn?: Enumerable<number>
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: number | NestedIntFilter
+}
+
+export type StringFilter = {
+  equals?: string
+  in?: Enumerable<string>
+  notIn?: Enumerable<string>
+  lt?: string
+  lte?: string
+  gt?: string
+  gte?: string
+  contains?: string
+  startsWith?: string
+  endsWith?: string
+  not?: string | NestedStringFilter
+}
+
+export type DateTimeNullableFilter = {
+  equals?: Date | string | null
+  in?: Enumerable<Date | string> | null
+  notIn?: Enumerable<Date | string> | null
+  lt?: Date | string | null
+  lte?: Date | string | null
+  gt?: Date | string | null
+  gte?: Date | string | null
+  not?: Date | string | NestedDateTimeNullableFilter | null
+}
+
+export type SponsoredGroupListRelationFilter = {
+  every?: SponsoredGroupWhereInput
+  some?: SponsoredGroupWhereInput
+  none?: SponsoredGroupWhereInput
+}
+
+export type Enumeducation_enrollmentStatusFilter = {
+  equals?: education_enrollmentStatus
+  in?: Enumerable<education_enrollmentStatus>
+  notIn?: Enumerable<education_enrollmentStatus>
+  not?: education_enrollmentStatus | NestedEnumeducation_enrollmentStatusFilter
+}
+
+export type StringNullableFilter = {
+  equals?: string | null
+  in?: Enumerable<string> | null
+  notIn?: Enumerable<string> | null
+  lt?: string | null
+  lte?: string | null
+  gt?: string | null
+  gte?: string | null
+  contains?: string | null
+  startsWith?: string | null
+  endsWith?: string | null
+  not?: string | NestedStringNullableFilter | null
+}
+
+export type Enumeducation_typeOfSchoolNullableFilter = {
+  equals?: education_typeOfSchool | null
+  in?: Enumerable<education_typeOfSchool> | null
+  notIn?: Enumerable<education_typeOfSchool> | null
+  not?: education_typeOfSchool | NestedEnumeducation_typeOfSchoolNullableFilter | null
+}
+
+export type OrphanRelationFilter = {
+  is?: OrphanWhereInput | null
+  isNot?: OrphanWhereInput | null
+}
+
+export type SupportListRelationFilter = {
+  every?: SupportWhereInput
+  some?: SupportWhereInput
+  none?: SupportWhereInput
+}
+
+export type DateTimeFilter = {
+  equals?: Date | string
+  in?: Enumerable<Date | string>
+  notIn?: Enumerable<Date | string>
+  lt?: Date | string
+  lte?: Date | string
+  gt?: Date | string
+  gte?: Date | string
+  not?: Date | string | NestedDateTimeFilter
+}
+
+export type OrphanListRelationFilter = {
+  every?: OrphanWhereInput
+  some?: OrphanWhereInput
+  none?: OrphanWhereInput
+}
+
+export type IntNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number | null
+  lte?: number | null
+  gt?: number | null
+  gte?: number | null
+  not?: number | NestedIntNullableFilter | null
+}
+
+export type FloatFilter = {
+  equals?: number
+  in?: Enumerable<number>
+  notIn?: Enumerable<number>
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: number | NestedFloatFilter
+}
+
+export type MotherJobRelationFilter = {
+  is?: MotherJobWhereInput | null
+  isNot?: MotherJobWhereInput | null
+}
+
+export type FloatNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number | null
+  lte?: number | null
+  gt?: number | null
+  gte?: number | null
+  not?: number | NestedFloatNullableFilter | null
+}
+
+export type MotherRelationFilter = {
+  is?: MotherWhereInput | null
+  isNot?: MotherWhereInput | null
+}
+
+export type Enumorphan_genderFilter = {
+  equals?: orphan_gender
+  in?: Enumerable<orphan_gender>
+  notIn?: Enumerable<orphan_gender>
+  not?: orphan_gender | NestedEnumorphan_genderFilter
+}
+
+export type Iga_propertyRelationFilter = {
+  is?: Iga_propertyWhereInput | null
+  isNot?: Iga_propertyWhereInput | null
+}
+
+export type OfficialDocumentsRelationFilter = {
+  is?: OfficialDocumentsWhereInput | null
+  isNot?: OfficialDocumentsWhereInput | null
+}
+
+export type EducationRelationFilter = {
+  is?: EducationWhereInput | null
+  isNot?: EducationWhereInput | null
+}
+
+export type FatherRelationFilter = {
+  is?: FatherWhereInput | null
+  isNot?: FatherWhereInput | null
+}
+
+export type GuardianRelationFilter = {
+  is?: GuardianWhereInput | null
+  isNot?: GuardianWhereInput | null
+}
+
+export type RegisteredGroupRelationFilter = {
+  is?: RegisteredGroupWhereInput | null
+  isNot?: RegisteredGroupWhereInput | null
+}
+
+export type SponsoredGroupRelationFilter = {
+  is?: SponsoredGroupWhereInput | null
+  isNot?: SponsoredGroupWhereInput | null
+}
+
+export type SiblingListRelationFilter = {
+  every?: SiblingWhereInput
+  some?: SiblingWhereInput
+  none?: SiblingWhereInput
+}
+
+export type DonorRelationFilter = {
+  is?: DonorWhereInput | null
+  isNot?: DonorWhereInput | null
+}
+
+export type SocialWorkerRelationFilter = {
+  is?: SocialWorkerWhereInput | null
+  isNot?: SocialWorkerWhereInput | null
+}
+
+export type SupportRelationFilter = {
+  is?: SupportWhereInput | null
+  isNot?: SupportWhereInput | null
+}
+
+export type EducationalSupportRelationFilter = {
+  is?: EducationalSupportWhereInput | null
+  isNot?: EducationalSupportWhereInput | null
+}
+
+export type FinancialSupportRelationFilter = {
+  is?: FinancialSupportWhereInput | null
+  isNot?: FinancialSupportWhereInput | null
+}
+
+export type OtherSupportRelationFilter = {
+  is?: OtherSupportWhereInput | null
+  isNot?: OtherSupportWhereInput | null
+}
+
+export type SponsoredGroupCreateManyWithoutDonorInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutDonorInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+}
+
+export type StringFieldUpdateOperationsInput = {
+  set?: string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type SponsoredGroupUpdateManyWithoutDonorInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutDonorInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  set?: Enumerable<SponsoredGroupWhereUniqueInput>
+  disconnect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  delete?: Enumerable<SponsoredGroupWhereUniqueInput>
+  update?: Enumerable<SponsoredGroupUpdateWithWhereUniqueWithoutDonorInput>
+  updateMany?: Enumerable<SponsoredGroupUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SponsoredGroupScalarWhereInput>
+  upsert?: Enumerable<SponsoredGroupUpsertWithWhereUniqueWithoutDonorInput>
+}
+
+export type OrphanCreateOneWithoutEducationInput = {
+  create?: OrphanCreateWithoutEducationInput
+  connect?: OrphanWhereUniqueInput
+}
+
+export type Enumeducation_enrollmentStatusFieldUpdateOperationsInput = {
+  set?: education_enrollmentStatus
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput = {
+  set?: education_typeOfSchool | null
+}
+
+export type OrphanUpdateOneRequiredWithoutEducationInput = {
+  create?: OrphanCreateWithoutEducationInput
+  connect?: OrphanWhereUniqueInput
+  update?: OrphanUpdateWithoutEducationDataInput
+  upsert?: OrphanUpsertWithoutEducationInput
+}
+
+export type SupportCreateManyWithoutEducationalsupportInput = {
+  create?: Enumerable<SupportCreateWithoutEducationalsupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+}
+
+export type SupportUpdateManyWithoutEducationalsupportInput = {
+  create?: Enumerable<SupportCreateWithoutEducationalsupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+  set?: Enumerable<SupportWhereUniqueInput>
+  disconnect?: Enumerable<SupportWhereUniqueInput>
+  delete?: Enumerable<SupportWhereUniqueInput>
+  update?: Enumerable<SupportUpdateWithWhereUniqueWithoutEducationalsupportInput>
+  updateMany?: Enumerable<SupportUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SupportScalarWhereInput>
+  upsert?: Enumerable<SupportUpsertWithWhereUniqueWithoutEducationalsupportInput>
+}
+
+export type OrphanCreateManyWithoutFatherInput = {
+  create?: Enumerable<OrphanCreateWithoutFatherInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+}
+
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+}
+
+export type OrphanUpdateManyWithoutFatherInput = {
+  create?: Enumerable<OrphanCreateWithoutFatherInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+  set?: Enumerable<OrphanWhereUniqueInput>
+  disconnect?: Enumerable<OrphanWhereUniqueInput>
+  delete?: Enumerable<OrphanWhereUniqueInput>
+  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutFatherInput>
+  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<OrphanScalarWhereInput>
+  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutFatherInput>
+}
+
+export type SupportCreateManyWithoutFinancialsupportInput = {
+  create?: Enumerable<SupportCreateWithoutFinancialsupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+}
+
+export type SupportUpdateManyWithoutFinancialsupportInput = {
+  create?: Enumerable<SupportCreateWithoutFinancialsupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+  set?: Enumerable<SupportWhereUniqueInput>
+  disconnect?: Enumerable<SupportWhereUniqueInput>
+  delete?: Enumerable<SupportWhereUniqueInput>
+  update?: Enumerable<SupportUpdateWithWhereUniqueWithoutFinancialsupportInput>
+  updateMany?: Enumerable<SupportUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SupportScalarWhereInput>
+  upsert?: Enumerable<SupportUpsertWithWhereUniqueWithoutFinancialsupportInput>
+}
+
+export type OrphanCreateManyWithoutGuardianInput = {
+  create?: Enumerable<OrphanCreateWithoutGuardianInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
 }
 
 export type OrphanUpdateManyWithoutGuardianInput = {
@@ -9259,105 +11261,9 @@ export type OrphanUpdateManyWithoutGuardianInput = {
   upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutGuardianInput>
 }
 
-export type GuardianUpdateInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  gender?: string
-  nationality?: string
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
-  relationToOrphan?: string
-  email?: string
-  job?: string | null
-  age?: number
-  orphans?: OrphanUpdateManyWithoutGuardianInput
-}
-
-export type GuardianUpdateManyMutationInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  gender?: string
-  nationality?: string
-  state?: string
-  zone?: string
-  district?: string
-  kebele?: string
-  relationToOrphan?: string
-  email?: string
-  job?: string | null
-  age?: number
-}
-
-export type OrphanCreateWithoutIga_propertyInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
-}
-
 export type OrphanCreateManyWithoutIga_propertyInput = {
   create?: Enumerable<OrphanCreateWithoutIga_propertyInput>
   connect?: Enumerable<OrphanWhereUniqueInput>
-}
-
-export type Iga_propertyCreateInput = {
-  ownershipStatus: string
-  otherProperty?: string | null
-  orphans?: OrphanCreateManyWithoutIga_propertyInput
-}
-
-export type OrphanUpdateWithoutIga_propertyDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
-}
-
-export type OrphanUpdateWithWhereUniqueWithoutIga_propertyInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutIga_propertyDataInput
-}
-
-export type OrphanUpsertWithWhereUniqueWithoutIga_propertyInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutIga_propertyDataInput
-  create: OrphanCreateWithoutIga_propertyInput
 }
 
 export type OrphanUpdateManyWithoutIga_propertyInput = {
@@ -9372,38 +11278,9 @@ export type OrphanUpdateManyWithoutIga_propertyInput = {
   upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutIga_propertyInput>
 }
 
-export type Iga_propertyUpdateInput = {
-  ownershipStatus?: string
-  otherProperty?: string | null
-  orphans?: OrphanUpdateManyWithoutIga_propertyInput
-}
-
-export type Iga_propertyUpdateManyMutationInput = {
-  ownershipStatus?: string
-  otherProperty?: string | null
-}
-
-export type OrphanCreateWithoutMotherInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
+export type MotherJobCreateOneWithoutMotherInput = {
+  create?: MotherJobCreateWithoutMotherInput
+  connect?: MotherJobWhereUniqueInput
 }
 
 export type OrphanCreateManyWithoutMotherInput = {
@@ -9411,51 +11288,17 @@ export type OrphanCreateManyWithoutMotherInput = {
   connect?: Enumerable<OrphanWhereUniqueInput>
 }
 
-export type MotherCreateInput = {
-  firstName: string
-  middleName: string
-  lastName: string
-  dateOfBirth: Date | string
-  phoneNumber: number
-  maritalStatus: string
-  vitalStatus: string
-  monthlyExpense: number
-  motherjob: MotherJobCreateOneWithoutMotherInput
-  orphans?: OrphanCreateManyWithoutMotherInput
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
 }
 
-export type OrphanUpdateWithoutMotherDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-}
-
-export type OrphanUpdateWithWhereUniqueWithoutMotherInput = {
-  where: OrphanWhereUniqueInput
-  data: OrphanUpdateWithoutMotherDataInput
-}
-
-export type OrphanUpsertWithWhereUniqueWithoutMotherInput = {
-  where: OrphanWhereUniqueInput
-  update: OrphanUpdateWithoutMotherDataInput
-  create: OrphanCreateWithoutMotherInput
+export type MotherJobUpdateOneWithoutMotherInput = {
+  create?: MotherJobCreateWithoutMotherInput
+  connect?: MotherJobWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: MotherJobUpdateWithoutMotherDataInput
+  upsert?: MotherJobUpsertWithoutMotherInput
 }
 
 export type OrphanUpdateManyWithoutMotherInput = {
@@ -9470,68 +11313,13 @@ export type OrphanUpdateManyWithoutMotherInput = {
   upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutMotherInput>
 }
 
-export type MotherUpdateInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  dateOfBirth?: Date | string
-  phoneNumber?: number
-  maritalStatus?: string
-  vitalStatus?: string
-  monthlyExpense?: number
-  motherjob?: MotherJobUpdateOneRequiredWithoutMotherInput
-  orphans?: OrphanUpdateManyWithoutMotherInput
-}
-
-export type MotherUpdateManyMutationInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  dateOfBirth?: Date | string
-  phoneNumber?: number
-  maritalStatus?: string
-  vitalStatus?: string
-  monthlyExpense?: number
-}
-
-export type MotherCreateWithoutMotherjobInput = {
-  firstName: string
-  middleName: string
-  lastName: string
-  dateOfBirth: Date | string
-  phoneNumber: number
-  maritalStatus: string
-  vitalStatus: string
-  monthlyExpense: number
-  orphans?: OrphanCreateManyWithoutMotherInput
-}
-
 export type MotherCreateOneWithoutMotherjobInput = {
   create?: MotherCreateWithoutMotherjobInput
   connect?: MotherWhereUniqueInput
 }
 
-export type MotherJobCreateInput = {
-  currentJobTitle?: string | null
-  monthlyIncome?: number | null
-  mother?: MotherCreateOneWithoutMotherjobInput
-}
-
-export type MotherUpdateWithoutMotherjobDataInput = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  dateOfBirth?: Date | string
-  phoneNumber?: number
-  maritalStatus?: string
-  vitalStatus?: string
-  monthlyExpense?: number
-  orphans?: OrphanUpdateManyWithoutMotherInput
-}
-
-export type MotherUpsertWithoutMotherjobInput = {
-  update: MotherUpdateWithoutMotherjobDataInput
-  create: MotherCreateWithoutMotherjobInput
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
 }
 
 export type MotherUpdateOneRequiredWithoutMotherjobInput = {
@@ -9541,103 +11329,183 @@ export type MotherUpdateOneRequiredWithoutMotherjobInput = {
   upsert?: MotherUpsertWithoutMotherjobInput
 }
 
-export type MotherJobUpdateInput = {
-  currentJobTitle?: string | null
-  monthlyIncome?: number | null
-  mother?: MotherUpdateOneRequiredWithoutMotherjobInput
+export type OrphanCreateOneWithoutOfficialdocumentsInput = {
+  create?: OrphanCreateWithoutOfficialdocumentsInput
+  connect?: OrphanWhereUniqueInput
 }
 
-export type MotherJobUpdateManyMutationInput = {
-  currentJobTitle?: string | null
-  monthlyIncome?: number | null
+export type OrphanUpdateOneRequiredWithoutOfficialdocumentsInput = {
+  create?: OrphanCreateWithoutOfficialdocumentsInput
+  connect?: OrphanWhereUniqueInput
+  update?: OrphanUpdateWithoutOfficialdocumentsDataInput
+  upsert?: OrphanUpsertWithoutOfficialdocumentsInput
 }
 
-export type OrphanCreateInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  siblings?: SiblingCreateManyWithoutOrphanInput
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
+export type Iga_propertyCreateOneWithoutOrphanInput = {
+  create?: Iga_propertyCreateWithoutOrphanInput
+  connect?: Iga_propertyWhereUniqueInput
 }
 
-export type OrphanUpdateInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  siblings?: SiblingUpdateManyWithoutOrphanInput
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
+export type OfficialDocumentsCreateOneWithoutOrphanInput = {
+  create?: OfficialDocumentsCreateWithoutOrphanInput
+  connect?: OfficialDocumentsWhereUniqueInput
 }
 
-export type OrphanUpdateManyMutationInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
+export type EducationCreateOneWithoutOrphanInput = {
+  create?: EducationCreateWithoutOrphanInput
+  connect?: EducationWhereUniqueInput
 }
 
-export type OrphanCreateWithoutSiblingsInput = {
-  firstName: string
-  fatherName: string
-  grandFatherName: string
-  greatGrandFatherName: string
-  gender: orphanGender
-  placeOfBirth: string
-  dateOfBirth: Date | string
-  numberOfSponserdSiblings: number
-  physicalHealthStatus: string
-  psychologicalHealthStatus: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl: string
-  photoLongUrl: string
-  siblingId: number
-  iga_property: Iga_propertyCreateOneWithoutOrphansInput
-  education: EducationCreateOneWithoutOrphansInput
-  father: FatherCreateOneWithoutOrphansInput
-  groupoforphans: GroupOfOrphansCreateOneWithoutOrphansInput
-  guardian: GuardianCreateOneWithoutOrphansInput
-  mother: MotherCreateOneWithoutOrphansInput
+export type FatherCreateOneWithoutOrphansInput = {
+  create?: FatherCreateWithoutOrphansInput
+  connect?: FatherWhereUniqueInput
+}
+
+export type GuardianCreateOneWithoutOrphansInput = {
+  create?: GuardianCreateWithoutOrphansInput
+  connect?: GuardianWhereUniqueInput
+}
+
+export type MotherCreateOneWithoutOrphansInput = {
+  create?: MotherCreateWithoutOrphansInput
+  connect?: MotherWhereUniqueInput
+}
+
+export type RegisteredGroupCreateOneWithoutOrphansInput = {
+  create?: RegisteredGroupCreateWithoutOrphansInput
+  connect?: RegisteredGroupWhereUniqueInput
+}
+
+export type SponsoredGroupCreateOneWithoutOrphansInput = {
+  create?: SponsoredGroupCreateWithoutOrphansInput
+  connect?: SponsoredGroupWhereUniqueInput
+}
+
+export type SiblingCreateManyWithoutOrphanInput = {
+  create?: Enumerable<SiblingCreateWithoutOrphanInput>
+  connect?: Enumerable<SiblingWhereUniqueInput>
+}
+
+export type Enumorphan_genderFieldUpdateOperationsInput = {
+  set?: orphan_gender
+}
+
+export type Iga_propertyUpdateOneWithoutOrphanInput = {
+  create?: Iga_propertyCreateWithoutOrphanInput
+  connect?: Iga_propertyWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: Iga_propertyUpdateWithoutOrphanDataInput
+  upsert?: Iga_propertyUpsertWithoutOrphanInput
+}
+
+export type OfficialDocumentsUpdateOneWithoutOrphanInput = {
+  create?: OfficialDocumentsCreateWithoutOrphanInput
+  connect?: OfficialDocumentsWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: OfficialDocumentsUpdateWithoutOrphanDataInput
+  upsert?: OfficialDocumentsUpsertWithoutOrphanInput
+}
+
+export type EducationUpdateOneWithoutOrphanInput = {
+  create?: EducationCreateWithoutOrphanInput
+  connect?: EducationWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: EducationUpdateWithoutOrphanDataInput
+  upsert?: EducationUpsertWithoutOrphanInput
+}
+
+export type FatherUpdateOneWithoutOrphansInput = {
+  create?: FatherCreateWithoutOrphansInput
+  connect?: FatherWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: FatherUpdateWithoutOrphansDataInput
+  upsert?: FatherUpsertWithoutOrphansInput
+}
+
+export type GuardianUpdateOneWithoutOrphansInput = {
+  create?: GuardianCreateWithoutOrphansInput
+  connect?: GuardianWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: GuardianUpdateWithoutOrphansDataInput
+  upsert?: GuardianUpsertWithoutOrphansInput
+}
+
+export type MotherUpdateOneWithoutOrphansInput = {
+  create?: MotherCreateWithoutOrphansInput
+  connect?: MotherWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: MotherUpdateWithoutOrphansDataInput
+  upsert?: MotherUpsertWithoutOrphansInput
+}
+
+export type RegisteredGroupUpdateOneWithoutOrphansInput = {
+  create?: RegisteredGroupCreateWithoutOrphansInput
+  connect?: RegisteredGroupWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: RegisteredGroupUpdateWithoutOrphansDataInput
+  upsert?: RegisteredGroupUpsertWithoutOrphansInput
+}
+
+export type SponsoredGroupUpdateOneWithoutOrphansInput = {
+  create?: SponsoredGroupCreateWithoutOrphansInput
+  connect?: SponsoredGroupWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: SponsoredGroupUpdateWithoutOrphansDataInput
+  upsert?: SponsoredGroupUpsertWithoutOrphansInput
+}
+
+export type SiblingUpdateManyWithoutOrphanInput = {
+  create?: Enumerable<SiblingCreateWithoutOrphanInput>
+  connect?: Enumerable<SiblingWhereUniqueInput>
+  set?: Enumerable<SiblingWhereUniqueInput>
+  disconnect?: Enumerable<SiblingWhereUniqueInput>
+  delete?: Enumerable<SiblingWhereUniqueInput>
+  update?: Enumerable<SiblingUpdateWithWhereUniqueWithoutOrphanInput>
+  updateMany?: Enumerable<SiblingUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SiblingScalarWhereInput>
+  upsert?: Enumerable<SiblingUpsertWithWhereUniqueWithoutOrphanInput>
+}
+
+export type SupportCreateManyWithoutOthersupportInput = {
+  create?: Enumerable<SupportCreateWithoutOthersupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+}
+
+export type SupportUpdateManyWithoutOthersupportInput = {
+  create?: Enumerable<SupportCreateWithoutOthersupportInput>
+  connect?: Enumerable<SupportWhereUniqueInput>
+  set?: Enumerable<SupportWhereUniqueInput>
+  disconnect?: Enumerable<SupportWhereUniqueInput>
+  delete?: Enumerable<SupportWhereUniqueInput>
+  update?: Enumerable<SupportUpdateWithWhereUniqueWithoutOthersupportInput>
+  updateMany?: Enumerable<SupportUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SupportScalarWhereInput>
+  upsert?: Enumerable<SupportUpsertWithWhereUniqueWithoutOthersupportInput>
+}
+
+export type OrphanCreateManyWithoutRegisteredgroupInput = {
+  create?: Enumerable<OrphanCreateWithoutRegisteredgroupInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+}
+
+export type OrphanUpdateManyWithoutRegisteredgroupInput = {
+  create?: Enumerable<OrphanCreateWithoutRegisteredgroupInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+  set?: Enumerable<OrphanWhereUniqueInput>
+  disconnect?: Enumerable<OrphanWhereUniqueInput>
+  delete?: Enumerable<OrphanWhereUniqueInput>
+  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutRegisteredgroupInput>
+  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<OrphanScalarWhereInput>
+  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutRegisteredgroupInput>
 }
 
 export type OrphanCreateOneWithoutSiblingsInput = {
@@ -9645,37 +11513,975 @@ export type OrphanCreateOneWithoutSiblingsInput = {
   connect?: OrphanWhereUniqueInput
 }
 
-export type SiblingCreateInput = {
+export type OrphanUpdateOneWithoutSiblingsInput = {
+  create?: OrphanCreateWithoutSiblingsInput
+  connect?: OrphanWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: OrphanUpdateWithoutSiblingsDataInput
+  upsert?: OrphanUpsertWithoutSiblingsInput
+}
+
+export type SponsoredGroupCreateManyWithoutSocialworkersInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutSocialworkersInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+}
+
+export type SponsoredGroupUpdateManyWithoutSocialworkersInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutSocialworkersInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  set?: Enumerable<SponsoredGroupWhereUniqueInput>
+  disconnect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  delete?: Enumerable<SponsoredGroupWhereUniqueInput>
+  update?: Enumerable<SponsoredGroupUpdateWithWhereUniqueWithoutSocialworkersInput>
+  updateMany?: Enumerable<SponsoredGroupUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SponsoredGroupScalarWhereInput>
+  upsert?: Enumerable<SponsoredGroupUpsertWithWhereUniqueWithoutSocialworkersInput>
+}
+
+export type DonorCreateOneWithoutSponsoredgroupsInput = {
+  create?: DonorCreateWithoutSponsoredgroupsInput
+  connect?: DonorWhereUniqueInput
+}
+
+export type SocialWorkerCreateOneWithoutSponsoredgroupInput = {
+  create?: SocialWorkerCreateWithoutSponsoredgroupInput
+  connect?: SocialWorkerWhereUniqueInput
+}
+
+export type SupportCreateOneWithoutSponsoredgroupInput = {
+  create?: SupportCreateWithoutSponsoredgroupInput
+  connect?: SupportWhereUniqueInput
+}
+
+export type OrphanCreateManyWithoutSponsoredgroupInput = {
+  create?: Enumerable<OrphanCreateWithoutSponsoredgroupInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+}
+
+export type DonorUpdateOneWithoutSponsoredgroupsInput = {
+  create?: DonorCreateWithoutSponsoredgroupsInput
+  connect?: DonorWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: DonorUpdateWithoutSponsoredgroupsDataInput
+  upsert?: DonorUpsertWithoutSponsoredgroupsInput
+}
+
+export type SocialWorkerUpdateOneWithoutSponsoredgroupInput = {
+  create?: SocialWorkerCreateWithoutSponsoredgroupInput
+  connect?: SocialWorkerWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: SocialWorkerUpdateWithoutSponsoredgroupDataInput
+  upsert?: SocialWorkerUpsertWithoutSponsoredgroupInput
+}
+
+export type SupportUpdateOneWithoutSponsoredgroupInput = {
+  create?: SupportCreateWithoutSponsoredgroupInput
+  connect?: SupportWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: SupportUpdateWithoutSponsoredgroupDataInput
+  upsert?: SupportUpsertWithoutSponsoredgroupInput
+}
+
+export type OrphanUpdateManyWithoutSponsoredgroupInput = {
+  create?: Enumerable<OrphanCreateWithoutSponsoredgroupInput>
+  connect?: Enumerable<OrphanWhereUniqueInput>
+  set?: Enumerable<OrphanWhereUniqueInput>
+  disconnect?: Enumerable<OrphanWhereUniqueInput>
+  delete?: Enumerable<OrphanWhereUniqueInput>
+  update?: Enumerable<OrphanUpdateWithWhereUniqueWithoutSponsoredgroupInput>
+  updateMany?: Enumerable<OrphanUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<OrphanScalarWhereInput>
+  upsert?: Enumerable<OrphanUpsertWithWhereUniqueWithoutSponsoredgroupInput>
+}
+
+export type EducationalSupportCreateOneWithoutSupportInput = {
+  create?: EducationalSupportCreateWithoutSupportInput
+  connect?: EducationalSupportWhereUniqueInput
+}
+
+export type FinancialSupportCreateOneWithoutSupportInput = {
+  create?: FinancialSupportCreateWithoutSupportInput
+  connect?: FinancialSupportWhereUniqueInput
+}
+
+export type OtherSupportCreateOneWithoutSupportInput = {
+  create?: OtherSupportCreateWithoutSupportInput
+  connect?: OtherSupportWhereUniqueInput
+}
+
+export type SponsoredGroupCreateManyWithoutSupportInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutSupportInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+}
+
+export type EducationalSupportUpdateOneWithoutSupportInput = {
+  create?: EducationalSupportCreateWithoutSupportInput
+  connect?: EducationalSupportWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: EducationalSupportUpdateWithoutSupportDataInput
+}
+
+export type FinancialSupportUpdateOneWithoutSupportInput = {
+  create?: FinancialSupportCreateWithoutSupportInput
+  connect?: FinancialSupportWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: FinancialSupportUpdateWithoutSupportDataInput
+}
+
+export type OtherSupportUpdateOneWithoutSupportInput = {
+  create?: OtherSupportCreateWithoutSupportInput
+  connect?: OtherSupportWhereUniqueInput
+  disconnect?: boolean
+  delete?: boolean
+  update?: OtherSupportUpdateWithoutSupportDataInput
+}
+
+export type SponsoredGroupUpdateManyWithoutSupportInput = {
+  create?: Enumerable<SponsoredGroupCreateWithoutSupportInput>
+  connect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  set?: Enumerable<SponsoredGroupWhereUniqueInput>
+  disconnect?: Enumerable<SponsoredGroupWhereUniqueInput>
+  delete?: Enumerable<SponsoredGroupWhereUniqueInput>
+  update?: Enumerable<SponsoredGroupUpdateWithWhereUniqueWithoutSupportInput>
+  updateMany?: Enumerable<SponsoredGroupUpdateManyWithWhereNestedInput> | null
+  deleteMany?: Enumerable<SponsoredGroupScalarWhereInput>
+  upsert?: Enumerable<SponsoredGroupUpsertWithWhereUniqueWithoutSupportInput>
+}
+
+export type NestedIntFilter = {
+  equals?: number
+  in?: Enumerable<number>
+  notIn?: Enumerable<number>
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: NestedIntFilter | null
+}
+
+export type NestedStringFilter = {
+  equals?: string
+  in?: Enumerable<string>
+  notIn?: Enumerable<string>
+  lt?: string
+  lte?: string
+  gt?: string
+  gte?: string
+  contains?: string
+  startsWith?: string
+  endsWith?: string
+  not?: NestedStringFilter | null
+}
+
+export type NestedDateTimeNullableFilter = {
+  equals?: Date | string | null
+  in?: Enumerable<Date | string> | null
+  notIn?: Enumerable<Date | string> | null
+  lt?: Date | string | null
+  lte?: Date | string | null
+  gt?: Date | string | null
+  gte?: Date | string | null
+  not?: NestedDateTimeNullableFilter | null
+}
+
+export type NestedEnumeducation_enrollmentStatusFilter = {
+  equals?: education_enrollmentStatus
+  in?: Enumerable<education_enrollmentStatus>
+  notIn?: Enumerable<education_enrollmentStatus>
+  not?: NestedEnumeducation_enrollmentStatusFilter | null
+}
+
+export type NestedStringNullableFilter = {
+  equals?: string | null
+  in?: Enumerable<string> | null
+  notIn?: Enumerable<string> | null
+  lt?: string | null
+  lte?: string | null
+  gt?: string | null
+  gte?: string | null
+  contains?: string | null
+  startsWith?: string | null
+  endsWith?: string | null
+  not?: NestedStringNullableFilter | null
+}
+
+export type NestedEnumeducation_typeOfSchoolNullableFilter = {
+  equals?: education_typeOfSchool | null
+  in?: Enumerable<education_typeOfSchool> | null
+  notIn?: Enumerable<education_typeOfSchool> | null
+  not?: NestedEnumeducation_typeOfSchoolNullableFilter | null
+}
+
+export type NestedDateTimeFilter = {
+  equals?: Date | string
+  in?: Enumerable<Date | string>
+  notIn?: Enumerable<Date | string>
+  lt?: Date | string
+  lte?: Date | string
+  gt?: Date | string
+  gte?: Date | string
+  not?: NestedDateTimeFilter | null
+}
+
+export type NestedIntNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number | null
+  lte?: number | null
+  gt?: number | null
+  gte?: number | null
+  not?: NestedIntNullableFilter | null
+}
+
+export type NestedFloatFilter = {
+  equals?: number
+  in?: Enumerable<number>
+  notIn?: Enumerable<number>
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: NestedFloatFilter | null
+}
+
+export type NestedFloatNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number | null
+  lte?: number | null
+  gt?: number | null
+  gte?: number | null
+  not?: NestedFloatNullableFilter | null
+}
+
+export type NestedEnumorphan_genderFilter = {
+  equals?: orphan_gender
+  in?: Enumerable<orphan_gender>
+  notIn?: Enumerable<orphan_gender>
+  not?: NestedEnumorphan_genderFilter | null
+}
+
+export type SponsoredGroupCreateWithoutDonorInput = {
+  sponsorshipDate: Date | string
+  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
+  support?: SupportCreateOneWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
+}
+
+export type SponsoredGroupUpdateWithWhereUniqueWithoutDonorInput = {
+  where: SponsoredGroupWhereUniqueInput
+  data: SponsoredGroupUpdateWithoutDonorDataInput
+}
+
+export type SponsoredGroupUpdateManyWithWhereNestedInput = {
+  where: SponsoredGroupScalarWhereInput
+  data: SponsoredGroupUpdateManyDataInput
+}
+
+export type SponsoredGroupScalarWhereInput = {
+  AND?: Enumerable<SponsoredGroupScalarWhereInput>
+  OR?: Array<SponsoredGroupScalarWhereInput>
+  NOT?: Enumerable<SponsoredGroupScalarWhereInput>
+  id?: number | IntFilter
+  sponsorshipDate?: Date | string | DateTimeFilter
+  supportId?: number | IntNullableFilter | null
+  donorId?: number | IntNullableFilter | null
+  socialWorkerId?: number | IntNullableFilter | null
+}
+
+export type SponsoredGroupUpsertWithWhereUniqueWithoutDonorInput = {
+  where: SponsoredGroupWhereUniqueInput
+  update: SponsoredGroupUpdateWithoutDonorDataInput
+  create: SponsoredGroupCreateWithoutDonorInput
+}
+
+export type OrphanCreateWithoutEducationInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithoutEducationDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type OrphanUpsertWithoutEducationInput = {
+  update: OrphanUpdateWithoutEducationDataInput
+  create: OrphanCreateWithoutEducationInput
+}
+
+export type SupportCreateWithoutEducationalsupportInput = {
+  status?: string | null
+  financialsupport?: FinancialSupportCreateOneWithoutSupportInput
+  othersupport?: OtherSupportCreateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupCreateManyWithoutSupportInput
+}
+
+export type SupportUpdateWithWhereUniqueWithoutEducationalsupportInput = {
+  where: SupportWhereUniqueInput
+  data: SupportUpdateWithoutEducationalsupportDataInput
+}
+
+export type SupportUpdateManyWithWhereNestedInput = {
+  where: SupportScalarWhereInput
+  data: SupportUpdateManyDataInput
+}
+
+export type SupportScalarWhereInput = {
+  AND?: Enumerable<SupportScalarWhereInput>
+  OR?: Array<SupportScalarWhereInput>
+  NOT?: Enumerable<SupportScalarWhereInput>
+  id?: number | IntFilter
+  status?: string | StringNullableFilter | null
+  financialId?: number | IntNullableFilter | null
+  educationalId?: number | IntNullableFilter | null
+  otherId?: number | IntNullableFilter | null
+}
+
+export type SupportUpsertWithWhereUniqueWithoutEducationalsupportInput = {
+  where: SupportWhereUniqueInput
+  update: SupportUpdateWithoutEducationalsupportDataInput
+  create: SupportCreateWithoutEducationalsupportInput
+}
+
+export type OrphanCreateWithoutFatherInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutFatherInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutFatherDataInput
+}
+
+export type OrphanUpdateManyWithWhereNestedInput = {
+  where: OrphanScalarWhereInput
+  data: OrphanUpdateManyDataInput
+}
+
+export type OrphanScalarWhereInput = {
+  AND?: Enumerable<OrphanScalarWhereInput>
+  OR?: Array<OrphanScalarWhereInput>
+  NOT?: Enumerable<OrphanScalarWhereInput>
+  id?: number | IntFilter
+  firstName?: string | StringFilter
+  fatherName?: string | StringFilter
+  grandFatherName?: string | StringFilter
+  greatGrandFatherName?: string | StringFilter
+  gender?: orphan_gender | Enumorphan_genderFilter
+  placeOfBirth?: string | StringFilter
+  dateOfBirth?: Date | string | DateTimeFilter
+  numberOfSponserdSiblings?: number | IntFilter
+  physicalHealthStatus?: string | StringFilter
+  psychologicalHealthStatus?: string | StringFilter
+  otherHealthIssues?: string | StringFilter
+  fatherId?: number | IntNullableFilter | null
+  motherId?: number | IntNullableFilter | null
+  guardianId?: number | IntNullableFilter | null
+  IGA_PropertyId?: number | IntNullableFilter | null
+  educationId?: number | IntNullableFilter | null
+  docsId?: number | IntNullableFilter | null
+  regGroupId?: number | IntNullableFilter | null
+  sponsrGroupId?: number | IntNullableFilter | null
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutFatherInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutFatherDataInput
+  create: OrphanCreateWithoutFatherInput
+}
+
+export type SupportCreateWithoutFinancialsupportInput = {
+  status?: string | null
+  educationalsupport?: EducationalSupportCreateOneWithoutSupportInput
+  othersupport?: OtherSupportCreateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupCreateManyWithoutSupportInput
+}
+
+export type SupportUpdateWithWhereUniqueWithoutFinancialsupportInput = {
+  where: SupportWhereUniqueInput
+  data: SupportUpdateWithoutFinancialsupportDataInput
+}
+
+export type SupportUpsertWithWhereUniqueWithoutFinancialsupportInput = {
+  where: SupportWhereUniqueInput
+  update: SupportUpdateWithoutFinancialsupportDataInput
+  create: SupportCreateWithoutFinancialsupportInput
+}
+
+export type OrphanCreateWithoutGuardianInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutGuardianInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutGuardianDataInput
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutGuardianInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutGuardianDataInput
+  create: OrphanCreateWithoutGuardianInput
+}
+
+export type OrphanCreateWithoutIga_propertyInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutIga_propertyInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutIga_propertyDataInput
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutIga_propertyInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutIga_propertyDataInput
+  create: OrphanCreateWithoutIga_propertyInput
+}
+
+export type MotherJobCreateWithoutMotherInput = {
+  currentJobTitle?: string | null
+  monthlyIncome?: number | null
+}
+
+export type OrphanCreateWithoutMotherInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type MotherJobUpdateWithoutMotherDataInput = {
+  currentJobTitle?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | NullableFloatFieldUpdateOperationsInput | null
+}
+
+export type MotherJobUpsertWithoutMotherInput = {
+  update: MotherJobUpdateWithoutMotherDataInput
+  create: MotherJobCreateWithoutMotherInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutMotherInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutMotherDataInput
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutMotherInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutMotherDataInput
+  create: OrphanCreateWithoutMotherInput
+}
+
+export type MotherCreateWithoutMotherjobInput = {
+  firstName: string
+  middleName: string
+  lastName: string
+  dateOfBirth: Date | string
+  phoneNumber: string
+  maritalStatus: string
+  vitalStatus: string
+  monthlyExpense: number
+  orphans?: OrphanCreateManyWithoutMotherInput
+}
+
+export type MotherUpdateWithoutMotherjobDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  vitalStatus?: string | StringFieldUpdateOperationsInput
+  monthlyExpense?: number | FloatFieldUpdateOperationsInput
+  orphans?: OrphanUpdateManyWithoutMotherInput
+}
+
+export type MotherUpsertWithoutMotherjobInput = {
+  update: MotherUpdateWithoutMotherjobDataInput
+  create: MotherCreateWithoutMotherjobInput
+}
+
+export type OrphanCreateWithoutOfficialdocumentsInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithoutOfficialdocumentsDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type OrphanUpsertWithoutOfficialdocumentsInput = {
+  update: OrphanUpdateWithoutOfficialdocumentsDataInput
+  create: OrphanCreateWithoutOfficialdocumentsInput
+}
+
+export type Iga_propertyCreateWithoutOrphanInput = {
+  ownershipStatus: string
+  otherProperty?: string | null
+}
+
+export type OfficialDocumentsCreateWithoutOrphanInput = {
+  photoPortraitUrl: string
+  photoLongUrl: string
+  fatherDeathCertificateUrl: string
+  birthCertificateUrl: string
+  guardianIDCardUrl: string
+  guardianConfirmationLetterUrl: string
+}
+
+export type EducationCreateWithoutOrphanInput = {
+  enrollmentStatus: education_enrollmentStatus
+  schoolName?: string | null
+  typeOfSchool?: education_typeOfSchool | null
+  grade?: string | null
+  reason?: string | null
+  hobbies?: string | null
+}
+
+export type FatherCreateWithoutOrphansInput = {
+  dateOfDeath: Date | string
+  causeOfDeath: string
+  job?: string | null
+  monthlyIncome: number
+  dateOfBirth: Date | string
+}
+
+export type GuardianCreateWithoutOrphansInput = {
+  firstName: string
+  middleName: string
+  lastName: string
+  gender: string
+  nationality: string
+  state: string
+  zone: string
+  district: string
+  kebele: string
+  relationToOrphan: string
+  email: string
+  job?: string | null
+  age: number
+}
+
+export type MotherCreateWithoutOrphansInput = {
+  firstName: string
+  middleName: string
+  lastName: string
+  dateOfBirth: Date | string
+  phoneNumber: string
+  maritalStatus: string
+  vitalStatus: string
+  monthlyExpense: number
+  motherjob?: MotherJobCreateOneWithoutMotherInput
+}
+
+export type RegisteredGroupCreateWithoutOrphansInput = {
+  registrationDate: Date | string
+  siteName: string
+  state: string
+  zone: string
+  district: string
+  kebele: string
+}
+
+export type SponsoredGroupCreateWithoutOrphansInput = {
+  sponsorshipDate: Date | string
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
+  support?: SupportCreateOneWithoutSponsoredgroupInput
+}
+
+export type SiblingCreateWithoutOrphanInput = {
   fullName: string
   gender: string
   age: number
   schoolGrade?: string | null
   job?: string | null
   maritalStatus: string
-  orphan: OrphanCreateOneWithoutSiblingsInput
+}
+
+export type Iga_propertyUpdateWithoutOrphanDataInput = {
+  ownershipStatus?: string | StringFieldUpdateOperationsInput
+  otherProperty?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type Iga_propertyUpsertWithoutOrphanInput = {
+  update: Iga_propertyUpdateWithoutOrphanDataInput
+  create: Iga_propertyCreateWithoutOrphanInput
+}
+
+export type OfficialDocumentsUpdateWithoutOrphanDataInput = {
+  photoPortraitUrl?: string | StringFieldUpdateOperationsInput
+  photoLongUrl?: string | StringFieldUpdateOperationsInput
+  fatherDeathCertificateUrl?: string | StringFieldUpdateOperationsInput
+  birthCertificateUrl?: string | StringFieldUpdateOperationsInput
+  guardianIDCardUrl?: string | StringFieldUpdateOperationsInput
+  guardianConfirmationLetterUrl?: string | StringFieldUpdateOperationsInput
+}
+
+export type OfficialDocumentsUpsertWithoutOrphanInput = {
+  update: OfficialDocumentsUpdateWithoutOrphanDataInput
+  create: OfficialDocumentsCreateWithoutOrphanInput
+}
+
+export type EducationUpdateWithoutOrphanDataInput = {
+  enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
+  schoolName?: string | NullableStringFieldUpdateOperationsInput | null
+  typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
+  grade?: string | NullableStringFieldUpdateOperationsInput | null
+  reason?: string | NullableStringFieldUpdateOperationsInput | null
+  hobbies?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type EducationUpsertWithoutOrphanInput = {
+  update: EducationUpdateWithoutOrphanDataInput
+  create: EducationCreateWithoutOrphanInput
+}
+
+export type FatherUpdateWithoutOrphansDataInput = {
+  dateOfDeath?: Date | string | DateTimeFieldUpdateOperationsInput
+  causeOfDeath?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  monthlyIncome?: number | IntFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+}
+
+export type FatherUpsertWithoutOrphansInput = {
+  update: FatherUpdateWithoutOrphansDataInput
+  create: FatherCreateWithoutOrphansInput
+}
+
+export type GuardianUpdateWithoutOrphansDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  nationality?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+  relationToOrphan?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  age?: number | IntFieldUpdateOperationsInput
+}
+
+export type GuardianUpsertWithoutOrphansInput = {
+  update: GuardianUpdateWithoutOrphansDataInput
+  create: GuardianCreateWithoutOrphansInput
+}
+
+export type MotherUpdateWithoutOrphansDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  middleName?: string | StringFieldUpdateOperationsInput
+  lastName?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+  vitalStatus?: string | StringFieldUpdateOperationsInput
+  monthlyExpense?: number | FloatFieldUpdateOperationsInput
+  motherjob?: MotherJobUpdateOneWithoutMotherInput
+}
+
+export type MotherUpsertWithoutOrphansInput = {
+  update: MotherUpdateWithoutOrphansDataInput
+  create: MotherCreateWithoutOrphansInput
+}
+
+export type RegisteredGroupUpdateWithoutOrphansDataInput = {
+  registrationDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  siteName?: string | StringFieldUpdateOperationsInput
+  state?: string | StringFieldUpdateOperationsInput
+  zone?: string | StringFieldUpdateOperationsInput
+  district?: string | StringFieldUpdateOperationsInput
+  kebele?: string | StringFieldUpdateOperationsInput
+}
+
+export type RegisteredGroupUpsertWithoutOrphansInput = {
+  update: RegisteredGroupUpdateWithoutOrphansDataInput
+  create: RegisteredGroupCreateWithoutOrphansInput
+}
+
+export type SponsoredGroupUpdateWithoutOrphansDataInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
+  support?: SupportUpdateOneWithoutSponsoredgroupInput
+}
+
+export type SponsoredGroupUpsertWithoutOrphansInput = {
+  update: SponsoredGroupUpdateWithoutOrphansDataInput
+  create: SponsoredGroupCreateWithoutOrphansInput
+}
+
+export type SiblingUpdateWithWhereUniqueWithoutOrphanInput = {
+  where: SiblingWhereUniqueInput
+  data: SiblingUpdateWithoutOrphanDataInput
+}
+
+export type SiblingUpdateManyWithWhereNestedInput = {
+  where: SiblingScalarWhereInput
+  data: SiblingUpdateManyDataInput
+}
+
+export type SiblingScalarWhereInput = {
+  AND?: Enumerable<SiblingScalarWhereInput>
+  OR?: Array<SiblingScalarWhereInput>
+  NOT?: Enumerable<SiblingScalarWhereInput>
+  id?: number | IntFilter
+  fullName?: string | StringFilter
+  gender?: string | StringFilter
+  age?: number | IntFilter
+  schoolGrade?: string | StringNullableFilter | null
+  job?: string | StringNullableFilter | null
+  maritalStatus?: string | StringFilter
+  orphanId?: number | IntNullableFilter | null
+}
+
+export type SiblingUpsertWithWhereUniqueWithoutOrphanInput = {
+  where: SiblingWhereUniqueInput
+  update: SiblingUpdateWithoutOrphanDataInput
+  create: SiblingCreateWithoutOrphanInput
+}
+
+export type SupportCreateWithoutOthersupportInput = {
+  status?: string | null
+  educationalsupport?: EducationalSupportCreateOneWithoutSupportInput
+  financialsupport?: FinancialSupportCreateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupCreateManyWithoutSupportInput
+}
+
+export type SupportUpdateWithWhereUniqueWithoutOthersupportInput = {
+  where: SupportWhereUniqueInput
+  data: SupportUpdateWithoutOthersupportDataInput
+}
+
+export type SupportUpsertWithWhereUniqueWithoutOthersupportInput = {
+  where: SupportWhereUniqueInput
+  update: SupportUpdateWithoutOthersupportDataInput
+  create: SupportCreateWithoutOthersupportInput
+}
+
+export type OrphanCreateWithoutRegisteredgroupInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutRegisteredgroupInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutRegisteredgroupDataInput
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutRegisteredgroupInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutRegisteredgroupDataInput
+  create: OrphanCreateWithoutRegisteredgroupInput
+}
+
+export type OrphanCreateWithoutSiblingsInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupCreateOneWithoutOrphansInput
 }
 
 export type OrphanUpdateWithoutSiblingsDataInput = {
-  firstName?: string
-  fatherName?: string
-  grandFatherName?: string
-  greatGrandFatherName?: string
-  gender?: orphanGender
-  placeOfBirth?: string
-  dateOfBirth?: Date | string
-  numberOfSponserdSiblings?: number
-  physicalHealthStatus?: string
-  psychologicalHealthStatus?: string
-  otherHealthIssues?: string | null
-  photoPortraitUrl?: string
-  photoLongUrl?: string
-  siblingId?: number
-  iga_property?: Iga_propertyUpdateOneRequiredWithoutOrphansInput
-  education?: EducationUpdateOneRequiredWithoutOrphansInput
-  father?: FatherUpdateOneRequiredWithoutOrphansInput
-  groupoforphans?: GroupOfOrphansUpdateOneRequiredWithoutOrphansInput
-  guardian?: GuardianUpdateOneRequiredWithoutOrphansInput
-  mother?: MotherUpdateOneRequiredWithoutOrphansInput
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
 }
 
 export type OrphanUpsertWithoutSiblingsInput = {
@@ -9683,73 +12489,370 @@ export type OrphanUpsertWithoutSiblingsInput = {
   create: OrphanCreateWithoutSiblingsInput
 }
 
-export type OrphanUpdateOneRequiredWithoutSiblingsInput = {
-  create?: OrphanCreateWithoutSiblingsInput
-  connect?: OrphanWhereUniqueInput
-  update?: OrphanUpdateWithoutSiblingsDataInput
-  upsert?: OrphanUpsertWithoutSiblingsInput
+export type SponsoredGroupCreateWithoutSocialworkersInput = {
+  sponsorshipDate: Date | string
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
+  support?: SupportCreateOneWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
 }
 
-export type SiblingUpdateInput = {
-  fullName?: string
-  gender?: string
-  age?: number
-  schoolGrade?: string | null
-  job?: string | null
-  maritalStatus?: string
-  orphan?: OrphanUpdateOneRequiredWithoutSiblingsInput
+export type SponsoredGroupUpdateWithWhereUniqueWithoutSocialworkersInput = {
+  where: SponsoredGroupWhereUniqueInput
+  data: SponsoredGroupUpdateWithoutSocialworkersDataInput
 }
 
-export type SiblingUpdateManyMutationInput = {
-  fullName?: string
-  gender?: string
-  age?: number
-  schoolGrade?: string | null
-  job?: string | null
-  maritalStatus?: string
+export type SponsoredGroupUpsertWithWhereUniqueWithoutSocialworkersInput = {
+  where: SponsoredGroupWhereUniqueInput
+  update: SponsoredGroupUpdateWithoutSocialworkersDataInput
+  create: SponsoredGroupCreateWithoutSocialworkersInput
 }
 
-export type SiteCreateInput = {
-  siteName: string
-  donationAmount: number
-  address: AddressCreateOneWithoutSiteInput
-  groupoforphans?: GroupOfOrphansCreateManyWithoutSiteInput
-  socialworker?: SocialWorkerCreateManyWithoutSiteInput
+export type DonorCreateWithoutSponsoredgroupsInput = {
+  companyName: string
+  initialReportPreparationDate?: Date | string | null
+  finalReportPreparationDate?: Date | string | null
+  initialDataCollectionDate?: Date | string | null
+  finalDataCollectionDate?: Date | string | null
+  reportDueDate?: Date | string | null
 }
 
-export type SiteUpdateInput = {
-  siteName?: string
-  donationAmount?: number
-  address?: AddressUpdateOneRequiredWithoutSiteInput
-  groupoforphans?: GroupOfOrphansUpdateManyWithoutSiteInput
-  socialworker?: SocialWorkerUpdateManyWithoutSiteInput
-}
-
-export type SiteUpdateManyMutationInput = {
-  siteName?: string
-  donationAmount?: number
-}
-
-export type SocialWorkerCreateInput = {
+export type SocialWorkerCreateWithoutSponsoredgroupInput = {
   fullName: string
-  phoneNumber: number
+  phoneNumber: string
   email: string
-  site: SiteCreateOneWithoutSocialworkerInput
-  groupoforphans?: GroupOfOrphansCreateManyWithoutSocialworkerInput
 }
 
-export type SocialWorkerUpdateInput = {
-  fullName?: string
-  phoneNumber?: number
-  email?: string
-  site?: SiteUpdateOneRequiredWithoutSocialworkerInput
-  groupoforphans?: GroupOfOrphansUpdateManyWithoutSocialworkerInput
+export type SupportCreateWithoutSponsoredgroupInput = {
+  status?: string | null
+  educationalsupport?: EducationalSupportCreateOneWithoutSupportInput
+  financialsupport?: FinancialSupportCreateOneWithoutSupportInput
+  othersupport?: OtherSupportCreateOneWithoutSupportInput
 }
 
-export type SocialWorkerUpdateManyMutationInput = {
-  fullName?: string
-  phoneNumber?: number
-  email?: string
+export type OrphanCreateWithoutSponsoredgroupInput = {
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  greatGrandFatherName: string
+  gender: orphan_gender
+  placeOfBirth: string
+  dateOfBirth: Date | string
+  numberOfSponserdSiblings: number
+  physicalHealthStatus: string
+  psychologicalHealthStatus: string
+  otherHealthIssues: string
+  iga_property?: Iga_propertyCreateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsCreateOneWithoutOrphanInput
+  education?: EducationCreateOneWithoutOrphanInput
+  father?: FatherCreateOneWithoutOrphansInput
+  guardian?: GuardianCreateOneWithoutOrphansInput
+  mother?: MotherCreateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupCreateOneWithoutOrphansInput
+  siblings?: SiblingCreateManyWithoutOrphanInput
+}
+
+export type DonorUpdateWithoutSponsoredgroupsDataInput = {
+  companyName?: string | StringFieldUpdateOperationsInput
+  initialReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalReportPreparationDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  initialDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  finalDataCollectionDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+  reportDueDate?: Date | string | NullableDateTimeFieldUpdateOperationsInput | null
+}
+
+export type DonorUpsertWithoutSponsoredgroupsInput = {
+  update: DonorUpdateWithoutSponsoredgroupsDataInput
+  create: DonorCreateWithoutSponsoredgroupsInput
+}
+
+export type SocialWorkerUpdateWithoutSponsoredgroupDataInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  phoneNumber?: string | StringFieldUpdateOperationsInput
+  email?: string | StringFieldUpdateOperationsInput
+}
+
+export type SocialWorkerUpsertWithoutSponsoredgroupInput = {
+  update: SocialWorkerUpdateWithoutSponsoredgroupDataInput
+  create: SocialWorkerCreateWithoutSponsoredgroupInput
+}
+
+export type SupportUpdateWithoutSponsoredgroupDataInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+  educationalsupport?: EducationalSupportUpdateOneWithoutSupportInput
+  financialsupport?: FinancialSupportUpdateOneWithoutSupportInput
+  othersupport?: OtherSupportUpdateOneWithoutSupportInput
+}
+
+export type SupportUpsertWithoutSponsoredgroupInput = {
+  update: SupportUpdateWithoutSponsoredgroupDataInput
+  create: SupportCreateWithoutSponsoredgroupInput
+}
+
+export type OrphanUpdateWithWhereUniqueWithoutSponsoredgroupInput = {
+  where: OrphanWhereUniqueInput
+  data: OrphanUpdateWithoutSponsoredgroupDataInput
+}
+
+export type OrphanUpsertWithWhereUniqueWithoutSponsoredgroupInput = {
+  where: OrphanWhereUniqueInput
+  update: OrphanUpdateWithoutSponsoredgroupDataInput
+  create: OrphanCreateWithoutSponsoredgroupInput
+}
+
+export type EducationalSupportCreateWithoutSupportInput = {
+
+}
+
+export type FinancialSupportCreateWithoutSupportInput = {
+
+}
+
+export type OtherSupportCreateWithoutSupportInput = {
+
+}
+
+export type SponsoredGroupCreateWithoutSupportInput = {
+  sponsorshipDate: Date | string
+  donor?: DonorCreateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerCreateOneWithoutSponsoredgroupInput
+  orphans?: OrphanCreateManyWithoutSponsoredgroupInput
+}
+
+export type EducationalSupportUpdateWithoutSupportDataInput = {
+
+}
+
+export type FinancialSupportUpdateWithoutSupportDataInput = {
+
+}
+
+export type OtherSupportUpdateWithoutSupportDataInput = {
+
+}
+
+export type SponsoredGroupUpdateWithWhereUniqueWithoutSupportInput = {
+  where: SponsoredGroupWhereUniqueInput
+  data: SponsoredGroupUpdateWithoutSupportDataInput
+}
+
+export type SponsoredGroupUpsertWithWhereUniqueWithoutSupportInput = {
+  where: SponsoredGroupWhereUniqueInput
+  update: SponsoredGroupUpdateWithoutSupportDataInput
+  create: SponsoredGroupCreateWithoutSupportInput
+}
+
+export type SponsoredGroupUpdateWithoutDonorDataInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
+  support?: SupportUpdateOneWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
+}
+
+export type SponsoredGroupUpdateManyDataInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+}
+
+export type SupportUpdateWithoutEducationalsupportDataInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+  financialsupport?: FinancialSupportUpdateOneWithoutSupportInput
+  othersupport?: OtherSupportUpdateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupUpdateManyWithoutSupportInput
+}
+
+export type SupportUpdateManyDataInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+}
+
+export type OrphanUpdateWithoutFatherDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateManyDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+}
+
+export type SupportUpdateWithoutFinancialsupportDataInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+  educationalsupport?: EducationalSupportUpdateOneWithoutSupportInput
+  othersupport?: OtherSupportUpdateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupUpdateManyWithoutSupportInput
+}
+
+export type OrphanUpdateWithoutGuardianDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithoutIga_propertyDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type OrphanUpdateWithoutMotherDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type SiblingUpdateWithoutOrphanDataInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+}
+
+export type SiblingUpdateManyDataInput = {
+  fullName?: string | StringFieldUpdateOperationsInput
+  gender?: string | StringFieldUpdateOperationsInput
+  age?: number | IntFieldUpdateOperationsInput
+  schoolGrade?: string | NullableStringFieldUpdateOperationsInput | null
+  job?: string | NullableStringFieldUpdateOperationsInput | null
+  maritalStatus?: string | StringFieldUpdateOperationsInput
+}
+
+export type SupportUpdateWithoutOthersupportDataInput = {
+  status?: string | NullableStringFieldUpdateOperationsInput | null
+  educationalsupport?: EducationalSupportUpdateOneWithoutSupportInput
+  financialsupport?: FinancialSupportUpdateOneWithoutSupportInput
+  sponsoredgroup?: SponsoredGroupUpdateManyWithoutSupportInput
+}
+
+export type OrphanUpdateWithoutRegisteredgroupDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  sponsoredgroup?: SponsoredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type SponsoredGroupUpdateWithoutSocialworkersDataInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
+  support?: SupportUpdateOneWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
+}
+
+export type OrphanUpdateWithoutSponsoredgroupDataInput = {
+  firstName?: string | StringFieldUpdateOperationsInput
+  fatherName?: string | StringFieldUpdateOperationsInput
+  grandFatherName?: string | StringFieldUpdateOperationsInput
+  greatGrandFatherName?: string | StringFieldUpdateOperationsInput
+  gender?: orphan_gender | Enumorphan_genderFieldUpdateOperationsInput
+  placeOfBirth?: string | StringFieldUpdateOperationsInput
+  dateOfBirth?: Date | string | DateTimeFieldUpdateOperationsInput
+  numberOfSponserdSiblings?: number | IntFieldUpdateOperationsInput
+  physicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  psychologicalHealthStatus?: string | StringFieldUpdateOperationsInput
+  otherHealthIssues?: string | StringFieldUpdateOperationsInput
+  iga_property?: Iga_propertyUpdateOneWithoutOrphanInput
+  officialdocuments?: OfficialDocumentsUpdateOneWithoutOrphanInput
+  education?: EducationUpdateOneWithoutOrphanInput
+  father?: FatherUpdateOneWithoutOrphansInput
+  guardian?: GuardianUpdateOneWithoutOrphansInput
+  mother?: MotherUpdateOneWithoutOrphansInput
+  registeredgroup?: RegisteredGroupUpdateOneWithoutOrphansInput
+  siblings?: SiblingUpdateManyWithoutOrphanInput
+}
+
+export type SponsoredGroupUpdateWithoutSupportDataInput = {
+  sponsorshipDate?: Date | string | DateTimeFieldUpdateOperationsInput
+  donor?: DonorUpdateOneWithoutSponsoredgroupsInput
+  socialworkers?: SocialWorkerUpdateOneWithoutSponsoredgroupInput
+  orphans?: OrphanUpdateManyWithoutSponsoredgroupInput
 }
 
 /**
