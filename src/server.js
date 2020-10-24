@@ -14,7 +14,7 @@ const MotherJob = require('./resolvers/MotherJob');
 const Sibling = require('./resolvers/Sibling');
 const SocialWorker = require('./resolvers/SocialWorker');
 const SponsoredGroup = require('./resolvers/SponsoredGroup');
-const RegisteredGroup = require('./resolvers/RegisteredGroup');
+const Site = require('./resolvers/Site');
 
 const prisma = new PrismaClient({
   errorFormat: 'pretty',
@@ -33,7 +33,7 @@ const resolvers = {
   MotherJob,
   Sibling,
   SocialWorker,
-  RegisteredGroup,
+  Site,
   SponsoredGroup,
 };
 

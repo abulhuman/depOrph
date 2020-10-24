@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Donor {
-  id                           Int              @default(autoincrement()) @id
+  id                           Int              @id @default(autoincrement())
   created_at                   DateTime?        @default(dbgenerated())
   updated_at                   DateTime?
   companyName                  String
@@ -17,20 +17,21 @@ model Donor {
   initialDataCollectionDate    DateTime?
   finalDataCollectionDate      DateTime?
   reportDueDate                DateTime?
-  orphan                       Orphan[]         @relation("donorToorphan")
+  Orphan                       Orphan[]
   sponsoredgroups              SponsoredGroup[]
 
   @@map("donor")
 }
 
 model Education {
-  id               Int                        @default(autoincrement()) @id
+  id               Int                        @id @default(autoincrement())
   created_at       DateTime?                  @default(dbgenerated())
   updated_at       DateTime?
   enrollmentStatus education_enrollmentStatus
   schoolName       String?
   typeOfSchool     education_typeOfSchool?
   grade            Int?
+  year             Int?
   level            education_level?
   reason           String?
   orphan           Orphan[]
@@ -39,7 +40,7 @@ model Education {
 }
 
 model EducationalSupport {
-  id         Int       @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
   created_at DateTime? @default(dbgenerated())
   updated_at DateTime?
   support    Support[]
@@ -48,7 +49,7 @@ model EducationalSupport {
 }
 
 model Father {
-  id                  Int       @default(autoincrement()) @id
+  id                  Int       @id @default(autoincrement())
   created_at          DateTime? @default(dbgenerated())
   updated_at          DateTime?
   dateOfDeath         DateTime
@@ -63,7 +64,7 @@ model Father {
 }
 
 model FinancialSupport {
-  id         Int       @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
   created_at DateTime? @default(dbgenerated())
   updated_at DateTime?
   support    Support[]
@@ -72,7 +73,7 @@ model FinancialSupport {
 }
 
 model Guardian {
-  id                            Int                       @default(autoincrement()) @id
+  id                            Int                       @id @default(autoincrement())
   created_at                    DateTime?                 @default(dbgenerated())
   updated_at                    DateTime?
   firstName                     String
@@ -97,7 +98,7 @@ model Guardian {
 }
 
 model Iga_property {
-  id              Int       @default(autoincrement()) @id
+  id              Int       @id @default(autoincrement())
   created_at      DateTime? @default(dbgenerated())
   updated_at      DateTime?
   ownershipStatus String
@@ -108,7 +109,7 @@ model Iga_property {
 }
 
 model Mother {
-  id             Int                  @default(autoincrement()) @id
+  id             Int                  @id @default(autoincrement())
   created_at     DateTime?            @default(dbgenerated())
   updated_at     DateTime?
   firstName      String
@@ -119,14 +120,14 @@ model Mother {
   maritalStatus  mother_maritalStatus
   vitalStatus    mother_vitalStatus
   monthlyExpense Float
-  motherjob      MotherJob[]          @relation("motherTomotherjob")
+  motherJob      MotherJob[]
   orphans        Orphan[]
 
   @@map("mother")
 }
 
 model MotherJob {
-  id              Int       @default(autoincrement()) @id
+  id              Int       @id @default(autoincrement())
   created_at      DateTime? @default(dbgenerated())
   updated_at      DateTime?
   currentJobTitle String?
@@ -140,7 +141,7 @@ model MotherJob {
 }
 
 model OfficialDocuments {
-  id                  Int       @default(autoincrement()) @id
+  id                  Int       @id @default(autoincrement())
   created_at          DateTime? @default(dbgenerated())
   updated_at          DateTime?
   photoPortraitUrl    String
@@ -152,7 +153,7 @@ model OfficialDocuments {
 }
 
 model Orphan {
-  id                        Int                       @default(autoincrement()) @id
+  id                        Int                       @id @default(autoincrement())
   created_at                DateTime?                 @default(dbgenerated())
   updated_at                DateTime?
   firstName                 String
@@ -180,7 +181,7 @@ model Orphan {
   sponsrGroupId             Int?
   iga_property              Iga_property?             @relation(fields: [IGA_PropertyId], references: [id])
   officialdocuments         OfficialDocuments?        @relation(fields: [docsId], references: [id])
-  donor                     Donor?                    @relation(fields: [donorId], references: [id])
+  Donor                     Donor?                    @relation(fields: [donorId], references: [id])
   education                 Education?                @relation(fields: [educationId], references: [id])
   father                    Father?                   @relation(fields: [fatherId], references: [id])
   guardian                  Guardian?                 @relation(fields: [guardianId], references: [id])
@@ -202,7 +203,7 @@ model Orphan {
 }
 
 model OtherSupport {
-  id         Int       @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
   created_at DateTime? @default(dbgenerated())
   updated_at DateTime?
   support    Support[]
@@ -211,7 +212,7 @@ model OtherSupport {
 }
 
 model Sibling {
-  id            Int            @default(autoincrement()) @id
+  id            Int            @id @default(autoincrement())
   created_at    DateTime?      @default(dbgenerated())
   updated_at    DateTime?
   fullName      String
@@ -228,7 +229,7 @@ model Sibling {
 }
 
 model SocialWorker {
-  id             Int             @default(autoincrement()) @id
+  id             Int             @id @default(autoincrement())
   created_at     DateTime?       @default(dbgenerated())
   updated_at     DateTime?
   fullName       String
@@ -242,7 +243,7 @@ model SocialWorker {
 }
 
 model SponsoredGroup {
-  id              Int            @default(autoincrement()) @id
+  id              Int            @id @default(autoincrement())
   created_at      DateTime?      @default(dbgenerated())
   updated_at      DateTime?
   sponsorshipDate DateTime
@@ -262,7 +263,7 @@ model SponsoredGroup {
 }
 
 model Support {
-  id                 Int                 @default(autoincrement()) @id
+  id                 Int                 @id @default(autoincrement())
   created_at         DateTime?           @default(dbgenerated())
   updated_at         DateTime?
   status             String?
@@ -281,7 +282,7 @@ model Support {
 }
 
 model Site {
-  id               Int              @default(autoincrement()) @id
+  id               Int              @id @default(autoincrement())
   created_at       DateTime?        @default(dbgenerated())
   updated_at       DateTime?
   registrationDate DateTime
@@ -290,9 +291,10 @@ model Site {
   zone             String
   district         String
   kebele           String
-  orphan           Orphan[]         
-  sponsoredgroup   SponsoredGroup[] 
-	@@map("site")
+  orphan           Orphan[]
+  sponsoredgroups   SponsoredGroup[]
+
+  @@map("site")
 }
 
 enum education_enrollmentStatus {

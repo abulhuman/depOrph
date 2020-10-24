@@ -22,7 +22,7 @@ function mother(parent, args, context){
     return context.prisma.orphan.findOne({ where: { id: parent.id } }).mother();
 }
 
-function registeredgroup(parent, args, context){
+function site(parent, args, context){
     return context.prisma.orphan.findOne({ where: { id: parent.id } }).registeredgroup();
 }
 
@@ -41,7 +41,7 @@ module.exports = {
     father,
     guardian,
     mother,
-    registeredgroup,
+    site,
     sponsoredgroup,
     siblings,
 }

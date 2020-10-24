@@ -88,14 +88,14 @@ async function socialWorker(parent, args, context, info) {
   return socialWorker;
 }
 
-async function registeredGroup(parent, args, context, info) {
-  const registeredGroup = await context.prisma.groupOfOrphans.findOne({
+async function site(parent, args, context, info) {
+  const site = await context.prisma.site.findOne({
     where: {
       id: Number(args.id),
     },
   });
 
-  return registeredGroup;
+  return site;
 }
 
 async function sponsoredGroup(parent, args, context, info) {
@@ -169,7 +169,7 @@ module.exports = {
   mother,
   donor,
   socialWorker,
-  registeredGroup,
+  site,
   sponsoredGroup,
   officialDocuments,
   support,

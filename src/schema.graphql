@@ -11,7 +11,7 @@ type Query {
   mother(id: ID!): Mother!
   donor(id: ID!): Donor!
   socialWorker(id: ID!): SocialWorker!
-  registeredGroup(id: ID!): RegisteredGroup!
+  site(id: ID!): Site!
   sponsoredGroup(id: ID!): SponsoredGroup!
   officialDocuments(id: ID!): OfficialDocuments!
   support(id: ID!): Support!
@@ -33,13 +33,17 @@ type Mutation {
     physicalHealthStatus: String!
     psychologicalHealthStatus: String!
     otherHealthIssues: String
+    hobbies: String
+    sponsorshipStatus: orphanSponsorshipStatus
+    sponsoredDate: DateTime
     iga_property: ID
     officialdocuments: ID
     education: ID
     father: ID
     guardian: ID
     mother: ID
-    registeredgroup: ID
+    donor: ID
+    site: ID
     sponsoredgroup: ID
     siblings: [ID]
   ): Orphan!
@@ -54,9 +58,10 @@ type Mutation {
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
     typeOfSchool: educationTypeOfSchool
-    grade: String 
+    grade: Int
+    year: Int
+    level: educationLevel
     reason: String
-    hobbies: String
     orphan: ID
 
   ): Education!
@@ -67,6 +72,7 @@ type Mutation {
     job: String
     monthlyIncome: Int
     dateOfBirth: DateTime!
+    fatherDeathCertificateUrl: String!
     orphans: [ID]
   ): Father!
   
@@ -84,22 +90,27 @@ type Mutation {
     firstName: String!
     middleName: String!
     lastName: String!
-    gender: String!
+    gender: guardianGender!
     nationality: String!
     state: String!
     zone: String!
     district: String!
     kebele: String!
-    relationToOrphan: String!
+    relationToOrphan: guardianRelationToOrphan!
     email: String!
     job: String
-    age: Int
+    dateOfBirth: DateTime!
+    monthlyExpense: Float!
+    guardianIDCardUrl: String! 
+    guardianConfirmationLetterUrl: String!
     orphans: [ID]
   ): Guardian!
 
   createMotherJob(
     currentJobTitle: String
     monthlyIncome: Float
+    initDate: DateTime
+    termdate: DateTime
     mother: ID
   ): MotherJob!
 
@@ -109,19 +120,17 @@ type Mutation {
     lastName: String!
     dateOfBirth: DateTime!
     phoneNumber: String!
-    maritalStatus: String!
-    vitalStatus: String!
+    maritalStatus: motherMaritalStatus!
+    vitalStatus: motherVitalStatus!
     monthlyExpense: Float!
+    motherjob: [ID]
     orphans: [ID]
   ): Mother!
 
   createOfficialDocuments(
     photoPortraitUrl: String!
     photoLongUrl: String!
-    fatherDeathCertificateUrl: String!
     birthCertificateUrl: String!
-    guardianIDCardUrl: String!
-    guardianConfirmationLetterUrl: String!
     orphan: ID
   ): OfficialDocuments!
 
@@ -142,7 +151,7 @@ type Mutation {
     sponsoredgroup: ID
   ): SocialWorker!
 
-  createRegisteredGroup(
+  createSite(
     registrationDate: DateTime!
     siteName: String!
     state: String!
@@ -150,7 +159,8 @@ type Mutation {
     district: String!
     kebele: String
     orphans: [ID]
-  ): RegisteredGroup!
+    sponsoredgroup: [ID]
+  ): Site!
 
   createSponsoredGroup(
     sponsorshipDate: DateTime!
@@ -180,6 +190,8 @@ type Mutation {
 
 type Iga_property {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   ownershipStatus: String!
   otherProperty: String
   orphan: Orphan
@@ -187,28 +199,35 @@ type Iga_property {
 
 type Education {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   enrollmentStatus: educationEnrollmentStatus!
   schoolName: String
   typeOfSchool: educationTypeOfSchool
-  grade: Int # TODO add level:enum(gradeschool,undergrad, postgrad), add year #DONE
+  grade: Int
+  year: Int
   level: educationLevel
   reason: String
-  hobbies: String # TODO move hobbies to orphan #DONE
   orphan: Orphan
 }
 
 type Father {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   dateOfDeath: DateTime
   causeOfDeath: String
   job: String
   monthlyIncome: Int
   dateOfBirth: DateTime
+  fatherDeathCertificateUrl: String!
   orphans: [Orphan]
 }
 
 type SocialWorker {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   fullName: String!
   phoneNumber: String!
   email: String!
@@ -217,6 +236,8 @@ type SocialWorker {
 
 type Donor {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   companyName: String
   initialReportPreparationDate: DateTime
   finalReportPreparationDate: DateTime
@@ -228,21 +249,29 @@ type Donor {
 
 type EducationalSupport {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   support: Support
 }
 
 type FinancialSupport {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   support: Support
 }
 
 type OtherSupport {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   support: Support
 }
 
 type Support {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   status: String!
   educationalsupport: EducationalSupport
   financialsupport: FinancialSupport
@@ -250,8 +279,10 @@ type Support {
   sponsoredgroup: SponsoredGroup
 }
 
-type RegisteredGroup { # TODO rename to site #DONE
+type Site { 
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   registrationDate: DateTime!
   siteName: String!
   state: String!
@@ -259,11 +290,13 @@ type RegisteredGroup { # TODO rename to site #DONE
   district: String!
   kebele: String!
   orphans: [Orphan]
-  # sponsored: [sponsoredgroup] #DONE
+  sponsoredgroups: [SponsoredGroup]
 }
 
 type SponsoredGroup {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   sponsorshipDate: DateTime!
   donor: Donor
   socialworkers: [SocialWorker]
@@ -273,56 +306,68 @@ type SponsoredGroup {
 
 type OfficialDocuments {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   photoPortraitUrl: String!
   photoLongUrl: String!
-  fatherDeathCertificateUrl: String! # move to father #DONE
   birthCertificateUrl: String!
-  guardianIDCardUrl: String! # move to guardian #DONE
-  guardianConfirmationLetterUrl: String! # move to guardian #DONE
   orphan: Orphan
 }
 
-type Guardian { # add [monthly expense, ] #DONE
+type Guardian {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   firstName: String!
   middleName: String!
   lastName: String!
-  gender: String! # make a general gender for all human entities #DONE
+  gender: guardianGender! 
   nationality: String!
   state: String!
   zone: String!
   district: String!
   kebele: String!
-  relationToOrphan: String! # change to enum(mother, grandparents, siblings, cousin, niece...) #DONE
+  relationToOrphan: guardianRelationToOrphan!
   email: String!
   job: String
-  age: Int
+  dateOfBirth: DateTime!
+  monthlyExpense: Float!
+  guardianIDCardUrl: String! 
+  guardianConfirmationLetterUrl: String! 
   orphans: [Orphan]
 }
 
-type MotherJob { # change rln to one{mother}:many{jobs} add [initdate, termdate] #DONE
+type MotherJob {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   currentJobTitle: String
   monthlyIncome: String
+  initDate: DateTime
+  termdate: DateTime
   mother: Mother
 }
 
 type Mother {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   firstName: String!
   middleName: String!
   lastName: String!
   dateOfBirth: DateTime!
   phoneNumber: String!
-  maritalStatus: String! # change to enum(remarreid, widow, divorcedthendead) #DONE
-  vitalStatus: String! # change to enum(alive, passed) #DONE
+  maritalStatus: motherMaritalStatus!
+  vitalStatus: motherVitalStatus!
   monthlyExpense: Float!
-  motherjob: MotherJob
+  motherjob: [MotherJob]
   orphans: [Orphan]
 }
 
 type Sibling {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   fullName: String!
   gender: String!
   age: Int!
@@ -332,8 +377,10 @@ type Sibling {
   orphan: Orphan
 }
 
-type Orphan { # TODO  add [sponsoship status: enum(inProgress, active, suspended, graduated ), donor: Donor, sponsoredDate: DateTime], move father
+type Orphan {
   id: ID!
+  created_at: DateTime
+  updated_at: DateTime
   firstName: String!
   fatherName: String!
   grandFatherName: String!
@@ -345,13 +392,17 @@ type Orphan { # TODO  add [sponsoship status: enum(inProgress, active, suspended
   physicalHealthStatus: String!
   psychologicalHealthStatus: String!
   otherHealthIssues: String!
+  hobbies: String
+  sponsorshipStatus: orphanSponsorshipStatus
+  sponsoredDate: DateTime
   iga_property: Iga_property
   officialdocuments: OfficialDocuments
   education: Education
   father: Father
   guardian: Guardian
   mother: Mother
-  registeredgroup: RegisteredGroup
+  donor: Donor
+  site: Site
   sponsoredgroup: SponsoredGroup
   siblings: [Sibling]
 }
@@ -359,6 +410,42 @@ type Orphan { # TODO  add [sponsoship status: enum(inProgress, active, suspended
 enum orphanGender {
   M
   F
+}
+
+enum orphanSponsorshipStatus {
+  inProgress
+  active
+  suspended
+  graduated
+}
+
+enum guardianGender {
+  M
+  F
+}
+
+enum guardianRelationToOrphan {
+  mother
+  grandMother
+  grandFather
+  sister
+  brother
+  uncle
+  aunt
+  cousin
+  niece
+  nephew
+}
+
+enum motherMaritalStatus {
+  remarried
+  widow
+  divorcedthendead 
+}
+
+enum motherVitalStatus {
+  alive
+  passed
 }
 
 enum educationEnrollmentStatus {
