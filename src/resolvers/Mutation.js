@@ -1,4 +1,3 @@
-const { sponsoredgroup } = require("./SocialWorker");
 
 async function createOrphan(parent, args, context, info) {
   const siblingIds = args.siblings ? [...(args.siblings)].map((val)=>({id: Number(val)})) : undefined;
@@ -11,6 +10,8 @@ async function createOrphan(parent, args, context, info) {
       gender: args.gender,
       placeOfBirth: args.placeOfBirth,
       dateOfBirth: args.dateOfBirth,
+      clan: args.clan,
+      spokenLanguages: args.spokenLanguages,
       numberOfSponserdSiblings: args.numberOfSponserdSiblings,
       physicalHealthStatus: args.physicalHealthStatus,
       psychologicalHealthStatus: args.psychologicalHealthStatus,
@@ -162,6 +163,9 @@ async function createGuardian(parent, args, context, info) {
       district: args.district, 
       kebele: args.kebele, 
       relationToOrphan: args.relationToOrphan,
+      telephone: args.telephone,
+      mobile: args.mobile,
+      POBox: args.POBox,
       email: args.email, 
       job: args.job, 
       dateOfBirth: args.dateOfBirth,
@@ -205,6 +209,8 @@ async function createMother(parent, args, context, info) {
       phoneNumber: args.phoneNumber,
       maritalStatus: args.maritalStatus, 
       vitalStatus: args.vitalStatus,
+      dateOfDeath: args.dateOfDeath,
+      causeOfDeath: args.causeOfDeath,
       monthlyExpense: args.monthlyExpense,
       motherjob: {
         connect: jobIds

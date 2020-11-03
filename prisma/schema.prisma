@@ -30,8 +30,8 @@ model Education {
   enrollmentStatus education_enrollmentStatus
   schoolName       String?
   typeOfSchool     education_typeOfSchool?
-  grade            Int?
   year             Int?
+  grade            Int?
   level            education_level?
   reason           String?
   orphan           Orphan[]
@@ -86,7 +86,10 @@ model Guardian {
   district                      String
   kebele                        String
   relationToOrphan              guardian_relationToOrphan
+  telephone                     String?
+  mobile                        String
   email                         String
+  POBox                         String?
   job                           String?
   dateOfBirth                   DateTime
   monthlyExpense                Float
@@ -115,12 +118,14 @@ model Mother {
   firstName      String
   middleName     String
   lastName       String
+  vitalStatus    mother_vitalStatus
   dateOfBirth    DateTime
+  dateOfDeath    DateTime?
+  causeOfDeath   String?
   phoneNumber    String
   maritalStatus  mother_maritalStatus
-  vitalStatus    mother_vitalStatus
   monthlyExpense Float
-  motherJob      MotherJob[]
+  motherJob      MotherJob?
   orphans        Orphan[]
 
   @@map("mother")
@@ -163,6 +168,8 @@ model Orphan {
   gender                    orphan_gender
   placeOfBirth              String
   dateOfBirth               DateTime
+  clan                      String?
+  spokenLanguages           String?
   numberOfSponserdSiblings  Int
   physicalHealthStatus      String
   psychologicalHealthStatus String
@@ -292,7 +299,7 @@ model Site {
   district         String
   kebele           String
   orphan           Orphan[]
-  sponsoredgroups   SponsoredGroup[]
+  sponsoredgroups  SponsoredGroup[]
 
   @@map("site")
 }

@@ -29,6 +29,8 @@ type Mutation {
     gender: orphanGender!
     placeOfBirth: String!
     dateOfBirth: DateTime!
+    clan: String
+    spokenLanguages: String
     numberOfSponserdSiblings: Int!
     physicalHealthStatus: String!
     psychologicalHealthStatus: String!
@@ -97,6 +99,9 @@ type Mutation {
     district: String!
     kebele: String!
     relationToOrphan: guardianRelationToOrphan!
+    telephone: String
+    mobile: String!
+    POBox: String
     email: String!
     job: String
     dateOfBirth: DateTime!
@@ -119,6 +124,8 @@ type Mutation {
     middleName: String!
     lastName: String!
     dateOfBirth: DateTime!
+    dateOfDeath: DateTime
+    causeOfDeath: String
     phoneNumber: String!
     maritalStatus: motherMaritalStatus!
     vitalStatus: motherVitalStatus!
@@ -328,6 +335,9 @@ type Guardian {
   district: String!
   kebele: String!
   relationToOrphan: guardianRelationToOrphan!
+  telephone: String
+  mobile: String!
+  POBox: String
   email: String!
   job: String
   dateOfBirth: DateTime!
@@ -343,8 +353,8 @@ type MotherJob {
   updated_at: DateTime
   currentJobTitle: String
   monthlyIncome: String
-  initDate: DateTime
-  termdate: DateTime
+  initDate: DateTime # add to mutation and resolvers and UI
+  termdate: DateTime # add to mutation and resolvers and UI
   mother: Mother
 }
 
@@ -356,6 +366,8 @@ type Mother {
   middleName: String!
   lastName: String!
   dateOfBirth: DateTime!
+  dateOfDeath: DateTime
+  causeOfDeath: String
   phoneNumber: String!
   maritalStatus: motherMaritalStatus!
   vitalStatus: motherVitalStatus!
@@ -388,6 +400,8 @@ type Orphan {
   gender: orphanGender!
   placeOfBirth: String!
   dateOfBirth: DateTime!
+  clan: String
+  spokenLanguages: String
   numberOfSponserdSiblings: Int!
   physicalHealthStatus: String!
   psychologicalHealthStatus: String!
