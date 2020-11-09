@@ -799,118 +799,164 @@
                 </b-form-group>
               </b-col>
               <b-col class="text-left col-4 mt-2">
-                <b-button v-b-modal.modal-center class="mt-4"
+                <b-button v-b-modal.modal-add-sibling class="mt-4"
                   >Add Sibling | Details</b-button
                 >
-                <b-modal id="modal-center" centered title="Add Sibling Details">
-                  <b-form-row>
-                    <b-col class="text-left">
-                      <b-form-group
-                        label="Full Name"
-                        label-for="siblingFullName"
-                      >
-                        <b-form-input
-                          id="siblingFullName"
-                          placeholder="Full Name ..."
-                          required
+                <b-modal
+                  id="modal-add-sibling"
+                  centered
+                  title="Add Sibling Details"
+                  @ok.prevent="handleSubmit"
+                  @cancel.prevent="handleCancel"
+                >
+                  <form ref="form" @submit.stop.prevent="handleSubmit">
+                    <b-form-row>
+                      <b-col class="text-left">
+                        <b-form-group
+                          label="Full Name"
+                          label-for="siblingFullName"
+                          invalid-feedback="Name is required"
                         >
-                        </b-form-input>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-row>
-                  <b-form-row>
-                    <b-col class="text-left col-4">
-                      <b-form-group label="Gender" label-for="siblingGender">
-                        <b-form-select id="siblingGender" required>
-                          <template #first>
-                            <b-form-select-option disabled value="">
-                              - Select Gender -
-                            </b-form-select-option>
-                          </template>
-                          <b-form-select-option value="M"
-                            >Male</b-form-select-option
+                          <b-form-input
+                            id="siblingFullName"
+                            placeholder="Full Name ..."
+                            :state="siblingFullNameState"
+                            required
+                            ref="siblingFullName"
+                            @input="update(newSibling, 'FullName', $event)"
                           >
-                          <b-form-select-option value="F"
-                            >Female</b-form-select-option
-                          >
-                        </b-form-select>
-                      </b-form-group>
-                    </b-col>
-                    <b-col class="text-left">
-                      <b-form-group label="Age" label-for="siblingAge">
-                        <b-form-input
-                          id="siblingAge"
-                          placeholder="Age ..."
-                          required
+                          </b-form-input>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+
+                    <b-form-row>
+                      <b-col class="text-left col-4">
+                        <b-form-group
+                          label="Gender"
+                          label-for="siblingGender"
+                          invalid-feedback="Gender is required"
                         >
-                        </b-form-input>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-row>
-                  <b-form-row>
-                    <b-col class="text-left">
-                      <b-form-group
-                        label="Education Level | School Grade"
-                        label-for="siblingSchoolGrade"
-                      >
-                        <b-form-input
-                          id="siblingSchoolGrade"
-                          placeholder="Education Level | School Grade ..."
+                          <b-form-select
+                            id="siblingGender"
+                            :state="siblingGenderState"
+                            ref="siblingGender"
+                            required
+                            @input="update(newSibling, 'Gender', $event)"
+                          >
+                            <template #first>
+                              <b-form-select-option disabled value="">
+                                - Select Gender -
+                              </b-form-select-option>
+                            </template>
+                            <b-form-select-option value="M"
+                              >Male</b-form-select-option
+                            >
+                            <b-form-select-option value="F"
+                              >Female</b-form-select-option
+                            >
+                          </b-form-select>
+                        </b-form-group>
+                      </b-col>
+                      <b-col class="text-left">
+                        <b-form-group
+                          label="Age"
+                          label-for="siblingAge"
+                          invalid-feedback="Age is required"
                         >
-                        </b-form-input>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-row>
-                  <b-form-row>
-                    <b-col class="text-left">
-                      <b-form-group label="Job" label-for="siblingJob">
-                        <b-form-input id="siblingJob" placeholder="Job ...">
-                        </b-form-input>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-row>
-                  <b-form-row>
-                    <b-col class="text-left">
-                      <b-form-group
-                        label="Marital Status"
-                        label-for="siblingMaritalStatus"
-                      >
-                        <b-form-select id="siblingMaritalStatus" required>
-                          <template #first>
-                            <b-form-select-option disabled value="">
-                              - Select Marital Status -
-                            </b-form-select-option>
-                          </template>
-                          <b-form-select-option value="Un-Married"
-                            >Un-Married</b-form-select-option
+                          <b-form-input
+                            id="siblingAge"
+                            placeholder="Age ..."
+                            :state="siblingAgeState"
+                            required
+                            ref="siblingAge"
+                            type="number"
+                            @input="update(newSibling, 'Age', $event)"
                           >
-                          <b-form-select-option value="Married"
-                            >Married</b-form-select-option
+                          </b-form-input>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+
+                    <b-form-row>
+                      <b-col class="text-left">
+                        <b-form-group
+                          label="Education Level | School Grade"
+                          label-for="siblingSchoolGrade"
+                        >
+                          <b-form-input
+                            id="siblingSchoolGrade"
+                            placeholder="Education Level | School Grade ..."
+                            @input="
+                              update(newSibling, 'EducationLevel', $event)
+                            "
                           >
-                          <b-form-select-option value="Divorced"
-                            >Divorced</b-form-select-option
+                          </b-form-input>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+
+                    <b-form-row>
+                      <b-col class="text-left">
+                        <b-form-group label="Job" label-for="siblingJob">
+                          <b-form-input
+                            id="siblingJob"
+                            placeholder="Job ..."
+                            @input="update(newSibling, 'Job', $event)"
                           >
-                        </b-form-select>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-row>
-                  <template #modal-footer>
-                    <div class="w-100">
-                      <b-button variant="primary" class="float-right">
-                        Add
-                      </b-button>
-                      <b-button
-                        variant="secondary"
-                        class="mr-3 float-right"
-                        @click="$bvModal.hide('modal-center')"
-                      >
-                        Cancel
-                      </b-button>
-                    </div>
-                  </template>
+                          </b-form-input>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+
+                    <b-form-row>
+                      <b-col class="text-left">
+                        <b-form-group
+                          label="Marital Status"
+                          label-for="siblingMaritalStatus"
+                          invalid-feedback="Marital Status is required"
+                        >
+                          <b-form-select
+                            id="siblingMaritalStatus"
+                            :state="siblingMaritalStatusState"
+                            required
+                            ref="siblingMaritalStatus"
+                            @input="update(newSibling, 'MaritalStatus', $event)"
+                          >
+                            <template #first>
+                              <b-form-select-option disabled value="">
+                                - Select Marital Status -
+                              </b-form-select-option>
+                            </template>
+                            <b-form-select-option value="Un-Married"
+                              >Un-Married</b-form-select-option
+                            >
+                            <b-form-select-option value="Married"
+                              >Married</b-form-select-option
+                            >
+                            <b-form-select-option value="Divorced"
+                              >Divorced</b-form-select-option
+                            >
+                          </b-form-select>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+                  </form>
                 </b-modal>
               </b-col>
             </b-form-row>
+            <b-table
+              v-if="siblings.length"
+              head-variant="light"
+              table-variant="info"
+              sticky-header
+              bordered
+              clickable
+              hover
+              :items="siblings"
+              class="text-left col p-0 border-rounded"
+            >
+            </b-table>
             <h5 class="text-left">House and Property Info</h5>
             <b-form-row>
               <b-col class="text-left">
@@ -1301,16 +1347,20 @@ export default {
       tmpMotherDateOfBirth: "", // add to UI, turned into computed props
       tmpMotherDateOfDeath: "", // TODO:DONE add to schema, turned into computed props
 
-      siblings: [
-        {
-          siblingFullName: "",
-          siblingGender: "",
-          siblingAge: "",
-          siblingSchoolGrade: "",
-          siblingJob: "",
-          siblingMaritalStatus: ""
-        }
-      ],
+      newSibling: {
+        // siblingFullName: " ",
+        // siblingGender: " ",
+        // siblingAge: " ",
+        // siblingSchoolGrade: " ",
+        // siblingJob: " ",
+        // siblingMaritalStatus: " "
+      },
+
+      siblingFullNameState: null,
+      siblingGenderState: null,
+      siblingAgeState: null,
+      siblingMaritalStatusState: null,
+      siblings: [],
 
       igaOwnershipStatus: "",
       igaOtherProperty: "",
@@ -1362,7 +1412,112 @@ export default {
       return moment(this.tmpGuardianDateOfBrith).format();
     }
   },
-  methods: {}
+  methods: {
+    addSibling: function() {
+      if (
+        this.newSibling.FullName &&
+        this.newSibling.Gender &&
+        this.newSibling.Age &&
+        this.newSibling.MaritalStatus
+      ) {
+        const tempObj = { ...this.newSibling };
+        this.siblings.push(tempObj);
+        this.newSibling.Age = null;
+        this.newSibling.FullName = null;
+        this.newSibling.Gender = null;
+        this.newSibling.EducationLevel = null;
+        this.newSibling.Job = null;
+        this.newSibling.MaritalStatus = null;
+      }
+    },
+    update: function(obj, prop, event) {
+      this.$set(obj, prop, event);
+    },
+
+    // checkFromValidity: function() {
+    //   const valid = this.$refs.form.checkValidity();
+    //   console.log(this.$refs.siblingFullName);
+    //   const validSiblingFullName = this.$refs.siblingFullName.checkValidity();
+    //   const validSiblingGender = this.$refs.siblingGender.checkValidity();
+    //   const validSiblingAge = this.$refs.siblingAge.checkValidity();
+    //   const validSiblingMaritalStatus = this.$refs.siblingMaritalStatus.checkValidity();
+    //   this.siblingFullNameState = valid;
+    //   this.siblingGenderState = valid;
+    //   this.siblingAgeState = valid;
+    //   this.siblingMaritalStatusState = valid;
+    //   return { valid, validSiblingFullName };
+    // },
+    checkSiblingFullNameValidity: function() {
+      const validSiblingFullName = this.$refs.siblingFullName.checkValidity();
+      this.siblingFullNameState = validSiblingFullName;
+      return validSiblingFullName;
+    },
+    checkSiblingGenderValidity: function() {
+      if (this.newSibling.Gender === "M" || this.newSibling.Gender === "F") {
+        this.siblingGenderState = true;
+      } else {
+        this.siblingGenderState = false;
+      }
+      return this.siblingGenderState;
+    },
+    checkSiblingAgeValidity: function() {
+      const validSiblingAge = this.$refs.siblingAge.checkValidity();
+      this.siblingAgeState = validSiblingAge;
+      return validSiblingAge;
+    },
+    checkSiblingMaritalStatusValidity: function() {
+      if (
+        this.newSibling.MaritalStatus === "Un-Married" ||
+        this.newSibling.MaritalStatus === "Married" ||
+        this.newSibling.MaritalStatus === "Divorced"
+      ) {
+        this.siblingMaritalStatusState = true;
+      } else {
+        this.siblingMaritalStatusState = false;
+      }
+      return this.siblingMaritalStatusState;
+    },
+    // resetModal: function(){
+    //   this.name = "";
+    //   this.nameState = null;
+    // },
+    // handleOk: function(bvModalEvt){
+    //   bvModalEvt.preventDefault();
+
+    //   this.handleSubmit();
+    // },
+    handleSubmit: function() {
+      if (
+        !this.checkSiblingFullNameValidity() ||
+        !this.checkSiblingGenderValidity() ||
+        !this.checkSiblingAgeValidity() ||
+        !this.checkSiblingMaritalStatusValidity()
+      ) {
+        return;
+      }
+      this.addSibling();
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide("modal-add-sibling");
+      });
+      // Reset form state
+      this.siblingFullNameState = null;
+      this.siblingGenderState = null;
+      this.siblingAgeState = null;
+      this.siblingMaritalStatusState = null;
+      console.log("🦆®");
+    },
+    handleCancel() {
+      this.$nextTick(() => {
+        this.$bvModal.hide("modal-prevent-closing");
+      });
+      // Reset form state
+      this.siblingFullNameState = null;
+      this.siblingGenderState = null;
+      this.siblingAgeState = null;
+      this.siblingMaritalStatusState = null;
+    }
+  }
 };
 </script>
 
