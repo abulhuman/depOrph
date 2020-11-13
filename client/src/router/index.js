@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Vuelidate from "vuelidate";
 import Staff from "../views/Staff.vue";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 import ElementUI from "element-ui";
@@ -10,6 +11,7 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(ElementUI);
+Vue.use(Vuelidate);
 
 const routes = [
   {

@@ -353,8 +353,8 @@ type MotherJob {
   updated_at: DateTime
   currentJobTitle: String
   monthlyIncome: String
-  initDate: DateTime # add to mutation and resolvers and UI
-  termdate: DateTime # add to mutation and resolvers and UI
+  initDate: DateTime # TODO:DONE add to mutation and resolvers and UI
+  termdate: DateTime # TODO:DONE add to mutation and resolvers and UI
   mother: Mother
 }
 

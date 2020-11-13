@@ -4,13 +4,13 @@
     <el-container class="row">
       <el-aside style="height: 100vh;" class="bg-light col-2 p-0"
         ><b-list-group class="text-left mt-3 ml-2 rounded-0">
-          <b-list-group-item variant="info" button @click="showAdd"
+          <b-list-group-item variant="secondary" button @click="showAdd"
             >Add new site</b-list-group-item
           >
-          <b-list-group-item variant="primary" button
+          <b-list-group-item variant="secondary" button
             >View Sites</b-list-group-item
           >
-          <b-list-group-item variant="info" button
+          <b-list-group-item variant="secondary" button
             >View Social-workers</b-list-group-item
           >
         </b-list-group></el-aside
