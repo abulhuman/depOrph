@@ -1,9 +1,12 @@
 <template>
   <b-form>
+    <b-form-text class="text-left mb-3"
+      >The inputs marked by * are all required</b-form-text
+    >
     <b-form-row>
       <b-col class="text-left col-6">
         <b-form-group
-          label="Enrollment Status"
+          label="Enrollment Status*"
           label-for="educationEnrollmentStatus"
         >
           <b-form-select

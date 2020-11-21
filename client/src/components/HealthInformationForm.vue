@@ -1,9 +1,12 @@
 <template>
   <b-form>
+    <b-form-text class="text-left mb-3"
+      >The inputs marked by * are all required</b-form-text
+    >
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
-          label="Physical Health"
+          label="Physical Health*"
           invalid-feedback="Please select one"
           :state="orphanPhysicalHealthState"
         >
@@ -51,7 +54,7 @@
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
-          label="Psychological Health"
+          label="Psychological Health*"
           :state="orphanPsychologicalHealthState"
           invalid-feedback="Please select one"
         >
@@ -76,6 +79,7 @@
         </b-form-group></b-col
       >
     </b-form-row>
+
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -93,6 +97,7 @@
         ></b-form-group>
       </b-col>
     </b-form-row>
+
     <b-form-row align-h="start">
       <b-button
         align-h="start"
@@ -134,9 +139,7 @@ export default {
     checkOrphanPsychologicalHealthValidity: function() {
       this.orphanPsychologicalHealthState =
         this.orphanPsychologicalHealth === "Sociable" ||
-        this.orphanPsychologicalHealth === "Not Sociable"
-          ? true
-          : false;
+        this.orphanPsychologicalHealth === "Not Sociable";
       return this.orphanPsychologicalHealthState;
     },
     checkOrphanPhysicalHealthValidity() {
@@ -144,6 +147,7 @@ export default {
         // if healthy radio is selected or re-selected
         this.orphanPhysicalHealthState = true;
         this.tmpOrphanDisabilityState = null;
+        this.tmpOrphanDisability = "";
       } else if (
         this.tmpOrphanPhysicalHealthRadio === "Disabled" &&
         this.tmpOrphanDisability === ""

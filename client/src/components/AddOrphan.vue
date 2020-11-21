@@ -26,7 +26,6 @@
       </b-card-header>
       <b-collapse
         id="accordion-2"
-        visible
         accordion="add-orphan-form-accordion"
         role="tabpanel"
       >
@@ -78,6 +77,7 @@
       </b-card-header>
       <b-collapse
         id="accordion-5"
+        visible
         accordion="add-orphan-form-accordion"
         role="tabpanel"
       >

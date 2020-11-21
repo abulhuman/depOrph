@@ -1,34 +1,53 @@
 <template>
   <b-form>
+    <b-form-text class="text-left mb-3"
+      >The inputs marked by * are all required</b-form-text
+    >
     <h5 class="text-left">Father</h5>
     <b-form-row>
       <b-col class="text-left">
-        <b-form-group label="Date of Birth" label-for="fatherDateOfBrith">
+        <b-form-group
+          label="Date of Birth*"
+          label-for="fatherDateOfBrith"
+          invalid-feedback="Date of birth is required"
+          :state="tmpFatherDateOfBirthState"
+        >
           <b-form-input
             type="date"
-            required
             id="fatherDateOfBrith"
-            v-model="tmpFatherDateOfBrith"
+            :state="tmpFatherDateOfBirthState"
+            v-model="tmpFatherDateOfBirth"
           >
           </b-form-input>
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Date of Death" label-for="fatherDateOfDeath">
+        <b-form-group
+          label="Date of Death*"
+          label-for="fatherDateOfDeath"
+          invalid-feedback="Date of death is required"
+          :state="tmpFatherDateOfDeathState"
+        >
           <b-form-input
             type="date"
-            required
             id="fatherDateOfDeath"
+            :state="tmpFatherDateOfDeathState"
             v-model="tmpFatherDateOfDeath"
           >
           </b-form-input>
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Cause of Death" label-for="fatherCauseOfDeath">
+        <b-form-group
+          label="Cause of Death*"
+          label-for="fatherCauseOfDeath"
+          :state="fatherCauseOfDeathState"
+          invalid-feedback="Cause of death is required and must contain at least 3 characters."
+        >
           <b-form-input
             id="fatherCauseOfDeath"
             placeholder="Cause of Death ..."
+            :state="fatherCauseOfDeathState"
             v-model="fatherCauseOfDeath"
           >
           </b-form-input>
@@ -47,10 +66,16 @@
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Monthly Income" label-for="fatherMonthlyIncome">
+        <b-form-group
+          label="Monthly Income*"
+          label-for="fatherMonthlyIncome"
+          invalid-feedback="Income is required and must be in numbers."
+          :state="fatherMonthlyIncomeState"
+        >
           <b-form-input
             id="fatherMonthlyIncome"
             placeholder="Monthly Income ..."
+            :state="fatherMonthlyIncomeState"
             v-model="fatherMonthlyIncome"
           >
           </b-form-input>
@@ -58,13 +83,17 @@
       </b-col>
       <b-col class="text-left">
         <b-form-group
-          label="Death Certificate (Upload)"
+          label="Death Certificate (Upload)*"
           label-for="fatherDeathCertificate"
+          invalid-feedback="Death certificate is required."
+          :state="fatherDeathCertificateState"
         >
           <b-form-file
             id="fatherDeathCertificate"
             placeholder="Upload Death Certificate ..."
             accept="image/*"
+            :state="fatherDeathCertificateState"
+            v-model="fatherDeathCertificate"
           >
           </b-form-file>
         </b-form-group>
@@ -73,33 +102,45 @@
     <h5 class="text-left">Mother</h5>
     <b-form-row>
       <b-col class="text-left">
-        <b-form-group label="First Name" label-for="motherFirstName">
+        <b-form-group
+          label="First Name*"
+          label-for="motherFirstName"
+          invalid-feedback="First Name is required, must be more than 2 characters long and contain letters ONLY."
+        >
           <b-form-input
             id="motherFirstName"
             placeholder="First Name ..."
-            required
+            :state="motherFirstNameState"
             v-model="motherFirstName"
           >
           </b-form-input>
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Middle Name" label-for="motherMiddleName">
+        <b-form-group
+          label="Middle Name*"
+          label-for="motherMiddleName"
+          invalid-feedback="Middle Name is required, must be more than 2 characters long and contain letters ONLY."
+        >
           <b-form-input
             id="motherMiddleName"
             placeholder="Middle Name ..."
-            required
+            :state="motherMiddleNameState"
             v-model="motherMiddleName"
           >
           </b-form-input>
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Last Name" label-for="motherLastName">
+        <b-form-group
+          label="Last Name*"
+          label-for="motherLastName"
+          invalid-feedback="Last Name is required, must be more than 2 characters long and contain letters ONLY."
+        >
           <b-form-input
             id="motherLastName"
             placeholder="Last Name ..."
-            required
+            :state="motherLastNameState"
             v-model="motherLastName"
           >
           </b-form-input>
@@ -108,21 +149,31 @@
     </b-form-row>
     <b-form-row>
       <b-col class="text-left">
-        <b-form-group label="Date of Birth" label-for="motherDateOfBrith">
+        <b-form-group
+          label="Date of Birth*"
+          label-for="motherDateOfBrith"
+          invalid-feedback="Date of birth is required"
+          :state="tmpMotherDateOfBirthState"
+        >
           <b-form-input
             type="date"
-            required
             id="motherDateOfBrith"
+            :state="tmpMotherDateOfBirthState"
             v-model="tmpMotherDateOfBirth"
           >
           </b-form-input>
         </b-form-group>
       </b-col>
       <b-col class="text-left">
-        <b-form-group label="Vital Status" label-for="motherVitalStatus">
+        <b-form-group
+          label="Vital Status*"
+          label-for="motherVitalStatus"
+          :state="motherVitalStatusState"
+          invalid-feedback="Vital Status is required"
+        >
           <b-form-select
             id="motherVitalStatus"
-            required
+            :state="motherVitalStatusState"
             v-model="motherVitalStatus"
           >
             <template #first>
@@ -142,13 +193,17 @@
     <b-container class="p-0" v-if="motherVitalStatus === 'Alive'">
       <b-form-row>
         <b-col class="text-left">
-          <b-form-group label="Marital status">
+          <b-form-group
+            label="Marital status*"
+            :state="motherMaritalStatusState"
+            invalid-feedback="Please select one."
+          >
             <b-form-radio
               name="motherMaritalStatusRadios"
               size="sm"
               plain
               value="widow"
-              required
+              :state="motherMaritalStatusState"
               v-model="motherMaritalStatus"
               >Widow</b-form-radio
             >
@@ -157,7 +212,7 @@
               size="sm"
               plain
               value="remarried"
-              required
+              :state="motherMaritalStatusState"
               v-model="motherMaritalStatus"
               >Remarried</b-form-radio
             >
@@ -176,10 +231,16 @@
           </b-form-group>
         </b-col>
         <b-col class="text-left">
-          <b-form-group label="Monthly Income" label-for="motherMonthlyIncome">
+          <b-form-group
+            label="Monthly Income"
+            label-for="motherMonthlyIncome"
+            :state="motherMonthlyIncomeState"
+            invalid-feedback="Monthly income must be in numbers."
+          >
             <b-form-input
               id="motherMonthlyIncome"
               placeholder="Monthly Income ..."
+              :state="motherMonthlyIncomeState"
               v-model="motherMonthlyIncome"
             >
             </b-form-input>
@@ -207,22 +268,29 @@
           <b-form-group
             label="Monthly Expense"
             label-for="motherMonthlyExpense"
+            :state="motherMonthlyExpenseState"
+            invalid-feedback="Monthly expense must be in numbers."
           >
             <b-form-input
               id="motherMonthlyExpense"
               placeholder="Monthly Expense ..."
-              required
+              :state="motherMonthlyExpenseState"
               v-model="motherMonthlyExpense"
             >
             </b-form-input>
           </b-form-group>
         </b-col>
         <b-col class="text-left">
-          <b-form-group label="Phone Number" label-for="motherPhoneNumber">
+          <b-form-group
+            label="Phone Number*"
+            label-for="motherPhoneNumber"
+            :state="motherPhoneNumberState"
+            invalid-feedback="Phone number is required and must be 10 digit numbers."
+          >
             <b-form-input
               id="motherPhoneNumber"
               placeholder="Phone Number ..."
-              required
+              :state="motherPhoneNumberState"
               v-model="motherPhoneNumber"
             >
             </b-form-input>
@@ -234,20 +302,33 @@
     <b-container class="p-0" v-if="motherVitalStatus === 'Passed Away'">
       <b-form-row>
         <b-col class="text-left col-4">
-          <b-form-group label="Cause of Death" label-for="motherCauseOfDeath">
+          <b-form-group
+            label="Cause of Death*"
+            label-for="motherCauseOfDeath"
+            :state="motherCauseOfDeathState"
+            invalid-feedback="Cause of death is required and must contain at least 3 characters."
+          >
             <b-form-input
               id="motherCauseOfDeath"
               placeholder="Cause of Death ..."
+              :state="motherCauseOfDeathState"
               v-model="motherCauseOfDeath"
             >
-            </b-form-input> </b-form-group
-        ></b-col>
+            </b-form-input>
+          </b-form-group>
+        </b-col>
         <b-col class="text-left col-4">
-          <b-form-group label="Date of Death" label-for="motherDateOfDeath">
+          <b-form-group
+            label="Date of Death*"
+            label-for="motherDateOfDeath"
+            invalid-feedback="Date of death is required"
+            :state="tmpMotherDateOfDeathState"
+          >
             <b-form-input
               type="date"
               id="motherDateOfDeath"
               placeholder="Select date ..."
+              :state="tmpMotherDateOfDeathState"
               v-model="tmpMotherDateOfDeath"
             >
             </b-form-input> </b-form-group
@@ -259,13 +340,15 @@
     <b-form-row>
       <b-col class="text-left col-4">
         <b-form-group
-          label="Number of Sponsored Siblings"
+          label="Number of Sponsored Siblings*"
           label-for="orphanNumberOfSponsoredSiblings"
         >
           <b-form-input
             id="orphanNumberOfSponsoredSiblings"
             placeholder="Number of Sponsored Siblings ..."
-            required
+            type="number"
+            min="0"
+            v-model="orphanNumberOfSponsoredSiblings"
           >
           </b-form-input>
         </b-form-group>
@@ -428,15 +511,19 @@
     <h5 class="text-left">House and Property Info</h5>
     <b-form-row>
       <b-col class="text-left">
-        <b-form-group label="House ownership">
+        <b-form-group
+          label="House Ownership*"
+          :state="tmpIgaOwnershipStatusRadioState"
+          invalid-feedback="Please select one."
+        >
           <b-form-radio
             name="IgaOwnershipStatusRadios"
             size="sm"
             class="ml-2"
             plain
             value="Privately owned"
-            v-model="igaOwnershipStatus"
-            required
+            v-model="tmpIgaOwnershipStatusRadio"
+            :state="tmpIgaOwnershipStatusRadioState"
             >Privately owned</b-form-radio
           >
           <b-form-radio
@@ -445,8 +532,8 @@
             class="ml-2"
             plain
             value="Rental"
-            v-model="igaOwnershipStatus"
-            required
+            v-model="tmpIgaOwnershipStatusRadio"
+            :state="tmpIgaOwnershipStatusRadioState"
             >Rental</b-form-radio
           >
           <b-form-radio
@@ -455,8 +542,8 @@
             class="ml-2"
             plain
             value="With Relatives"
-            v-model="igaOwnershipStatus"
-            required
+            v-model="tmpIgaOwnershipStatusRadio"
+            :state="tmpIgaOwnershipStatusRadioState"
             >With Relatives</b-form-radio
           >
           <b-form-radio
@@ -465,7 +552,8 @@
             class="ml-2"
             plain
             value="Dependent"
-            v-model="igaOwnershipStatus"
+            v-model="tmpIgaOwnershipStatusRadio"
+            :state="tmpIgaOwnershipStatusRadioState"
             >Dependent</b-form-radio
           >
           <b-input-group>
@@ -475,22 +563,28 @@
                 name="IgaOwnershipStatusRadios"
                 class="ml-n1"
                 value="Other"
-                required
+                v-model="tmpIgaOwnershipStatusRadio"
+                :state="tmpIgaOwnershipStatusRadioState"
               />
               <label
                 class="form-check-label mb-0 ml-2"
-                for="physicalHealth-disabledRadio"
-                >Other</label
+                for="igaOwnershipStatusOther"
               >
+                Other
+              </label>
             </b-input-group-prepend>
             <b-form-input
-              for="physicalHealth-disabledRadio"
+              id="igaOwnershipStatusOther"
               placeholder="Mention housing situation ... "
-              v-model="igaOwnershipStatus"
-              required
+              v-model="tmpIgaOwnershipStatus"
+              :state="tmpIgaOwnershipStatusState"
             ></b-form-input>
-          </b-input-group> </b-form-group
-      ></b-col>
+            <b-form-invalid-feedback :state="tmpIgaOwnershipStatusState">
+              Please mention housing situation
+            </b-form-invalid-feedback>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
     </b-form-row>
     <b-form-row>
       <b-col class="text-left">
@@ -510,44 +604,73 @@
       </b-col>
     </b-form-row>
     <b-form-row align-h="start">
-      <b-col cols="1">
-        <b-button v-b-toggle.accordion-5 align-h="start" variant="primary"
-          >Next</b-button
-        >
-      </b-col>
+      <b-button
+        align-h="start"
+        type="submit"
+        class="ml-1"
+        @click.prevent="handleHouseholdSubmit"
+        variant="primary"
+        >Next</b-button
+      >
     </b-form-row>
   </b-form>
 </template>
 
 <script>
 import moment from "moment";
+import {
+  required,
+  alpha,
+  minLength,
+  maxLength,
+  minValue,
+  numeric,
+  decimal
+} from "vuelidate/lib/validators";
 
 export default {
   data() {
     return {
-      orphanNumberOfSponserdSiblings: "",
+      orphanNumberOfSponsoredSiblings: "",
 
       fatherCauseOfDeath: "",
+      fatherCauseOfDeathState: null,
       fatherJobTitle: "",
       fatherMonthlyIncome: "",
+      fatherMonthlyIncomeState: null,
+      fatherDeathCertificate: null,
+      fatherDeathCertificateState: null,
 
-      tmpFatherDateOfBrith: "", // turned into computed props
+      tmpFatherDateOfBirth: "", // turned into computed props
+      tmpFatherDateOfBirthState: null,
       tmpFatherDateOfDeath: "", // turned into computed props
+      tmpFatherDateOfDeathState: null,
 
       motherFirstName: "",
+      motherFirstNameState: null,
       motherMiddleName: "",
+      motherMiddleNameState: null,
       motherLastName: "",
+      motherLastNameState: null,
       motherVitalStatus: "", // TODO:DONE add to UI
+      motherVitalStatusState: null,
       motherCauseOfDeath: "", // TODO:DONE add to schema
+      motherCauseOfDeathState: null,
       motherMaritalStatus: "",
+      motherMaritalStatusState: null,
       motherJobTitle: "",
       motherMonthlyExpense: "",
+      motherMonthlyExpenseState: null,
       motherMonthlyIncome: "",
+      motherMonthlyIncomeState: null,
       motherSourceOfIncome: [],
       motherPhoneNumber: "",
+      motherPhoneNumberState: null,
 
       tmpMotherDateOfBirth: "", // add to UI, turned into computed props
+      tmpMotherDateOfBirthState: null,
       tmpMotherDateOfDeath: "", // TODO:DONE add to schema, turned into computed props
+      tmpMotherDateOfDeathState: null,
 
       newSibling: {},
 
@@ -557,13 +680,66 @@ export default {
       siblingMaritalStatusState: null,
       siblings: [],
 
-      igaOwnershipStatus: "",
-      igaOtherProperty: ""
+      // igaOwnershipStatus: "", turned into computed props
+      igaOtherProperty: "",
+      tmpIgaOwnershipStatusRadio: "",
+      tmpIgaOwnershipStatusRadioState: null,
+      tmpIgaOwnershipStatus: "",
+      tmpIgaOwnershipStatusState: null
     };
+  },
+  validations: {
+    fatherCauseOfDeath: {
+      required,
+      minLength: minLength(3)
+    },
+    fatherMonthlyIncome: {
+      required,
+      numeric,
+      minValue: minValue(0)
+    },
+    tmpFatherDateOfBirth: { required },
+    tmpFatherDateOfDeath: { required },
+    fatherDeathCertificate: { required },
+    motherFirstName: {
+      required,
+      alpha,
+      minLength: minLength(3)
+    },
+    motherMiddleName: {
+      required,
+      alpha,
+      minLength: minLength(3)
+    },
+    motherLastName: {
+      required,
+      alpha,
+      minLength: minLength(3)
+    },
+    tmpMotherDateOfBirth: { required },
+    motherMonthlyIncome: {
+      decimal,
+      minValue: minValue(0)
+    },
+    motherMonthlyExpense: {
+      decimal,
+      minValue: minValue(0)
+    },
+    motherPhoneNumber: {
+      required,
+      numeric,
+      minLength: minLength(10),
+      maxLength: maxLength(10)
+    },
+    motherCauseOfDeath: {
+      required,
+      minLength: minLength(3)
+    },
+    tmpMotherDateOfDeath: { required }
   },
   computed: {
     fatherDateOfBrith: function() {
-      return moment(this.tmpFatherDateOfBrith).format();
+      return moment(this.tmpFatherDateOfBirth).format();
     },
     fatherDateOfDeath: function() {
       return moment(this.tmpFatherDateOfDeath).format();
@@ -573,6 +749,12 @@ export default {
     },
     motherDateOfDeath: function() {
       return moment(this.tmpMotherDateOfDeath).format();
+    },
+    igaOwnershipStatus: function() {
+      if (this.tmpIgaOwnershipStatusRadio == "Other") {
+        return `Other: ${this.tmpIgaOwnershipStatus}`;
+      }
+      return this.tmpIgaOwnershipStatusRadio;
     }
   },
   methods: {
@@ -593,10 +775,162 @@ export default {
         this.newSibling.MaritalStatus = null;
       }
     },
+
+    // dynamically add data properties to a component's property
     update: function(obj, prop, event) {
       this.$set(obj, prop, event);
     },
-    // Add sibling form validation
+
+    // Father info validation
+    checkFatherDateOfBirthValidity: function() {
+      const validFatherDateOfBirth = !this.$v.tmpFatherDateOfBirth.$invalid;
+      this.tmpFatherDateOfBirthState = validFatherDateOfBirth;
+      return validFatherDateOfBirth;
+    },
+    checkFatherDateOfDeathValidity: function() {
+      const validFatherDateOfDeath = !this.$v.tmpFatherDateOfDeath.$invalid;
+      this.tmpFatherDateOfDeathState = validFatherDateOfDeath;
+      return validFatherDateOfDeath;
+    },
+    checkFatherCauseOfDeathValidity: function() {
+      const validFatherCauseOfDeath = !this.$v.fatherCauseOfDeath.$invalid;
+      this.fatherCauseOfDeathState = validFatherCauseOfDeath;
+      return validFatherCauseOfDeath;
+    },
+    checkFatherMonthlyIncomeValidity: function() {
+      const validFatherMonthlyIncome = !this.$v.fatherMonthlyIncome.$invalid;
+      this.fatherMonthlyIncomeState = validFatherMonthlyIncome;
+      return validFatherMonthlyIncome;
+    },
+    checkFatherDeathCertificateValidity: function() {
+      const validFatherDeathCertificate = !this.$v.fatherDeathCertificate
+        .$invalid;
+      this.fatherDeathCertificateState = validFatherDeathCertificate;
+      return validFatherDeathCertificate;
+    },
+
+    // Mother info validation
+    checkMotherFirstNameValidity: function() {
+      const validMotherFirstName = !this.$v.motherFirstName.$invalid;
+      this.motherFirstNameState = validMotherFirstName;
+      return validMotherFirstName;
+    },
+    checkMotherMiddleNameValidity: function() {
+      const validMotherMiddleName = !this.$v.motherMiddleName.$invalid;
+      this.motherMiddleNameState = validMotherMiddleName;
+      return validMotherMiddleName;
+    },
+    checkMotherLastNameValidity: function() {
+      const validMotherLastName = !this.$v.motherLastName.$invalid;
+      this.motherLastNameState = validMotherLastName;
+      return validMotherLastName;
+    },
+    checkMotherDateOfBirthValidity: function() {
+      const validMotherDateOfBirth = !this.$v.tmpMotherDateOfBirth.$invalid;
+      this.tmpMotherDateOfBirthState = validMotherDateOfBirth;
+      return validMotherDateOfBirth;
+    },
+    checkMotherVitalStatusValidity: function() {
+      this.motherVitalStatusState =
+        this.motherVitalStatus === "Alive" ||
+        this.motherVitalStatus === "Passed Away";
+      return this.motherVitalStatusState;
+    },
+    checkMotherMaritalStatusValidity: function() {
+      if (this.motherVitalStatus === "Alive") {
+        this.motherMaritalStatusState =
+          this.motherMaritalStatus === "widow" ||
+          this.motherMaritalStatus === "remarried";
+        return this.motherMaritalStatusState;
+      } else return true;
+    },
+    checkMotherMonthlyIncomeValidity: function() {
+      if (this.motherVitalStatus === "Alive") {
+        const validMotherMonthlyIncome = !this.$v.motherMonthlyIncome.$invalid;
+        this.motherMonthlyIncomeState = validMotherMonthlyIncome;
+        return validMotherMonthlyIncome;
+      } else return true;
+    },
+    checkMotherMonthlyExpenseValidity: function() {
+      const validMotherMonthlyExpense = !this.$v.motherMonthlyExpense.$invalid;
+      if (this.motherVitalStatus === "Alive") {
+        this.motherMonthlyExpenseState = validMotherMonthlyExpense;
+        return validMotherMonthlyExpense;
+      } else return true;
+    },
+    checkMotherPhoneNumberValidity: function() {
+      if (this.motherVitalStatus === "Alive") {
+        const validMotherPhoneNumber = !this.$v.motherPhoneNumber.$invalid;
+        this.motherPhoneNumberState = validMotherPhoneNumber;
+        return validMotherPhoneNumber;
+      } else return true;
+    },
+    checkMotherCauseOfDeathValidity: function() {
+      const validMotherCauseOfDeath = !this.$v.motherCauseOfDeath.$invalid;
+      if (this.motherVitalStatus === "Passed Away") {
+        this.motherCauseOfDeathState = validMotherCauseOfDeath;
+        return validMotherCauseOfDeath;
+      } else return true;
+    },
+    checkMotherDateOfDeathValidity: function() {
+      const validMotherDateOfDeath = !this.$v.tmpMotherDateOfDeath.$invalid;
+      if (this.motherVitalStatus === "Passed Away") {
+        this.tmpMotherDateOfDeathState = validMotherDateOfDeath;
+        return validMotherDateOfDeath;
+      } else return true;
+    },
+
+    // IGA validity check
+    checkIgaHouseOwnershipValidity: function() {
+      if (
+        this.tmpIgaOwnershipStatusRadio === "Privately owned" ||
+        this.tmpIgaOwnershipStatusRadio === "Rental" ||
+        this.tmpIgaOwnershipStatusRadio === "With Relatives" ||
+        this.tmpIgaOwnershipStatusRadio === "Dependent"
+      ) {
+        this.tmpIgaOwnershipStatusRadioState = true;
+        this.tmpIgaOwnershipStatusState = null;
+        this.tmpIgaOwnershipStatus = "";
+      } else if (
+        this.tmpIgaOwnershipStatusRadio === "Other" &&
+        this.tmpIgaOwnershipStatus === ""
+      ) {
+        this.tmpIgaOwnershipStatusState = false;
+        this.tmpIgaOwnershipStatusRadioState = null;
+      } else if (this.tmpIgaOwnershipStatusRadio === "") {
+        this.tmpIgaOwnershipStatusRadioState = false;
+      } else {
+        this.tmpIgaOwnershipStatusRadioState = true;
+        this.tmpIgaOwnershipStatusState = true;
+      }
+      return this.tmpIgaOwnershipStatusRadioState;
+    },
+
+    handleHouseholdSubmit: function() {
+      if (
+        this.checkFatherDateOfBirthValidity() &&
+        this.checkFatherDateOfDeathValidity() &&
+        this.checkFatherCauseOfDeathValidity() &&
+        this.checkFatherMonthlyIncomeValidity() &&
+        this.checkFatherDeathCertificateValidity() &&
+        this.checkMotherFirstNameValidity() &&
+        this.checkMotherMiddleNameValidity() &&
+        this.checkMotherLastNameValidity() &&
+        this.checkMotherDateOfBirthValidity() &&
+        this.checkMotherVitalStatusValidity() &&
+        this.checkMotherMaritalStatusValidity() &&
+        this.checkMotherMonthlyIncomeValidity() &&
+        this.checkMotherMonthlyExpenseValidity() &&
+        this.checkMotherPhoneNumberValidity() &&
+        this.checkMotherCauseOfDeathValidity() &&
+        this.checkMotherDateOfDeathValidity() &&
+        this.checkIgaHouseOwnershipValidity()
+      ) {
+        this.$root.$emit("bv::toggle::collapse", "accordion-5");
+      }
+    },
+
+    // "Add sibling" form validation
     checkSiblingFullNameValidity: function() {
       const validSiblingFullName = this.$refs.siblingFullName.checkValidity();
       this.siblingFullNameState = validSiblingFullName;
@@ -649,7 +983,7 @@ export default {
     },
     handleSiblingCancel: function() {
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing");
+        this.$bvModal.hide("modal-add-sibling");
       });
       // Reset form state
       this.siblingFullNameState = null;
