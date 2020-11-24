@@ -190,7 +190,7 @@
       </b-col>
     </b-form-row>
     <!-- alive container -->
-    <b-container class="p-0" v-if="motherVitalStatus === 'Alive'">
+    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'Alive'">
       <b-form-row>
         <b-col class="text-left">
           <b-form-group
@@ -299,7 +299,7 @@
       </b-form-row>
     </b-container>
     <!-- passed away container -->
-    <b-container class="p-0" v-if="motherVitalStatus === 'Passed Away'">
+    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'Passed Away'">
       <b-form-row>
         <b-col class="text-left col-4">
           <b-form-group
