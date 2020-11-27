@@ -103,7 +103,7 @@
           <b-form-input
             id="guardianJobTitle"
             placeholder="Job Title ..."
-            v-model="guardianJob"
+            v-model="guardianJobTitle"
           >
           </b-form-input>
         </b-form-group>
@@ -284,6 +284,7 @@ import {
   decimal,
   email
 } from "vuelidate/lib/validators";
+import { mapActions } from "vuex";
 
 export default {
   data() {
@@ -320,7 +321,7 @@ export default {
       guardianPOBox: "", // TODO:DONE add to schema
       guardianEmail: "",
       guardianEmailState: null,
-      guardianJob: "",
+      guardianJobTitle: "",
       guardianMonthlyExpense: "",
       guardianMonthlyExpenseState: null,
 
@@ -385,6 +386,25 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      "setInvalidGuardianForm",
+      "setGuardianFirstName",
+      "setGuardianMiddleName",
+      "setGuardianLastName",
+      "setGuardianGender",
+      "setGuardianNationality",
+      "setGuardianAddress",
+      "setGuardianRelationToOrphan",
+      "setGuardianTelephone",
+      "setGuardianMobile",
+      "setGuardianPOBox",
+      "setGuardianEmail",
+      "setGuardianJobTitle",
+      "setGuardianMonthlyExpense",
+      "setGuardianConfirmationLetterUrl",
+      "setGuardianIDCardUrl",
+      "setGuadrianDateOfBrith"
+    ]),
     checkGuardianFirstNameValidity: function() {
       const validGuardianFirstName = !this.$v.guardianFirstName.$invalid;
       this.guardianFirstNameState = validGuardianFirstName;
@@ -485,8 +505,33 @@ export default {
         this.checkGuardianConfirmationLetterValidity() &&
         this.checkGuardianIDCardValidity()
       ) {
+        this.setInvalidGuardianForm(false);
         console.log("Final Form Section Valid, \n pass the data to the parent");
-      }
+        //  dispatch setter actions to the state in the store
+        this.setGuardianFirstName(this.guardianFirstName);
+        this.setGuardianMiddleName(this.guardianMiddleName);
+        this.setGuardianLastName(this.guardianLastName);
+        this.setGuardianGender(this.guardianGender);
+        this.setGuardianNationality(this.guardianNationality);
+        this.setGuardianAddress(this.guardianAddress);
+        this.setGuardianRelationToOrphan(this.guardianRelationToOrphan);
+        this.setGuardianTelephone(this.guardianTelephone);
+        this.setGuardianMobile(this.guardianMobile);
+        this.setGuardianPOBox(this.guardianPOBox);
+        this.setGuardianEmail(this.guardianEmail);
+        this.setGuardianJobTitle(this.guardianJobTitle);
+        this.setGuardianMonthlyExpense(this.guardianMonthlyExpense);
+        this.setGuadrianDateOfBrith(this.guadrianDateOfBrith);
+
+        // TODO Save images to the server and get the url for each
+
+        // TODO Set the url to their respective state in the store
+        this.setGuardianConfirmationLetterUrl(
+          this.guardianConfirmationLetterUrl
+        );
+        this.setGuardianIDCardUrl(this.guardianIDCardUrl);
+        // TODO Emit a "formComplete" event
+      } else this.setInvalidGuardianForm(true);
     }
   }
 };

@@ -627,6 +627,7 @@ import {
   numeric,
   decimal
 } from "vuelidate/lib/validators";
+import { mapActions } from "vuex";
 
 export default {
   data() {
@@ -758,6 +759,32 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      "setInvalidHouseholdForm",
+      "setOrphanNumberOfSponsoredSiblings",
+      "setFatherCauseOfDeath",
+      "setFatherJobTitle",
+      "setFatherMonthlyIncome",
+      "setFatherDeathCertificateUrl",
+      "setFatherDateOfBrith",
+      "setFatherDateOfDeath",
+      "setMotherFirstName",
+      "setMotherMiddleName",
+      "setMotherLastName",
+      "setMotherVitalStatus",
+      "setMotherCauseOfDeath",
+      "setMotherMaritalStatus",
+      "setMotherJobTitle",
+      "setMotherMonthlyExpense",
+      "setMotherMonthlyIncome",
+      "setMotherSourceOfIncome",
+      "setMotherPhoneNumber",
+      "setMotherDateOfBrith",
+      "setMotherDateOfDeath",
+      "setSiblings",
+      "setIgaOwnershipStatus",
+      "setIgaOtherProperty"
+    ]),
     addSibling: function() {
       if (
         this.newSibling.FullName &&
@@ -926,8 +953,43 @@ export default {
         this.checkMotherDateOfDeathValidity() &&
         this.checkIgaHouseOwnershipValidity()
       ) {
+        //  dispatch setter actions to the state in the store
+        this.setOrphanNumberOfSponsoredSiblings(
+          this.orphanNumberOfSponsoredSiblings
+        );
+        this.setFatherCauseOfDeath(this.fatherCauseOfDeath);
+        this.setFatherJobTitle(this.fatherJobTitle);
+        this.setFatherMonthlyIncome(this.fatherMonthlyIncome);
+        this.setFatherDateOfBrith(this.fatherDateOfBrith);
+        this.setFatherDateOfDeath(this.fatherDateOfDeath);
+        this.setMotherFirstName(this.motherFirstName);
+        this.setMotherMiddleName(this.motherMiddleName);
+        this.setMotherLastName(this.motherLastName);
+        this.setMotherVitalStatus(this.motherVitalStatus);
+        this.setMotherCauseOfDeath(this.motherCauseOfDeath);
+        this.setMotherMaritalStatus(this.motherMaritalStatus);
+        this.setMotherJobTitle(this.motherJobTitle);
+        this.setMotherMonthlyExpense(this.motherMonthlyExpense);
+        this.setMotherMonthlyIncome(this.motherMonthlyIncome);
+        this.setMotherSourceOfIncome(this.motherSourceOfIncome);
+        this.setMotherPhoneNumber(this.motherPhoneNumber);
+        this.setMotherDateOfBrith(this.motherDateOfBrith);
+        this.setMotherDateOfDeath(this.motherDateOfDeath);
+        this.setSiblings(this.siblings);
+        this.setIgaOwnershipStatus(this.igaOwnershipStatus);
+        this.setIgaOtherProperty(this.igaOtherProperty);
+
+        // TODO Save images to the server and get the url for each
+
+        // TODO Set the url to their respective state in the store
+        // this.setFatherDeathCertificateUrl(this.fatherDeathCertificateUrl);
+
+        // Set global form validity
+        this.setInvalidHouseholdForm(false);
+
+        // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-5");
-      }
+      } else this.setInvalidHouseholdForm(true);
     },
 
     // "Add sibling" form validation

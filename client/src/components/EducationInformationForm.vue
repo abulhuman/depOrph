@@ -230,6 +230,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
@@ -272,6 +274,17 @@ export default {
     };
   },
   methods: {
+    ...mapActions([
+      "setInvalidEducationForm",
+      "setEducationEnrollmentStatus",
+      "setEducationSchoolName",
+      "setEducationTypeOfSchool",
+      "setEducationLevel",
+      "setEducationYear",
+      "setEducationDroppedOutGrade",
+      "setEducationDroppedOutReason",
+      "setEducationUnEnrolledReason"
+    ]),
     setYear: function() {
       if (this.educationLevel === "KG") {
         this.educationYearOptions = ["Preparatory", "Nursery", "LKG", "UKG"];
@@ -375,8 +388,22 @@ export default {
         this.checkEducationDroppedOutReasonValidity() &&
         this.checkEducationUnEnrolledReasonValidity()
       ) {
+        //  dispatch setter actions to the state in the store
+        this.setEducationEnrollmentStatus(this.educationEnrollmentStatus);
+        this.setEducationSchoolName(this.educationSchoolName);
+        this.setEducationTypeOfSchool(this.educationTypeOfSchool);
+        this.setEducationLevel(this.educationLevel);
+        this.setEducationYear(this.educationYear);
+        this.setEducationDroppedOutGrade(this.educationDroppedOutGrade);
+        this.setEducationDroppedOutReason(this.educationDroppedOutReason);
+        this.setEducationUnEnrolledReason(this.educationUnEnrolledReason);
+
+        // Set global form validity
+        this.setInvalidEducationForm(false);
+
+        // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-4");
-      }
+      } else this.setInvalidEducationForm(true);
     }
   }
 };

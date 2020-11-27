@@ -207,6 +207,7 @@
 <script>
 import moment from "moment";
 import { required, alpha, minLength } from "vuelidate/lib/validators";
+import { mapActions } from "vuex";
 
 export default {
   data() {
@@ -281,6 +282,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      "setInvalidPersonalForm",
+      "setOrphanFirstName",
+      "setOrphanFatherName",
+      "setOrphanGrandFatherName",
+      "setOrphanGreatGrandFatherName",
+      "setOrphanGender",
+      "setOrphanPlaceOfBirth",
+      "setOrphanClan",
+      "setOrphanSpokenLanguages",
+      "setOrphanDateOfBirth",
+      "setOrphanBirthCertificateUrl",
+      "setOrphanPhotoPortraitUrl"
+    ]),
     // Orphan Personal Information validation
     checkOrphanFirstNameValidity: function() {
       const validOrphanFirstName = !this.$v.orphanFirstName.$invalid;
@@ -353,8 +368,32 @@ export default {
         this.checkOrphanBirthCertificateValidity() &&
         this.checkOrphanPhotoPortraitValidity()
       ) {
+        //  dispatch setter actions to the state in the store
+        this.setOrphanFirstName(this.orphanFirstName);
+        this.setOrphanFatherName(this.orphanFatherName);
+        this.setOrphanGrandFatherName(this.orphanGrandFatherName);
+        this.setOrphanGreatGrandFatherName(this.orphanGreatGrandFatherName);
+        this.setOrphanGender(this.orphanGender);
+        this.setOrphanPlaceOfBirth(this.orphanPlaceOfBirth);
+        this.setOrphanClan(this.orphanClan);
+        this.setOrphanSpokenLanguages(
+          this.orphanSpokenLanguagesInput.toString()
+        );
+        this.setOrphanDateOfBirth(this.orphanDateOfBirth);
+
+        // TODO Save images to the server and get the url for each
+
+        // TODO Set the url to their respective state in the store
+
+        // this.setOrphanBirthCertificateUrl(this.orphanBirthCertificateUrl);
+        // this.setOrphanPhotoPortraitUrl(this.orphanPhotoPortraitUrl);
+
+        // Set global form validity
+        this.setInvalidPersonalForm(false);
+
+        // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-2");
-      }
+      } else this.setInvalidPersonalForm(true);
     }
   }
 };

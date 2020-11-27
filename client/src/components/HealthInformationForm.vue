@@ -112,6 +112,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
@@ -136,6 +138,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      "setInvalidHealthForm",
+      "setOrphanPhysicalHealth",
+      "setOrphanPsychologicalHealth",
+      "setOrphanOtherHealthIssues"
+    ]),
     checkOrphanPsychologicalHealthValidity: function() {
       this.orphanPsychologicalHealthState =
         this.orphanPsychologicalHealth === "Sociable" ||
@@ -170,8 +178,16 @@ export default {
         this.checkOrphanPhysicalHealthValidity() &&
         this.checkOrphanPsychologicalHealthValidity()
       ) {
+        //  dispatch setter actions to the state in the store
+        this.setOrphanPhysicalHealth(this.orphanPhysicalHealth);
+        this.setOrphanPsychologicalHealth(this.orphanPsychologicalHealth);
+        this.setOrphanOtherHealthIssues(this.orphanOtherHealthIssues);
+
+        // Set global form validity
+        this.setInvalidHealthForm(false);
+        // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-3");
-      }
+      } else this.setInvalidHealthForm(true);
     }
   }
 };
