@@ -13,7 +13,7 @@ const AUTH_TOKEN = "apollo-token";
 
 // Http endpoint
 const httpEndpoint =
-  process.env.VUE_APP_GRAPHQL_HTTP || "http://localhost:5005/";
+  process.env.VUE_APP_GRAPHQL_HTTP || process.env.VUE_APP_BASE_URL;
 
 // Config
 const defaultOptions = {
@@ -21,7 +21,7 @@ const defaultOptions = {
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || "ws://localhost:5005/",
+  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `null`,
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine

@@ -208,6 +208,7 @@
 import moment from "moment";
 import { required, alpha, minLength } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
+import axios from "axios";
 
 export default {
   data() {
@@ -357,14 +358,14 @@ export default {
 
     handleOrphanPersonalSubmit: function() {
       if (
-        this.checkOrphanFirstNameValidity() &&
-        this.checkOrphanFatherNameValidity() &&
-        this.checkOrphanGrandFatherNameValidity() &&
-        this.checkOrphanGreatGrandFatherNameValidity() &&
-        this.checkOrphanGenderValidity() &&
-        this.checkOrphanDateOfBirthValidity() &&
-        this.checkOrphanPlaceOfBirthValidity() &&
-        this.checkOrphanClanValidity() &&
+        // this.checkOrphanFirstNameValidity() &&
+        // this.checkOrphanFatherNameValidity() &&
+        // this.checkOrphanGrandFatherNameValidity() &&
+        // this.checkOrphanGreatGrandFatherNameValidity() &&
+        // this.checkOrphanGenderValidity() &&
+        // this.checkOrphanDateOfBirthValidity() &&
+        // this.checkOrphanPlaceOfBirthValidity() &&
+        // this.checkOrphanClanValidity() &&
         this.checkOrphanBirthCertificateValidity() &&
         this.checkOrphanPhotoPortraitValidity()
       ) {
@@ -382,18 +383,56 @@ export default {
         this.setOrphanDateOfBirth(this.orphanDateOfBirth);
 
         // TODO Save images to the server and get the url for each
+        let orphanBirthCertificateUrl = "",
+          orphanPhotoPortraitUrl = "";
+        const formdata_BC = new FormData();
+        formdata_BC.append(
+          "orphanBirthCertificate",
+          this.orphanBirthCertificate,
+          this.orphanBirthCertificate.name
+        );
+
+        axios
+          .post(
+            `${process.env.VUE_APP_BASE_URL}public/images/orphanBirthCertificate`,
+            formdata_BC
+          )
+          .then(res => {
+            const temp =
+              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
+            orphanBirthCertificateUrl = temp.replace("/public", "");
+          });
+
+        const formdata_PP = new FormData();
+        formdata_PP.append(
+          "orphanPhotoPortrait",
+          this.orphanPhotoPortrait,
+          this.orphanPhotoPortrait.name
+        );
+
+        axios
+          .post(
+            `${process.env.VUE_APP_BASE_URL}public/images/orphanPhotoPortrait`,
+            formdata_PP
+          )
+          .then(res => {
+            const temp =
+              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
+            orphanPhotoPortraitUrl = temp.replace("/public", "");
+          });
 
         // TODO Set the url to their respective state in the store
-
-        // this.setOrphanBirthCertificateUrl(this.orphanBirthCertificateUrl);
-        // this.setOrphanPhotoPortraitUrl(this.orphanPhotoPortraitUrl);
+        this.setOrphanBirthCertificateUrl(orphanBirthCertificateUrl);
+        this.setOrphanPhotoPortraitUrl(orphanPhotoPortraitUrl);
 
         // Set global form validity
         this.setInvalidPersonalForm(false);
 
-        // porceed to the next section
+        // proceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-2");
-      } else this.setInvalidPersonalForm(true);
+      } else {
+        this.setInvalidPersonalForm(true);
+      }
     }
   }
 };

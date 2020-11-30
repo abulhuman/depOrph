@@ -121,11 +121,12 @@
         </b-card-body>
       </b-collapse>
     </b-card>
+    <b-button @click="logOrphan">LOG</b-button>
   </div>
 </template>
 
 <script>
-// import gql from "graphql-tag";
+import gql from "graphql-tag";
 import PersonalInformationForm from "./PersonalInformationForm.vue";
 import HealthInformationForm from "./HealthInformationForm";
 import EducationInformationForm from "./EducationInformationForm";
@@ -150,14 +151,14 @@ export default {
     GuardianInformationForm
   },
   apollo: {
-    // orphan: gql`
-    //   query {
-    //     orphan(id: 1) {
-    //       created_at
-    //       updated_at
-    //     }
-    //   }
-    // `
+    orphan: gql`
+      query {
+        orphan(id: 1) {
+          created_at
+          updated_at
+        }
+      }
+    `
   },
   computed: {
     ...mapGetters([
