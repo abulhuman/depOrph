@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const { GraphQLServer } = require('graphql-yoga');
+const express = require('express');
 const path = require('path');
+const multer = require('multer');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const Orphan = require('./resolvers/Orphan');
@@ -48,14 +50,36 @@ const server = new GraphQLServer({
     };
   },
 });
-server.createHttpServer({cors:true})
-const express = server.express;
 
-express.get('/images/:id', (req, res) => {
-  console.log(`Hello Number ${req.params.id}`)
-  res.sendFile(path.join(__dirname, 'public', 'powerfulFiles.PNG'));
+// create file storage middleware to handle image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `./public/images/${file.fieldname}`)
+  },
+  filename: function (req, file, cb) {
+    const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, `${uniquePrefix}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage });
+
+server.createHttpServer({
+  cors:true,
+  subscriptions: false
 })
 
-server.start({ port: 5005 }, ({ port }) => {
-  console.log(`\n\nServer is running on port ${port} ... \n\n`);
+const app = server.express;
+
+app.use(express.static('public'));
+
+app.post('/public/images/orphanBirthCertificate/', upload.single('orphanBirthCertificate'), function(req, res) {
+    return res.send(req.file.path);
+  })
+app.post('/public/images/orphanPhotoPortrait/', upload.single('orphanPhotoPortrait'), function(req, res) {
+    return res.send(req.file.path);
+  })
+
+app.listen(3000, () => {
+  console.log('App listening on port 3000!');
 });
