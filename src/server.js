@@ -75,10 +75,24 @@ app.use(express.static('public'));
 
 app.post('/public/images/orphanBirthCertificate/', upload.single('orphanBirthCertificate'), function(req, res) {
     return res.send(req.file.path);
-  })
+  });
+  
 app.post('/public/images/orphanPhotoPortrait/', upload.single('orphanPhotoPortrait'), function(req, res) {
     return res.send(req.file.path);
-  })
+  });
+
+app.post('/public/images/fatherDeathCertificate/', upload.single('fatherDeathCertificate'), function(req, res) {
+    return res.send(req.file.path);
+  });
+
+app.post('/public/images/guardianConfirmationLetter/', upload.single('guardianConfirmationLetter'), function(req, res) {
+    return res.send(req.file.path);
+  });
+
+app.post('/public/images/guardianIDCard/', upload.single('guardianIDCard'), function(req, res) {
+    return res.send(req.file.path);
+  });
+
 
 app.listen(3000, () => {
   console.log('App listening on port 3000!');

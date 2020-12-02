@@ -358,14 +358,14 @@ export default {
 
     handleOrphanPersonalSubmit: function() {
       if (
-        // this.checkOrphanFirstNameValidity() &&
-        // this.checkOrphanFatherNameValidity() &&
-        // this.checkOrphanGrandFatherNameValidity() &&
-        // this.checkOrphanGreatGrandFatherNameValidity() &&
-        // this.checkOrphanGenderValidity() &&
-        // this.checkOrphanDateOfBirthValidity() &&
-        // this.checkOrphanPlaceOfBirthValidity() &&
-        // this.checkOrphanClanValidity() &&
+        this.checkOrphanFirstNameValidity() &&
+        this.checkOrphanFatherNameValidity() &&
+        this.checkOrphanGrandFatherNameValidity() &&
+        this.checkOrphanGreatGrandFatherNameValidity() &&
+        this.checkOrphanGenderValidity() &&
+        this.checkOrphanDateOfBirthValidity() &&
+        this.checkOrphanPlaceOfBirthValidity() &&
+        this.checkOrphanClanValidity() &&
         this.checkOrphanBirthCertificateValidity() &&
         this.checkOrphanPhotoPortraitValidity()
       ) {
@@ -382,7 +382,7 @@ export default {
         );
         this.setOrphanDateOfBirth(this.orphanDateOfBirth);
 
-        // TODO Save images to the server and get the url for each
+        // TODO:DONE Save images to the server and get the url for each
         let orphanBirthCertificateUrl = "",
           orphanPhotoPortraitUrl = "";
         const formdata_BC = new FormData();
@@ -394,7 +394,7 @@ export default {
 
         axios
           .post(
-            `${process.env.VUE_APP_BASE_URL}public/images/orphanBirthCertificate`,
+            `${process.env.VUE_APP_BASE_URL}/public/images/orphanBirthCertificate`,
             formdata_BC
           )
           .then(res => {
@@ -412,7 +412,7 @@ export default {
 
         axios
           .post(
-            `${process.env.VUE_APP_BASE_URL}public/images/orphanPhotoPortrait`,
+            `${process.env.VUE_APP_BASE_URL}/public/images/orphanPhotoPortrait`,
             formdata_PP
           )
           .then(res => {
@@ -421,7 +421,7 @@ export default {
             orphanPhotoPortraitUrl = temp.replace("/public", "");
           });
 
-        // TODO Set the url to their respective state in the store
+        // TODO:DONE Set the url to their respective state in the store
         this.setOrphanBirthCertificateUrl(orphanBirthCertificateUrl);
         this.setOrphanPhotoPortraitUrl(orphanPhotoPortraitUrl);
 
