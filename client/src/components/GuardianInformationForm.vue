@@ -285,7 +285,6 @@ import {
   email
 } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
-import axios from "axios";
 
 export default {
   data() {
@@ -506,6 +505,7 @@ export default {
         this.checkGuardianConfirmationLetterValidity() &&
         this.checkGuardianIDCardValidity()
       ) {
+        this.setInvalidGuardianForm(false);
         console.log("Final Form Section Valid, \n pass the data to the parent");
         //  dispatch setter actions to the state in the store
         this.setGuardianFirstName(this.guardianFirstName);
@@ -523,52 +523,13 @@ export default {
         this.setGuardianMonthlyExpense(this.guardianMonthlyExpense);
         this.setGuadrianDateOfBrith(this.guadrianDateOfBrith);
 
-        // TODO:DONE Save images to the server and get the url for each
-        let guardianConfirmationLetterUrl = "",
-          guardianIDCardUrl = "";
-        const formdata_CL = new FormData();
-        formdata_CL.append(
-          "guardianConfirmationLetter",
-          this.guardianConfirmationLetter,
-          this.guardianConfirmationLetter.name
+        // TODO Save images to the server and get the url for each
+
+        // TODO Set the url to their respective state in the store
+        this.setGuardianConfirmationLetterUrl(
+          this.guardianConfirmationLetterUrl
         );
-
-        axios
-          .post(
-            `${process.env.VUE_APP_BASE_URL}/public/images/guardianConfirmationLetter`,
-            formdata_CL
-          )
-          .then(res => {
-            const temp =
-              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            guardianConfirmationLetterUrl = temp.replace("/public", "");
-          });
-
-        const formdata_IDC = new FormData();
-        formdata_IDC.append(
-          "guardianIDCard",
-          this.guardianIDCard,
-          this.guardianIDCard.name
-        );
-
-        axios
-          .post(
-            `${process.env.VUE_APP_BASE_URL}/public/images/guardianIDCard`,
-            formdata_IDC
-          )
-          .then(res => {
-            const temp =
-              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            guardianIDCardUrl = temp.replace("/public", "");
-          });
-
-        // TODO:DONE Set the url to their respective state in the store
-        this.setGuardianConfirmationLetterUrl(guardianConfirmationLetterUrl);
-        this.setGuardianIDCardUrl(guardianIDCardUrl);
-
-        // Set global form validity
-        this.setInvalidGuardianForm(false);
-
+        this.setGuardianIDCardUrl(this.guardianIDCardUrl);
         // TODO Emit a "formComplete" event
       } else this.setInvalidGuardianForm(true);
     }

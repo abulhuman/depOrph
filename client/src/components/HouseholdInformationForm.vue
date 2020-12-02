@@ -628,7 +628,6 @@ import {
   decimal
 } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
-import axios from "axios";
 
 export default {
   data() {
@@ -980,28 +979,10 @@ export default {
         this.setIgaOwnershipStatus(this.igaOwnershipStatus);
         this.setIgaOtherProperty(this.igaOtherProperty);
 
-        // TODO:DONE Save the image to the server and get the url for it
-        let fatherDeathCertificateUrl = "";
-        const formdata_DC = new FormData();
-        formdata_DC.append(
-          "fatherDeathCertificate",
-          this.fatherDeathCertificate,
-          this.fatherDeathCertificate.name
-        );
+        // TODO Save images to the server and get the url for each
 
-        axios
-          .post(
-            `${process.env.VUE_APP_BASE_URL}/public/images/fatherDeathCertificate`,
-            formdata_DC
-          )
-          .then(res => {
-            const temp =
-              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            fatherDeathCertificateUrl = temp.replace("/public", "");
-          });
-
-        // TODO:DONE Set the url to its state in the store
-        this.setFatherDeathCertificateUrl(fatherDeathCertificateUrl);
+        // TODO Set the url to their respective state in the store
+        // this.setFatherDeathCertificateUrl(this.fatherDeathCertificateUrl);
 
         // Set global form validity
         this.setInvalidHouseholdForm(false);
