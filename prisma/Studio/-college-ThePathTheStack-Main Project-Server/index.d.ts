@@ -593,7 +593,6 @@ export declare const EducationDistinctFieldEnum: {
   schoolName: 'schoolName',
   typeOfSchool: 'typeOfSchool',
   year: 'year',
-  grade: 'grade',
   level: 'level',
   reason: 'reason'
 };
@@ -1484,8 +1483,7 @@ export type Education = {
   enrollmentStatus: education_enrollmentStatus
   schoolName: string | null
   typeOfSchool: education_typeOfSchool | null
-  year: number | null
-  grade: number | null
+  year: string | null
   level: education_level | null
   reason: string | null
 }
@@ -1501,51 +1499,35 @@ export type AggregateEducation = {
 
 export type EducationAvgAggregateOutputType = {
   id: number
-  year: number | null
-  grade: number | null
 }
 
 export type EducationSumAggregateOutputType = {
   id: number
-  year: number | null
-  grade: number | null
 }
 
 export type EducationMinAggregateOutputType = {
   id: number
-  year: number | null
-  grade: number | null
 }
 
 export type EducationMaxAggregateOutputType = {
   id: number
-  year: number | null
-  grade: number | null
 }
 
 
 export type EducationAvgAggregateInputType = {
   id?: true
-  year?: true
-  grade?: true
 }
 
 export type EducationSumAggregateInputType = {
   id?: true
-  year?: true
-  grade?: true
 }
 
 export type EducationMinAggregateInputType = {
   id?: true
-  year?: true
-  grade?: true
 }
 
 export type EducationMaxAggregateInputType = {
   id?: true
-  year?: true
-  grade?: true
 }
 
 export type AggregateEducationArgs = {
@@ -1580,7 +1562,6 @@ export type EducationSelect = {
   schoolName?: boolean
   typeOfSchool?: boolean
   year?: boolean
-  grade?: boolean
   level?: boolean
   reason?: boolean
   orphan?: boolean | FindManyOrphanArgs
@@ -10381,8 +10362,7 @@ export type EducationWhereInput = {
   enrollmentStatus?: Enumeducation_enrollmentStatusFilter | education_enrollmentStatus
   schoolName?: StringNullableFilter | string | null
   typeOfSchool?: Enumeducation_typeOfSchoolNullableFilter | education_typeOfSchool | null
-  year?: IntNullableFilter | number | null
-  grade?: IntNullableFilter | number | null
+  year?: StringNullableFilter | string | null
   level?: Enumeducation_levelNullableFilter | education_level | null
   reason?: StringNullableFilter | string | null
   orphan?: OrphanListRelationFilter
@@ -10396,7 +10376,6 @@ export type EducationOrderByInput = {
   schoolName?: SortOrder
   typeOfSchool?: SortOrder
   year?: SortOrder
-  grade?: SortOrder
   level?: SortOrder
   reason?: SortOrder
 }
@@ -10956,8 +10935,7 @@ export type EducationCreateInput = {
   enrollmentStatus: education_enrollmentStatus
   schoolName?: string | null
   typeOfSchool?: education_typeOfSchool | null
-  year?: number | null
-  grade?: number | null
+  year?: string | null
   level?: education_level | null
   reason?: string | null
   orphan?: OrphanCreateManyWithoutEducationInput
@@ -10969,8 +10947,7 @@ export type EducationUpdateInput = {
   enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
   schoolName?: string | NullableStringFieldUpdateOperationsInput | null
   typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
-  year?: number | NullableIntFieldUpdateOperationsInput | null
-  grade?: number | NullableIntFieldUpdateOperationsInput | null
+  year?: string | NullableStringFieldUpdateOperationsInput | null
   level?: education_level | NullableEnumeducation_levelFieldUpdateOperationsInput | null
   reason?: string | NullableStringFieldUpdateOperationsInput | null
   orphan?: OrphanUpdateManyWithoutEducationInput
@@ -10982,8 +10959,7 @@ export type EducationUpdateManyMutationInput = {
   enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
   schoolName?: string | NullableStringFieldUpdateOperationsInput | null
   typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
-  year?: number | NullableIntFieldUpdateOperationsInput | null
-  grade?: number | NullableIntFieldUpdateOperationsInput | null
+  year?: string | NullableStringFieldUpdateOperationsInput | null
   level?: education_level | NullableEnumeducation_levelFieldUpdateOperationsInput | null
   reason?: string | NullableStringFieldUpdateOperationsInput | null
 }
@@ -11589,17 +11565,6 @@ export type Enumeducation_typeOfSchoolNullableFilter = {
   not?: education_typeOfSchool | NestedEnumeducation_typeOfSchoolNullableFilter | null
 }
 
-export type IntNullableFilter = {
-  equals?: number | null
-  in?: Enumerable<number> | null
-  notIn?: Enumerable<number> | null
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: number | NestedIntNullableFilter | null
-}
-
 export type Enumeducation_levelNullableFilter = {
   equals?: education_level | null
   in?: Enumerable<education_level> | null
@@ -11677,6 +11642,17 @@ export type FloatNullableFilter = {
   gt?: number
   gte?: number
   not?: number | NestedFloatNullableFilter | null
+}
+
+export type IntNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: number | NestedIntNullableFilter | null
 }
 
 export type MotherRelationFilter = {
@@ -11839,10 +11815,6 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput = {
   set?: education_typeOfSchool | null
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
 }
 
 export type NullableEnumeducation_levelFieldUpdateOperationsInput = {
@@ -12011,6 +11983,10 @@ export type MotherCreateOneWithoutMotherJobInput = {
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
 }
 
@@ -12471,17 +12447,6 @@ export type NestedEnumeducation_typeOfSchoolNullableFilter = {
   not?: education_typeOfSchool | NestedEnumeducation_typeOfSchoolNullableFilter | null
 }
 
-export type NestedIntNullableFilter = {
-  equals?: number | null
-  in?: Enumerable<number> | null
-  notIn?: Enumerable<number> | null
-  lt?: number
-  lte?: number
-  gt?: number
-  gte?: number
-  not?: number | NestedIntNullableFilter | null
-}
-
 export type NestedEnumeducation_levelNullableFilter = {
   equals?: education_level | null
   in?: Enumerable<education_level> | null
@@ -12548,6 +12513,17 @@ export type NestedFloatNullableFilter = {
   gt?: number
   gte?: number
   not?: number | NestedFloatNullableFilter | null
+}
+
+export type NestedIntNullableFilter = {
+  equals?: number | null
+  in?: Enumerable<number> | null
+  notIn?: Enumerable<number> | null
+  lt?: number
+  lte?: number
+  gt?: number
+  gte?: number
+  not?: number | NestedIntNullableFilter | null
 }
 
 export type NestedEnumorphan_genderFilter = {
@@ -13089,8 +13065,7 @@ export type EducationCreateWithoutOrphanInput = {
   enrollmentStatus: education_enrollmentStatus
   schoolName?: string | null
   typeOfSchool?: education_typeOfSchool | null
-  year?: number | null
-  grade?: number | null
+  year?: string | null
   level?: education_level | null
   reason?: string | null
 }
@@ -13227,8 +13202,7 @@ export type EducationUpdateWithoutOrphanDataInput = {
   enrollmentStatus?: education_enrollmentStatus | Enumeducation_enrollmentStatusFieldUpdateOperationsInput
   schoolName?: string | NullableStringFieldUpdateOperationsInput | null
   typeOfSchool?: education_typeOfSchool | NullableEnumeducation_typeOfSchoolFieldUpdateOperationsInput | null
-  year?: number | NullableIntFieldUpdateOperationsInput | null
-  grade?: number | NullableIntFieldUpdateOperationsInput | null
+  year?: string | NullableStringFieldUpdateOperationsInput | null
   level?: education_level | NullableEnumeducation_levelFieldUpdateOperationsInput | null
   reason?: string | NullableStringFieldUpdateOperationsInput | null
 }

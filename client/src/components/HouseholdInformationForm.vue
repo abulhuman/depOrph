@@ -1006,6 +1006,37 @@ export default {
         // Set global form validity
         this.setInvalidHouseholdForm(false);
 
+        // emit `guardian-info-complete` event to send guardian info to addOrphan.vue
+        this.$emit("household-info-complete", {
+          orphanNumberOfSponsoredSiblings: this.orphanNumberOfSponsoredSiblings,
+
+          fatherCauseOfDeath: this.fatherCauseOfDeath,
+          fatherJobTitle: this.fatherJobTitle,
+          fatherMonthlyIncome: this.fatherMonthlyIncome,
+          fatherDeathCertificateUrl: this.fatherDeathCertificateUrl,
+          fatherDateOfBrith: this.fatherDateOfBrith,
+          fatherDateOfDeath: this.fatherDateOfDeath,
+
+          motherFirstName: this.motherFirstName,
+          motherMiddleName: this.motherMiddleName,
+          motherLastName: this.motherLastName,
+          motherVitalStatus: this.motherVitalStatus,
+          motherCauseOfDeath: this.motherCauseOfDeath,
+          motherMaritalStatus: this.motherMaritalStatus,
+          motherJobTitle: this.motherJobTitle,
+          motherMonthlyExpense: this.motherMonthlyExpense,
+          motherMonthlyIncome: this.motherMonthlyIncome,
+          motherSourceOfIncome: this.motherSourceOfIncome,
+          motherPhoneNumber: this.motherPhoneNumber,
+          motherDateOfBrith: this.motherDateOfBrith,
+          motherDateOfDeath: this.motherDateOfDeath,
+
+          siblings: this.siblings,
+
+          igaOwnershipStatus: this.igaOwnershipStatus,
+          igaOtherProperty: this.igaOtherProperty
+        });
+
         // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-5");
       } else this.setInvalidHouseholdForm(true);

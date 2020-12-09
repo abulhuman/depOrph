@@ -506,7 +506,6 @@ export default {
         this.checkGuardianConfirmationLetterValidity() &&
         this.checkGuardianIDCardValidity()
       ) {
-        console.log("Final Form Section Valid, \n pass the data to the parent");
         //  dispatch setter actions to the state in the store
         this.setGuardianFirstName(this.guardianFirstName);
         this.setGuardianMiddleName(this.guardianMiddleName);
@@ -569,7 +568,27 @@ export default {
         // Set global form validity
         this.setInvalidGuardianForm(false);
 
-        // TODO Emit a "formComplete" event
+        // emit `guardian-info-complete` event to send guardian info to addOrphan.vue
+        this.$emit("guardian-info-complete", {
+          guardianFirstName: this.guardianFirstName,
+          guardianMiddleName: this.guardianMiddleName,
+          guardianLastName: this.guardianLastName,
+          guardianGender: this.guardianGender,
+          guardianNationality: this.guardianNationality,
+          guardianAddress: this.guardianAddress,
+          guardianRelationToOrphan: this.guardianRelationToOrphan,
+          guardianTelephone: this.guardianTelephone,
+          guardianMobile: this.guardianMobile,
+          guardianPOBox: this.guardianPOBox,
+          guardianEmail: this.guardianEmail,
+          guardianJobTitle: this.guardianJobTitle,
+          guardianMonthlyExpense: this.guardianMonthlyExpense,
+          guardianConfirmationLetterUrl: this.guardianConfirmationLetterUrl,
+          guardianIDCardUrl: this.guardianIDCardUrl,
+          guadrianDateOfBrith: this.guadrianDateOfBrith
+        });
+        // TODO:DONE Emit a "formComplete" event
+        this.$emit("formComplete");
       } else this.setInvalidGuardianForm(true);
     }
   }

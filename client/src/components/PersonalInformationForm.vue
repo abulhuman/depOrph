@@ -428,6 +428,21 @@ export default {
         // Set global form validity
         this.setInvalidPersonalForm(false);
 
+        // emit `personal-info-complete` event to send personal info to addOrphan.vue
+        this.$emit("personal-info-complete", {
+          orphanFirstName: this.orphanFirstName,
+          orphanFatherName: this.orphanFatherName,
+          orphanGrandFatherName: this.orphanGrandFatherName,
+          orphanGreatGrandFatherName: this.orphanGreatGrandFatherName,
+          orphanGender: this.orphanGender,
+          orphanPlaceOfBirth: this.orphanPlaceOfBirth,
+          orphanClan: this.orphanClan,
+          orphanSpokenLanguages: this.orphanSpokenLanguagesInput.toString(),
+          orphanDateOfBirth: this.orphanDateOfBirth,
+          orphanBirthCertificateUrl,
+          orphanPhotoPortraitUrl
+        });
+
         // proceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-2");
       } else {

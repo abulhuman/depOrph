@@ -60,8 +60,7 @@ type Mutation {
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
     typeOfSchool: educationTypeOfSchool
-    grade: Int
-    year: Int
+    year: String
     level: educationLevel
     reason: String
     orphan: ID
@@ -115,7 +114,7 @@ type Mutation {
     currentJobTitle: String
     monthlyIncome: Float
     initDate: DateTime
-    termdate: DateTime
+    termDate: DateTime
     mother: ID
   ): MotherJob!
 
@@ -211,8 +210,7 @@ type Education {
   enrollmentStatus: educationEnrollmentStatus!
   schoolName: String
   typeOfSchool: educationTypeOfSchool
-  grade: Int
-  year: Int
+  year: String
   level: educationLevel
   reason: String
   orphan: Orphan
@@ -354,7 +352,7 @@ type MotherJob {
   currentJobTitle: String
   monthlyIncome: String
   initDate: DateTime # TODO:DONE add to mutation and resolvers and UI
-  termdate: DateTime # TODO:DONE add to mutation and resolvers and UI
+  termDate: DateTime # TODO:DONE add to mutation and resolvers and UI
   mother: Mother
 }
 

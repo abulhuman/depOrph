@@ -97,7 +97,6 @@ async function createEducation(parent, args, context, info) {
       enrollmentStatus: args.enrollmentStatus,
       schoolName: args.schoolName ? args.schoolName : undefined,
       typeOfSchool: args.typeOfSchool ? args.typeOfSchool : undefined,
-      grade: args.grade ? args.grade : undefined,
       year: args.year ? args.year : undefined,
       level: args.level ? args.level : undefined,
       reason: args.reason ? args.reason : undefined,
@@ -186,7 +185,7 @@ async function createMotherJob(parent, args, context, info) {
       currentJobTitle: args.currentJobTitle, 
       monthlyIncome: parseFloat(args.monthlyIncome),
       initDate: args.initDate,
-      termdate: args.termdate,
+      termDate: args.termDate,
       mother: {
         connect: {
           id: Number(args.mother)

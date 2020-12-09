@@ -30,8 +30,7 @@ model Education {
   enrollmentStatus education_enrollmentStatus
   schoolName       String?
   typeOfSchool     education_typeOfSchool?
-  year             Int?
-  grade            Int?
+  year             String?
   level            education_level?
   reason           String?
   orphan           Orphan[]

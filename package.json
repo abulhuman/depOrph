@@ -14,11 +14,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@prisma/cli": "^2.9.0",
+    "@prisma/cli": "^2.13.0",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "@prisma/client": "^2.5.1",
+    "@prisma/client": "^2.13.0",
     "aws-lambda": "^0.1.2",
     "graphql": "^0.13.2",
     "graphql-yoga": "^1.18.3",

@@ -185,6 +185,14 @@ export default {
 
         // Set global form validity
         this.setInvalidHealthForm(false);
+
+        // emit `health-info-complete` event to send health info to addOrphan.vue
+        this.$emit("health-info-complete", {
+          orphanPhysicalHealth: this.orphanPhysicalHealth,
+          orphanPsychologicalHealth: this.orphanPsychologicalHealth,
+          orphanOtherHealthIssues: this.orphanOtherHealthIssues
+        });
+
         // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-3");
       } else this.setInvalidHealthForm(true);

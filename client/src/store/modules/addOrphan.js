@@ -24,6 +24,8 @@ const state = {
   orphanOtherHealthIssues: null,
 
   // state from education
+  orphanHobbies: null,
+
   educationEnrollmentStatus: null,
   educationSchoolName: null,
   educationTypeOfSchool: null,
@@ -107,6 +109,8 @@ const getters = {
   getOrphanOtherHealthIssues: state => state.orphanOtherHealthIssues,
 
   // getters for state from education
+  getOrphanHobbies: state => state.orphanHobbies,
+
   getEducationEnrollmentStatus: state => state.educationEnrollmentStatus,
   getEducationSchoolName: state => state.educationSchoolName,
   getEducationTypeOfSchool: state => state.educationTypeOfSchool,
@@ -230,6 +234,9 @@ const actions = {
   },
 
   // getters for state from education
+  setOrphanHobbies({ commit }, data) {
+    commit("SET_ORPHAN_HOBBIES", data);
+  },
   setEducationEnrollmentStatus({ commit }, data) {
     commit("SET_EDUCATION_ENROLLMENT_STATUS", data);
   },
@@ -445,6 +452,10 @@ const mutations = {
   },
 
   //  MUTATIONS FOR ACTIONS FROM EDUCATION
+  SET_ORPHAN_HOBBIES(state, data) {
+    state.orphanHobbies = data;
+  },
+
   SET_EDUCATION_ENROLLMENT_STATUS(state, data) {
     state.educationEnrollmentStatus = data;
   },

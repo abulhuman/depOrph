@@ -276,6 +276,7 @@ export default {
   methods: {
     ...mapActions([
       "setInvalidEducationForm",
+      "setOrphanHobbies",
       "setEducationEnrollmentStatus",
       "setEducationSchoolName",
       "setEducationTypeOfSchool",
@@ -389,6 +390,8 @@ export default {
         this.checkEducationUnEnrolledReasonValidity()
       ) {
         //  dispatch setter actions to the state in the store
+        this.setOrphanHobbies(this.orphanHobbies);
+
         this.setEducationEnrollmentStatus(this.educationEnrollmentStatus);
         this.setEducationSchoolName(this.educationSchoolName);
         this.setEducationTypeOfSchool(this.educationTypeOfSchool);
@@ -400,6 +403,31 @@ export default {
 
         // Set global form validity
         this.setInvalidEducationForm(false);
+
+        // emit `education-info-complete` event to send education info to addOrphan.vue
+        this.$emit("education-info-complete", {
+          orphanHobbies: this.orphanHobbies,
+          educationEnrollmentStatus: this.educationEnrollmentStatus,
+          educationSchoolName: this.educationSchoolName,
+          educationTypeOfSchool: this.educationTypeOfSchool,
+          educationLevel: this.educationLevel,
+          educationYear: this.educationYear,
+          educationDroppedOutGrade: this.educationDroppedOutGrade,
+          educationDroppedOutReason: this.educationDroppedOutReason,
+          educationUnEnrolledReason: this.educationUnEnrolledReason
+        });
+
+        console.log({
+          orphanHobbies: this.orphanHobbies,
+          educationEnrollmentStatus: this.educationEnrollmentStatus,
+          educationSchoolName: this.educationSchoolName,
+          educationTypeOfSchool: this.educationTypeOfSchool,
+          educationLevel: this.educationLevel,
+          educationYear: this.educationYear,
+          educationDroppedOutGrade: this.educationDroppedOutGrade,
+          educationDroppedOutReason: this.educationDroppedOutReason,
+          educationUnEnrolledReason: this.educationUnEnrolledReason
+        });
 
         // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-4");
