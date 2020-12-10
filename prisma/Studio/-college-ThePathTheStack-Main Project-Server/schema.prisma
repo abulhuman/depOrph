@@ -333,8 +333,8 @@ enum guardian_gender {
 
 enum guardian_relationToOrphan {
   mother
-  grandMother
-  grandFather
+  grandmother
+  grandfather
   sister
   brother
   uncle
