@@ -100,7 +100,7 @@ export const CREATE_FATHER_MUTATION = `
     $job: String
     $monthlyIncome: Int
     $dateOfBirth: DateTime!
-    $fatherDeathCertificateUrl: String!
+    $deathCertificateUrl: String!
     $orphan: ID
   ){
     createFather(
@@ -109,7 +109,7 @@ export const CREATE_FATHER_MUTATION = `
       job: $job
       monthlyIncome: $monthlyIncome
       dateOfBirth: $dateOfBirth
-      fatherDeathCertificateUrl: $fatherDeathCertificateUrl
+      deathCertificateUrl: $deathCertificateUrl
       orphans: [$orphan]
     ){
       id
@@ -190,6 +190,7 @@ export const CREATE_MOTHER_MUTATION = `
       maritalStatus: $maritalStatus
       vitalStatus: $vitalStatus
       monthlyExpense: $monthlyExpense
+      motherjob: []
       orphans: [$orphan]
     ){
       id

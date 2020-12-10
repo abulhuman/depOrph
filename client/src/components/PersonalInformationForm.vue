@@ -230,8 +230,10 @@ export default {
       orphanSpokenLanguagesInput: [], // TODO:DONE add to schema
 
       orphanBirthCertificate: null,
+      orphanBirthCertificateUrl: null,
       orphanBirthCertificateState: null,
       orphanPhotoPortrait: null,
+      orphanPhotoPortraitUrl: null,
       orphanPhotoPortraitState: null,
 
       tmpOrphanDateOfBirth: "", // TODO:DONE formatted as ISO DateTime
@@ -356,7 +358,7 @@ export default {
       return validOrphanClan;
     },
 
-    handleOrphanPersonalSubmit: function() {
+    handleOrphanPersonalSubmit: async function() {
       if (
         this.checkOrphanFirstNameValidity() &&
         this.checkOrphanFatherNameValidity() &&
@@ -383,8 +385,8 @@ export default {
         this.setOrphanDateOfBirth(this.orphanDateOfBirth);
 
         // TODO:DONE Save images to the server and get the url for each
-        let orphanBirthCertificateUrl = "",
-          orphanPhotoPortraitUrl = "";
+        // var orphanBirthCertificateUrl = "",
+        //   orphanPhotoPortraitUrl = "";
         const formdata_BC = new FormData();
         formdata_BC.append(
           "orphanBirthCertificate",
@@ -392,7 +394,7 @@ export default {
           this.orphanBirthCertificate.name
         );
 
-        axios
+        await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanBirthCertificate`,
             formdata_BC
@@ -400,7 +402,9 @@ export default {
           .then(res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            orphanBirthCertificateUrl = temp.replace("/public", "");
+            this.orphanBirthCertificateUrl = encodeURI(
+              temp.replace("public", "")
+            );
           });
 
         const formdata_PP = new FormData();
@@ -410,7 +414,7 @@ export default {
           this.orphanPhotoPortrait.name
         );
 
-        axios
+        await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanPhotoPortrait`,
             formdata_PP
@@ -418,12 +422,13 @@ export default {
           .then(res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            orphanPhotoPortraitUrl = temp.replace("/public", "");
+            this.orphanPhotoPortraitUrl = encodeURI(temp.replace("public", ""));
           });
+        console.log(this.orphanPhotoPortraitUrl);
 
         // TODO:DONE Set the url to their respective state in the store
-        this.setOrphanBirthCertificateUrl(orphanBirthCertificateUrl);
-        this.setOrphanPhotoPortraitUrl(orphanPhotoPortraitUrl);
+        this.setOrphanBirthCertificateUrl(this.orphanBirthCertificateUrl);
+        this.setOrphanPhotoPortraitUrl(this.orphanPhotoPortraitUrl);
 
         // Set global form validity
         this.setInvalidPersonalForm(false);
@@ -439,8 +444,8 @@ export default {
           orphanClan: this.orphanClan,
           orphanSpokenLanguages: this.orphanSpokenLanguagesInput.toString(),
           orphanDateOfBirth: this.orphanDateOfBirth,
-          orphanBirthCertificateUrl,
-          orphanPhotoPortraitUrl
+          orphanBirthCertificateUrl: this.orphanBirthCertificateUrl,
+          orphanPhotoPortraitUrl: this.orphanPhotoPortraitUrl
         });
 
         // proceed to the next section

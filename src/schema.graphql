@@ -73,7 +73,7 @@ type Mutation {
     job: String
     monthlyIncome: Int
     dateOfBirth: DateTime!
-    fatherDeathCertificateUrl: String!
+    deathCertificateUrl: String!
     orphans: [ID]
   ): Father!
   
@@ -225,7 +225,7 @@ type Father {
   job: String
   monthlyIncome: Int
   dateOfBirth: DateTime
-  fatherDeathCertificateUrl: String!
+  deathCertificateUrl: String!
   orphans: [Orphan]
 }
 
@@ -452,7 +452,7 @@ enum guardianRelationToOrphan {
 enum motherMaritalStatus {
   remarried
   widow
-  divorcedthendead 
+  N_A 
 }
 
 enum motherVitalStatus {
@@ -469,6 +469,7 @@ enum educationEnrollmentStatus {
 enum educationTypeOfSchool {
   private
   public
+  N_A
 }
 
 enum educationLevel {
@@ -476,5 +477,6 @@ enum educationLevel {
   gradeSchool
   underGraduate
   postGraduate
+  N_A
 }
 

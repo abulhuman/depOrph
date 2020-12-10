@@ -181,8 +181,8 @@
                 - Select Status -
               </b-form-select-option>
             </template>
-            <b-form-select-option value="Alive">Alive</b-form-select-option>
-            <b-form-select-option value="Passed Away"
+            <b-form-select-option value="alive">Alive</b-form-select-option>
+            <b-form-select-option value="passed"
               >Passed Away</b-form-select-option
             >
           </b-form-select>
@@ -190,7 +190,7 @@
       </b-col>
     </b-form-row>
     <!-- alive container -->
-    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'Alive'">
+    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'alive'">
       <b-form-row>
         <b-col class="text-left">
           <b-form-group
@@ -299,7 +299,7 @@
       </b-form-row>
     </b-container>
     <!-- passed away container -->
-    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'Passed Away'">
+    <b-container class="p-0 m-0" v-if="motherVitalStatus === 'passed'">
       <b-form-row>
         <b-col class="text-left col-4">
           <b-form-group
@@ -641,6 +641,7 @@ export default {
       fatherMonthlyIncome: "",
       fatherMonthlyIncomeState: null,
       fatherDeathCertificate: null,
+      fatherDeathCertificateUrl: null,
       fatherDeathCertificateState: null,
 
       tmpFatherDateOfBirth: "", // turned into computed props
@@ -860,8 +861,8 @@ export default {
     },
     checkMotherVitalStatusValidity: function() {
       this.motherVitalStatusState =
-        this.motherVitalStatus === "Alive" ||
-        this.motherVitalStatus === "Passed Away";
+        this.motherVitalStatus === "alive" ||
+        this.motherVitalStatus === "passed";
       return this.motherVitalStatusState;
     },
     checkMotherMaritalStatusValidity: function() {
@@ -895,7 +896,7 @@ export default {
     },
     checkMotherCauseOfDeathValidity: function() {
       const validMotherCauseOfDeath = !this.$v.motherCauseOfDeath.$invalid;
-      if (this.motherVitalStatus === "Passed Away") {
+      if (this.motherVitalStatus === "passed") {
         this.motherCauseOfDeathState = validMotherCauseOfDeath;
         return validMotherCauseOfDeath;
       } else return true;
@@ -934,7 +935,7 @@ export default {
       return this.tmpIgaOwnershipStatusRadioState;
     },
 
-    handleHouseholdSubmit: function() {
+    handleHouseholdSubmit: async function() {
       if (
         this.checkFatherDateOfBirthValidity() &&
         this.checkFatherDateOfDeathValidity() &&
@@ -981,7 +982,7 @@ export default {
         this.setIgaOtherProperty(this.igaOtherProperty);
 
         // TODO:DONE Save the image to the server and get the url for it
-        let fatherDeathCertificateUrl = "";
+        // let fatherDeathCertificateUrl = "";
         const formdata_DC = new FormData();
         formdata_DC.append(
           "fatherDeathCertificate",
@@ -989,7 +990,7 @@ export default {
           this.fatherDeathCertificate.name
         );
 
-        axios
+        await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/fatherDeathCertificate`,
             formdata_DC
@@ -997,11 +998,13 @@ export default {
           .then(res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            fatherDeathCertificateUrl = temp.replace("/public", "");
+            this.fatherDeathCertificateUrl = encodeURI(
+              temp.replace("public", "")
+            );
           });
 
         // TODO:DONE Set the url to its state in the store
-        this.setFatherDeathCertificateUrl(fatherDeathCertificateUrl);
+        this.setFatherDeathCertificateUrl(this.fatherDeathCertificateUrl);
 
         // Set global form validity
         this.setInvalidHouseholdForm(false);

@@ -119,7 +119,7 @@ async function createFather(parent, args, context, info) {
       job: args.job, 
       monthlyIncome: args.monthlyIncome, 
       dateOfBirth: args.dateOfBirth,
-      fatherDeathCertificateUrl: args.fatherDeathCertificateUrl,
+      deathCertificateUrl: args.deathCertificateUrl,
       orphans: {
         connect: ids
       },
@@ -199,6 +199,7 @@ async function createMotherJob(parent, args, context, info) {
 async function createMother(parent, args, context, info) {
   const ids = [...(args.orphans)].map((val)=>({id: Number(val)}));
   const jobIds = [...(args.motherjob)].map((val)=>({id: Number(val)}));
+  console.log(args.motherJob);
   const newMother = await context.prisma.mother.create({
     data: {
       firstName: args.firstName, 

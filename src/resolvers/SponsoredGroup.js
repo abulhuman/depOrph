@@ -1,13 +1,13 @@
 function donor(parent, args, context){
-    return context.prisma.sponsoredGroup.findOne({ where: { id: parent.id } }).donor();
+    return context.prisma.sponsoredGroup.findUnique({ where: { id: parent.id } }).donor();
 }
 
 function socialworkers(parent, args, context){
-    return context.prisma.sponsoredGroup.findOne({ where: { id: parent.id } }).socialworkers();
+    return context.prisma.sponsoredGroup.findUnique({ where: { id: parent.id } }).socialworkers();
 }
 
 function orphans(parent, args, context){
-    return context.prisma.sponsoredGroup.findOne({ where: { id: parent.id } }).orphans();
+    return context.prisma.sponsoredGroup.findUnique({ where: { id: parent.id } }).orphans();
 }
 
 module.exports = {

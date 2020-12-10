@@ -23,13 +23,13 @@
                 - Select Status -
               </b-form-select-option>
             </template>
-            <b-form-select-option value="Enrolled"
+            <b-form-select-option value="enrolled"
               >Enrolled</b-form-select-option
             >
-            <b-form-select-option value="Dropped-out"
+            <b-form-select-option value="droppedout"
               >Dropped-out</b-form-select-option
             >
-            <b-form-select-option value="Un-Enrolled"
+            <b-form-select-option value="unenrolled"
               >Un-Enrolled</b-form-select-option
             >
           </b-form-select>
@@ -39,7 +39,7 @@
     <!-- Enrolled container -->
     <b-container
       class="p-0 m-0"
-      v-if="educationEnrollmentStatus === 'Enrolled'"
+      v-if="educationEnrollmentStatus === 'enrolled'"
     >
       <b-form-row>
         <!-- Enrolled school type -->
@@ -130,7 +130,7 @@
     <!-- Dropped-out container -->
     <b-container
       class="p-0 m-0"
-      v-if="educationEnrollmentStatus === 'Dropped-out'"
+      v-if="educationEnrollmentStatus === 'droppedout'"
     >
       <!-- Dropped-out school grade & reason -->
       <b-form-row>
@@ -179,7 +179,7 @@
     <!-- Un-Enrolled container -->
     <b-container
       class="p-0 m-0"
-      v-if="educationEnrollmentStatus === 'Un-Enrolled'"
+      v-if="educationEnrollmentStatus === 'unenrolled'"
     >
       <!-- Un-Enrolled reason -->
       <b-form-row>
@@ -300,7 +300,7 @@ export default {
       // enrollment status after he started filling it in.
       // 📝NOTE: the result of this method is unsatisfactory so it needs to be refactored
       // 🔼RE-NOTE: code refactored and its working as desired
-      if (this.educationEnrollmentStatus !== "Enrolled") {
+      if (this.educationEnrollmentStatus !== "enrolled") {
         this.educationSchoolName = null;
         this.educationTypeOfSchool = null;
         this.educationYear = null;
@@ -309,12 +309,12 @@ export default {
         this.educationTypeOfSchoolState = null;
         this.educationYearState = null;
         this.educationLevelState = null;
-      } else if (this.educationEnrollmentStatus !== "Dropped-out") {
+      } else if (this.educationEnrollmentStatus !== "droppedout") {
         this.educationDroppedOutGrade = null;
         this.educationDroppedOutGradeState = null;
         this.educationDroppedOutReason = null;
         this.educationDroppedOutReasonState = null;
-      } else if (this.educationEnrollmentStatus !== "Un-Enrolled") {
+      } else if (this.educationEnrollmentStatus !== "unenrolled") {
         this.educationUnEnrolledReason = null;
         this.educationUnEnrolledReasonState = null;
       }
@@ -326,35 +326,35 @@ export default {
       return validEducationEnrollmentStatus;
     },
     checkEducationTypeOfSchoolValidity: function() {
-      if (this.educationEnrollmentStatus === "Enrolled") {
+      if (this.educationEnrollmentStatus === "enrolled") {
         const validEducationTypeOfSchool = this.educationTypeOfSchool !== null;
         this.educationTypeOfSchoolState = validEducationTypeOfSchool;
         return validEducationTypeOfSchool;
       } else return true;
     },
     checkEducationLevelValidity: function() {
-      if (this.educationEnrollmentStatus === "Enrolled") {
+      if (this.educationEnrollmentStatus === "enrolled") {
         const validEducationLevel = this.educationLevel !== null;
         this.educationLevelState = validEducationLevel;
         return validEducationLevel;
       } else return true;
     },
     checkEducationYearValidity: function() {
-      if (this.educationEnrollmentStatus === "Enrolled") {
+      if (this.educationEnrollmentStatus === "enrolled") {
         const validEducationYear = this.educationYear !== null;
         this.educationYearState = validEducationYear;
         return validEducationYear;
       } else return true;
     },
     checkEducationSchoolNameValidity: function() {
-      if (this.educationEnrollmentStatus === "Enrolled") {
+      if (this.educationEnrollmentStatus === "enrolled") {
         const validEducationSchoolName = this.educationSchoolName !== null;
         this.educationSchoolNameState = validEducationSchoolName;
         return validEducationSchoolName;
       } else return true;
     },
     checkEducationDroppedOutGradeValidity: function() {
-      if (this.educationEnrollmentStatus === "Dropped-out") {
+      if (this.educationEnrollmentStatus === "droppedout") {
         const validEducationDroppedOutGrade =
           this.educationDroppedOutGrade !== null;
         this.educationDroppedOutGradeState = validEducationDroppedOutGrade;
@@ -364,13 +364,13 @@ export default {
     checkEducationDroppedOutReasonValidity: function() {
       const validEducationDroppedOutReason =
         this.educationDroppedOutReason !== null;
-      if (this.educationEnrollmentStatus === "Dropped-out") {
+      if (this.educationEnrollmentStatus === "droppedout") {
         this.educationDroppedOutReasonState = validEducationDroppedOutReason;
         return validEducationDroppedOutReason;
       } else return true;
     },
     checkEducationUnEnrolledReasonValidity: function() {
-      if (this.educationEnrollmentStatus === "Un-Enrolled") {
+      if (this.educationEnrollmentStatus === "unenrolled") {
         const validEducationUnEnrolledReason =
           this.educationUnEnrolledReason !== null;
         this.educationUnEnrolledReasonState = validEducationUnEnrolledReason;
@@ -417,19 +417,7 @@ export default {
           educationUnEnrolledReason: this.educationUnEnrolledReason
         });
 
-        console.log({
-          orphanHobbies: this.orphanHobbies,
-          educationEnrollmentStatus: this.educationEnrollmentStatus,
-          educationSchoolName: this.educationSchoolName,
-          educationTypeOfSchool: this.educationTypeOfSchool,
-          educationLevel: this.educationLevel,
-          educationYear: this.educationYear,
-          educationDroppedOutGrade: this.educationDroppedOutGrade,
-          educationDroppedOutReason: this.educationDroppedOutReason,
-          educationUnEnrolledReason: this.educationUnEnrolledReason
-        });
-
-        // porceed to the next section
+        // proceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-4");
       } else this.setInvalidEducationForm(true);
     }

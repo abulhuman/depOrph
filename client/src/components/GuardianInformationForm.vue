@@ -330,8 +330,10 @@ export default {
       tmpGuardianDateOfBirthState: null,
 
       guardianConfirmationLetter: null,
+      guardianConfirmationLetterUrl: null,
       guardianConfirmationLetterState: null,
       guardianIDCard: null,
+      guardianIDCardUrl: null,
       guardianIDCardState: null,
 
       addressTagLimit: 4
@@ -491,7 +493,7 @@ export default {
       this.guardianIDCardState = validGuardianIDCard;
       return validGuardianIDCard;
     },
-    handleGuardianInfoSubmit: function() {
+    handleGuardianInfoSubmit: async function() {
       if (
         this.checkGuardianFirstNameValidity() &&
         this.checkGuardianMiddleNameValidity() &&
@@ -523,8 +525,8 @@ export default {
         this.setGuadrianDateOfBrith(this.guadrianDateOfBrith);
 
         // TODO:DONE Save images to the server and get the url for each
-        let guardianConfirmationLetterUrl = "",
-          guardianIDCardUrl = "";
+        // let guardianConfirmationLetterUrl = "",
+        //   guardianIDCardUrl = "";
         const formdata_CL = new FormData();
         formdata_CL.append(
           "guardianConfirmationLetter",
@@ -532,7 +534,7 @@ export default {
           this.guardianConfirmationLetter.name
         );
 
-        axios
+        await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/guardianConfirmationLetter`,
             formdata_CL
@@ -540,7 +542,9 @@ export default {
           .then(res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            guardianConfirmationLetterUrl = temp.replace("/public", "");
+            this.guardianConfirmationLetterUrl = encodeURI(
+              temp.replace("public", "")
+            );
           });
 
         const formdata_IDC = new FormData();
@@ -550,7 +554,7 @@ export default {
           this.guardianIDCard.name
         );
 
-        axios
+        await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/guardianIDCard`,
             formdata_IDC
@@ -558,12 +562,14 @@ export default {
           .then(res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            guardianIDCardUrl = temp.replace("/public", "");
+            this.guardianIDCardUrl = encodeURI(temp.replace("public", ""));
           });
 
         // TODO:DONE Set the url to their respective state in the store
-        this.setGuardianConfirmationLetterUrl(guardianConfirmationLetterUrl);
-        this.setGuardianIDCardUrl(guardianIDCardUrl);
+        this.setGuardianConfirmationLetterUrl(
+          this.guardianConfirmationLetterUrl
+        );
+        this.setGuardianIDCardUrl(this.guardianIDCardUrl);
 
         // Set global form validity
         this.setInvalidGuardianForm(false);

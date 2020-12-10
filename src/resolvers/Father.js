@@ -1,5 +1,5 @@
 function orphans(parent, args, context){
-    return context.prisma.father.findOne({ where: { id: parent.id } }).orphans();
+    return context.prisma.father.findUnique({ where: { id: parent.id } }).orphans();
 }
 
 module.exports = {

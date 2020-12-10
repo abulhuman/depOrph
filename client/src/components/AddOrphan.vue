@@ -208,7 +208,7 @@ export default {
       motherCauseOfDeath: "",
       motherMaritalStatus: "",
       motherJobTitle: "",
-      motherMonthlyExpense: "",
+      motherMonthlyExpense: 0,
       motherMonthlyIncome: "",
       motherSourceOfIncome: "",
       motherPhoneNumber: "",
@@ -233,7 +233,7 @@ export default {
       guardianPOBox: "",
       guardianEmail: "",
       guardianJobTitle: "",
-      guardianMonthlyExpense: "",
+      guardianMonthlyExpense: 0,
       guardianConfirmationLetterUrl: "",
       guardianIDCardUrl: "",
       guadrianDateOfBrith: ""
@@ -373,7 +373,9 @@ export default {
       this.motherCauseOfDeath = motherCauseOfDeath;
       this.motherMaritalStatus = motherMaritalStatus;
       this.motherJobTitle = motherJobTitle;
-      this.motherMonthlyExpense = motherMonthlyExpense;
+      this.motherMonthlyExpense = motherMonthlyExpense
+        ? parseFloat(motherMonthlyExpense)
+        : 0;
       this.motherMonthlyIncome = motherMonthlyIncome;
       this.motherSourceOfIncome = motherSourceOfIncome;
       this.motherPhoneNumber = motherPhoneNumber;
@@ -415,7 +417,9 @@ export default {
       this.guardianPOBox = guardianPOBox;
       this.guardianEmail = guardianEmail;
       this.guardianJobTitle = guardianJobTitle;
-      this.guardianMonthlyExpense = guardianMonthlyExpense;
+      this.guardianMonthlyExpense = guardianMonthlyExpense
+        ? parseFloat(guardianMonthlyExpense)
+        : 0;
       this.guardianConfirmationLetterUrl = guardianConfirmationLetterUrl;
       this.guardianIDCardUrl = guardianIDCardUrl;
       this.guadrianDateOfBrith = guadrianDateOfBrith;
@@ -446,10 +450,30 @@ export default {
         })
         .catch(err => console.log(err));
     },
+    year: function() {
+      if (this.educationEnrollmentStatus == "enrolled") {
+        return this.educationYear;
+      } else if (this.educationEnrollmentStatus == "droppedout") {
+        return parseInt(this.educationDroppedOutGrade);
+      } else return "";
+    },
+    level: function() {
+      if (this.educationLevel === "KG") return "preSchool";
+      else if (this.educationLevel === "GS") return "gradeSchool";
+      else if (this.educationLevel === "UG") return "underGraduate";
+      else if (this.educationLevel === "PG") return "postGraduate";
+      else return "N_A";
+    },
+    reason: function() {
+      if (this.educationDroppedOutReason /*.length*/)
+        return this.educationDroppedOutReason;
+      else if (this.educationUnEnrolledReason /*.length*/)
+        return this.educationUnEnrolledReason;
+      else return "";
+    },
     testMutation: async function() {
       console.log(`testMutation() From ${this.$vnode.tag}.vue`);
 
-      // /*
       const orphanRes = await axios
         .post("/", {
           query: CREATE_ORPHAN_MUTATION,
@@ -473,18 +497,9 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      // */
-
-      /* TEST with individual async functions
-      this.orphanRes()
-        .then(async data => {
-          this.orphanId = await data.data.createOrphan.id;
-        })
-        .catch(err => console.log(err));
-      */
 
       this.orphanId = orphanRes.data.data.createOrphan.id;
-      console.log(this.orphanId);
+      console.log("orphan: " + this.orphanId);
 
       // create an Iga_property on the DB connected to the above orphan
       const igaRes = await axios
@@ -497,7 +512,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log(igaRes.data.data.createIga_property.id);
+      console.log("IGA: " + igaRes.data.data.createIga_property.id);
 
       // create an Officail_documents on the DB connected to the above orphan
       const offDocsRes = await axios
@@ -510,31 +525,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log(offDocsRes.data.data.createOfficialDocuments.id);
-
-      const year = function() {
-        if (this.educationEnrollmentStatus == "Enrolled") {
-          return this.educationYear;
-        } else if (this.educationEnrollmentStatus == "Dropped-out") {
-          return parseInt(this.educationDroppedOutGrade);
-        } else return "";
-      };
-
-      const level = function() {
-        if (this.educationLevel === "KG") return "preSchool";
-        else if (this.educationLevel === "GS") return "gradeSchool";
-        else if (this.educationLevel === "UG") return "underGraduate";
-        else if (this.educationLevel === "PG") return "postGraduate";
-        else return "";
-      };
-
-      const reason = function() {
-        if (this.educationDroppedOutReason.length)
-          return this.educationDroppedOutReason;
-        else if (this.educationUnEnrolledReason.length)
-          return this.educationUnEnrolledReason;
-        else return "";
-      };
+      console.log("docs: " + offDocsRes.data.data.createOfficialDocuments.id);
 
       // create an Education on the DB connected to the above orphan
       const educationRes = await axios
@@ -543,15 +534,17 @@ export default {
           variables: {
             enrollmentStatus: this.educationEnrollmentStatus.toLowerCase(),
             schoolName: this.educationSchoolName,
-            typeOfSchool: this.educationTypeOfSchool,
-            year: year(),
-            level: level(),
-            reason: reason(),
+            typeOfSchool: this.educationTypeOfSchool
+              ? this.educationTypeOfSchool.toLowerCase()
+              : "N_A",
+            year: this.year(),
+            level: this.level(),
+            reason: this.reason(),
             orphanId: this.orphanId
           }
         })
         .catch(err => console.log(err));
-      console.log(educationRes.data.data.createEducation.id);
+      console.log("edd: " + educationRes.data.data.createEducation.id);
 
       // create a Father on the DB connected to the above orphan
       const fatherRes = await axios
@@ -563,12 +556,12 @@ export default {
             job: this.fatherJobTitle,
             monthlyIncome: parseInt(this.fatherMonthlyIncome),
             dateOfBirth: moment(this.fatherDateOfBrith).toISOString(),
-            fatherDeathCertificateUrl: this.fatherDeathCertificateUrl,
+            deathCertificateUrl: this.fatherDeathCertificateUrl,
             orphan: this.orphanId
           }
         })
         .catch(err => console.log(err));
-      console.log(fatherRes.data.data.createFather.id);
+      console.log("pops: " + fatherRes.data.data.createFather.id);
 
       // create a Guardian on the DB connected to the above orphan
       const guardianRes = await axios
@@ -584,7 +577,7 @@ export default {
             zone: this.guardianAddress[1],
             district: this.guardianAddress[2],
             kebele: this.guardianAddress[3],
-            relationToOrphan: this.guardianRelationToOrphan,
+            relationToOrphan: this.guardianRelationToOrphan.toLowerCase(),
             telephone: this.guardianTelephone,
             mobile: this.guardianMobile,
             POBox: this.guardianPOBox,
@@ -598,7 +591,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log(guardianRes.data.data.createGuardian.id);
+      console.log("guardian: " + guardianRes.data.data.createGuardian.id);
 
       // create a Mother on the DB connected to the above orphan
       const motherRes = await axios
@@ -610,44 +603,48 @@ export default {
             lastName: this.motherLastName,
             dateOfBirth: moment(this.motherDateOfBrith).toISOString(),
             dateOfDeath:
-              this.motherVitalStatus == "Alive"
+              this.motherVitalStatus == "alive"
                 ? moment(this.motherDateOfDeath).toISOString()
-                : "",
+                : null,
             causeOfDeath: this.motherCauseOfDeath,
             phoneNumber: this.motherPhoneNumber,
-            maritalStatus: this.motherMaritalStatus,
+            maritalStatus: this.motherMaritalStatus
+              ? this.motherMaritalStatus
+              : "N_A",
             vitalStatus: this.motherVitalStatus,
             monthlyExpense: this.motherMonthlyExpense,
             orphan: this.orphanId
           }
         })
         .catch(err => console.log(err));
-      console.log(motherRes.data.data.createMother.id);
+      console.log("moms: " + motherRes.data.data.createMother.id);
 
       // if the mother is alive creata a MotherJob record
       // on the DB and connect it to the mother above
-      if (this.motherVitalStatus == "Alive") {
+      if (this.motherVitalStatus == "alive") {
         const motherJobRes = await axios
           .post("/", {
             query: CREATE_MOTHER_JOB_MUTATION,
             variables: {
               jobTitle: this.motherJobTitle,
-              monthlyIncome: this.motherMonthlyIncome,
+              monthlyIncome: this.motherMonthlyIncome
+                ? parseFloat(this.motherMonthlyIncome)
+                : 0,
               initDate: moment(new Date()).toISOString(),
               termDate: null,
               mother: motherRes.data.data.createMother.id
             }
           })
           .catch(err => console.log(err));
-        console.log(motherJobRes.data.data.createJobMother.id);
+        console.log("momsJob: " + motherJobRes.data.data.createMotherJob.id);
       }
 
       // if the orphan has siblings create a sibling record
       // for each sibling on the DB and
       // connect it to the orphan above
       if (this.siblings.length) {
-        this.siblings.forEach(sibling => {
-          const siblingRes = axios
+        this.siblings.forEach(async sibling => {
+          const siblingRes = await axios
             .post("/", {
               query: CREATE_SIBLING_MUTATUON,
               variables: {
@@ -661,7 +658,7 @@ export default {
               }
             })
             .catch(err => console.log(err));
-          console.log(siblingRes.data.data.createSibling.id);
+          console.log("sib: " + siblingRes.data.data.createSibling.id);
         });
       }
     },
