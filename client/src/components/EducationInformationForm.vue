@@ -275,16 +275,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      "setInvalidEducationForm",
-      "setOrphanHobbies",
-      "setEducationEnrollmentStatus",
-      "setEducationSchoolName",
-      "setEducationTypeOfSchool",
-      "setEducationLevel",
-      "setEducationYear",
-      "setEducationDroppedOutGrade",
-      "setEducationDroppedOutReason",
-      "setEducationUnEnrolledReason"
+      "setInvalidEducationForm"
     ]),
     setYear: function() {
       if (this.educationLevel === "KG") {
@@ -389,18 +380,6 @@ export default {
         this.checkEducationDroppedOutReasonValidity() &&
         this.checkEducationUnEnrolledReasonValidity()
       ) {
-        //  dispatch setter actions to the state in the store
-        this.setOrphanHobbies(this.orphanHobbies);
-
-        this.setEducationEnrollmentStatus(this.educationEnrollmentStatus);
-        this.setEducationSchoolName(this.educationSchoolName);
-        this.setEducationTypeOfSchool(this.educationTypeOfSchool);
-        this.setEducationLevel(this.educationLevel);
-        this.setEducationYear(this.educationYear);
-        this.setEducationDroppedOutGrade(this.educationDroppedOutGrade);
-        this.setEducationDroppedOutReason(this.educationDroppedOutReason);
-        this.setEducationUnEnrolledReason(this.educationUnEnrolledReason);
-
         // Set global form validity
         this.setInvalidEducationForm(false);
 
