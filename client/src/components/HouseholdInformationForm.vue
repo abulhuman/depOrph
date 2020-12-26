@@ -763,29 +763,6 @@ export default {
   methods: {
     ...mapActions([
       "setInvalidHouseholdForm",
-      "setOrphanNumberOfSponsoredSiblings",
-      "setFatherCauseOfDeath",
-      "setFatherJobTitle",
-      "setFatherMonthlyIncome",
-      "setFatherDeathCertificateUrl",
-      "setFatherDateOfBrith",
-      "setFatherDateOfDeath",
-      "setMotherFirstName",
-      "setMotherMiddleName",
-      "setMotherLastName",
-      "setMotherVitalStatus",
-      "setMotherCauseOfDeath",
-      "setMotherMaritalStatus",
-      "setMotherJobTitle",
-      "setMotherMonthlyExpense",
-      "setMotherMonthlyIncome",
-      "setMotherSourceOfIncome",
-      "setMotherPhoneNumber",
-      "setMotherDateOfBrith",
-      "setMotherDateOfDeath",
-      "setSiblings",
-      "setIgaOwnershipStatus",
-      "setIgaOtherProperty"
     ]),
     addSibling: function() {
       if (
@@ -935,116 +912,6 @@ export default {
       return this.tmpIgaOwnershipStatusRadioState;
     },
 
-    handleHouseholdSubmit: async function() {
-      if (
-        this.checkFatherDateOfBirthValidity() &&
-        this.checkFatherDateOfDeathValidity() &&
-        this.checkFatherCauseOfDeathValidity() &&
-        this.checkFatherMonthlyIncomeValidity() &&
-        this.checkFatherDeathCertificateValidity() &&
-        this.checkMotherFirstNameValidity() &&
-        this.checkMotherMiddleNameValidity() &&
-        this.checkMotherLastNameValidity() &&
-        this.checkMotherDateOfBirthValidity() &&
-        this.checkMotherVitalStatusValidity() &&
-        this.checkMotherMaritalStatusValidity() &&
-        this.checkMotherMonthlyIncomeValidity() &&
-        this.checkMotherMonthlyExpenseValidity() &&
-        this.checkMotherPhoneNumberValidity() &&
-        this.checkMotherCauseOfDeathValidity() &&
-        this.checkMotherDateOfDeathValidity() &&
-        this.checkIgaHouseOwnershipValidity()
-      ) {
-        //  dispatch setter actions to the state in the store
-        this.setOrphanNumberOfSponsoredSiblings(
-          this.orphanNumberOfSponsoredSiblings
-        );
-        this.setFatherCauseOfDeath(this.fatherCauseOfDeath);
-        this.setFatherJobTitle(this.fatherJobTitle);
-        this.setFatherMonthlyIncome(this.fatherMonthlyIncome);
-        this.setFatherDateOfBrith(this.fatherDateOfBrith);
-        this.setFatherDateOfDeath(this.fatherDateOfDeath);
-        this.setMotherFirstName(this.motherFirstName);
-        this.setMotherMiddleName(this.motherMiddleName);
-        this.setMotherLastName(this.motherLastName);
-        this.setMotherVitalStatus(this.motherVitalStatus);
-        this.setMotherCauseOfDeath(this.motherCauseOfDeath);
-        this.setMotherMaritalStatus(this.motherMaritalStatus);
-        this.setMotherJobTitle(this.motherJobTitle);
-        this.setMotherMonthlyExpense(this.motherMonthlyExpense);
-        this.setMotherMonthlyIncome(this.motherMonthlyIncome);
-        this.setMotherSourceOfIncome(this.motherSourceOfIncome);
-        this.setMotherPhoneNumber(this.motherPhoneNumber);
-        this.setMotherDateOfBrith(this.motherDateOfBrith);
-        this.setMotherDateOfDeath(this.motherDateOfDeath);
-        this.setSiblings(this.siblings);
-        this.setIgaOwnershipStatus(this.igaOwnershipStatus);
-        this.setIgaOtherProperty(this.igaOtherProperty);
-
-        // TODO:DONE Save the image to the server and get the url for it
-        // let fatherDeathCertificateUrl = "";
-        const formdata_DC = new FormData();
-        formdata_DC.append(
-          "fatherDeathCertificate",
-          this.fatherDeathCertificate,
-          this.fatherDeathCertificate.name
-        );
-
-        await axios
-          .post(
-            `${process.env.VUE_APP_BASE_URL}/public/images/fatherDeathCertificate`,
-            formdata_DC
-          )
-          .then(res => {
-            const temp =
-              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
-            this.fatherDeathCertificateUrl = encodeURI(
-              temp.replace("public", "")
-            );
-          });
-
-        // TODO:DONE Set the url to its state in the store
-        this.setFatherDeathCertificateUrl(this.fatherDeathCertificateUrl);
-
-        // Set global form validity
-        this.setInvalidHouseholdForm(false);
-
-        // emit `guardian-info-complete` event to send guardian info to addOrphan.vue
-        this.$emit("household-info-complete", {
-          orphanNumberOfSponsoredSiblings: this.orphanNumberOfSponsoredSiblings,
-
-          fatherCauseOfDeath: this.fatherCauseOfDeath,
-          fatherJobTitle: this.fatherJobTitle,
-          fatherMonthlyIncome: this.fatherMonthlyIncome,
-          fatherDeathCertificateUrl: this.fatherDeathCertificateUrl,
-          fatherDateOfBrith: this.fatherDateOfBrith,
-          fatherDateOfDeath: this.fatherDateOfDeath,
-
-          motherFirstName: this.motherFirstName,
-          motherMiddleName: this.motherMiddleName,
-          motherLastName: this.motherLastName,
-          motherVitalStatus: this.motherVitalStatus,
-          motherCauseOfDeath: this.motherCauseOfDeath,
-          motherMaritalStatus: this.motherMaritalStatus,
-          motherJobTitle: this.motherJobTitle,
-          motherMonthlyExpense: this.motherMonthlyExpense,
-          motherMonthlyIncome: this.motherMonthlyIncome,
-          motherSourceOfIncome: this.motherSourceOfIncome,
-          motherPhoneNumber: this.motherPhoneNumber,
-          motherDateOfBrith: this.motherDateOfBrith,
-          motherDateOfDeath: this.motherDateOfDeath,
-
-          siblings: this.siblings,
-
-          igaOwnershipStatus: this.igaOwnershipStatus,
-          igaOtherProperty: this.igaOtherProperty
-        });
-
-        // porceed to the next section
-        this.$root.$emit("bv::toggle::collapse", "accordion-5");
-      } else this.setInvalidHouseholdForm(true);
-    },
-
     // "Add sibling" form validation
     checkSiblingFullNameValidity: function() {
       const validSiblingFullName = this.$refs.siblingFullName.checkValidity();
@@ -1105,6 +972,87 @@ export default {
       this.siblingGenderState = null;
       this.siblingAgeState = null;
       this.siblingMaritalStatusState = null;
+    },
+
+    handleHouseholdSubmit: async function() {
+      if (
+        this.checkFatherDateOfBirthValidity() &&
+        this.checkFatherDateOfDeathValidity() &&
+        this.checkFatherCauseOfDeathValidity() &&
+        this.checkFatherMonthlyIncomeValidity() &&
+        this.checkFatherDeathCertificateValidity() &&
+        this.checkMotherFirstNameValidity() &&
+        this.checkMotherMiddleNameValidity() &&
+        this.checkMotherLastNameValidity() &&
+        this.checkMotherDateOfBirthValidity() &&
+        this.checkMotherVitalStatusValidity() &&
+        this.checkMotherMaritalStatusValidity() &&
+        this.checkMotherMonthlyIncomeValidity() &&
+        this.checkMotherMonthlyExpenseValidity() &&
+        this.checkMotherPhoneNumberValidity() &&
+        this.checkMotherCauseOfDeathValidity() &&
+        this.checkMotherDateOfDeathValidity() &&
+        this.checkIgaHouseOwnershipValidity()
+      ) {
+        // TODO:DONE Save the image to the server and get the url for it
+        const formdata_DC = new FormData();
+        formdata_DC.append(
+          "fatherDeathCertificate",
+          this.fatherDeathCertificate,
+          this.fatherDeathCertificate.name
+        );
+
+        // save father death certificate on server and get the path then save it locally as a URI
+        await axios
+          .post(
+            `${process.env.VUE_APP_BASE_URL}/public/images/fatherDeathCertificate`,
+            formdata_DC
+          )
+          .then(res => {
+            const temp =
+              process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
+            this.fatherDeathCertificateUrl = encodeURI(
+              temp.replace("public", "")
+            );
+          });
+
+        // Set global form validity
+        this.setInvalidHouseholdForm(false);
+
+        // emit `household-info-complete` event to send household info to addOrphan.vue
+        this.$emit("household-info-complete", {
+          orphanNumberOfSponsoredSiblings: this.orphanNumberOfSponsoredSiblings,
+
+          fatherCauseOfDeath: this.fatherCauseOfDeath,
+          fatherJobTitle: this.fatherJobTitle,
+          fatherMonthlyIncome: this.fatherMonthlyIncome,
+          fatherDeathCertificateUrl: this.fatherDeathCertificateUrl,
+          fatherDateOfBrith: this.fatherDateOfBrith,
+          fatherDateOfDeath: this.fatherDateOfDeath,
+
+          motherFirstName: this.motherFirstName,
+          motherMiddleName: this.motherMiddleName,
+          motherLastName: this.motherLastName,
+          motherVitalStatus: this.motherVitalStatus,
+          motherCauseOfDeath: this.motherCauseOfDeath,
+          motherMaritalStatus: this.motherMaritalStatus,
+          motherJobTitle: this.motherJobTitle,
+          motherMonthlyExpense: this.motherMonthlyExpense,
+          motherMonthlyIncome: this.motherMonthlyIncome,
+          motherSourceOfIncome: this.motherSourceOfIncome,
+          motherPhoneNumber: this.motherPhoneNumber,
+          motherDateOfBrith: this.motherDateOfBrith,
+          motherDateOfDeath: this.motherDateOfDeath,
+
+          siblings: this.siblings,
+
+          igaOwnershipStatus: this.igaOwnershipStatus,
+          igaOtherProperty: this.igaOtherProperty
+        });
+
+        // porceed to the next section
+        this.$root.$emit("bv::toggle::collapse", "accordion-5");
+      } else this.setInvalidHouseholdForm(true);
     }
   }
 };
