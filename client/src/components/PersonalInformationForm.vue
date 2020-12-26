@@ -287,17 +287,6 @@ export default {
   methods: {
     ...mapActions([
       "setInvalidPersonalForm",
-      "setOrphanFirstName",
-      "setOrphanFatherName",
-      "setOrphanGrandFatherName",
-      "setOrphanGreatGrandFatherName",
-      "setOrphanGender",
-      "setOrphanPlaceOfBirth",
-      "setOrphanClan",
-      "setOrphanSpokenLanguages",
-      "setOrphanDateOfBirth",
-      "setOrphanBirthCertificateUrl",
-      "setOrphanPhotoPortraitUrl"
     ]),
     // Orphan Personal Information validation
     checkOrphanFirstNameValidity: function() {
@@ -371,22 +360,7 @@ export default {
         this.checkOrphanBirthCertificateValidity() &&
         this.checkOrphanPhotoPortraitValidity()
       ) {
-        //  dispatch setter actions to the state in the store
-        this.setOrphanFirstName(this.orphanFirstName);
-        this.setOrphanFatherName(this.orphanFatherName);
-        this.setOrphanGrandFatherName(this.orphanGrandFatherName);
-        this.setOrphanGreatGrandFatherName(this.orphanGreatGrandFatherName);
-        this.setOrphanGender(this.orphanGender);
-        this.setOrphanPlaceOfBirth(this.orphanPlaceOfBirth);
-        this.setOrphanClan(this.orphanClan);
-        this.setOrphanSpokenLanguages(
-          this.orphanSpokenLanguagesInput.toString()
-        );
-        this.setOrphanDateOfBirth(this.orphanDateOfBirth);
-
         // TODO:DONE Save images to the server and get the url for each
-        // var orphanBirthCertificateUrl = "",
-        //   orphanPhotoPortraitUrl = "";
         const formdata_BC = new FormData();
         formdata_BC.append(
           "orphanBirthCertificate",
@@ -394,6 +368,7 @@ export default {
           this.orphanBirthCertificate.name
         );
 
+        // save birth certificate on server and get the path then save it locally as a URI
         await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanBirthCertificate`,
@@ -414,6 +389,7 @@ export default {
           this.orphanPhotoPortrait.name
         );
 
+        // save portrait photo on server and get the path then save it locally as a URI
         await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanPhotoPortrait`,
@@ -424,11 +400,6 @@ export default {
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
             this.orphanPhotoPortraitUrl = encodeURI(temp.replace("public", ""));
           });
-        console.log(this.orphanPhotoPortraitUrl);
-
-        // TODO:DONE Set the url to their respective state in the store
-        this.setOrphanBirthCertificateUrl(this.orphanBirthCertificateUrl);
-        this.setOrphanPhotoPortraitUrl(this.orphanPhotoPortraitUrl);
 
         // Set global form validity
         this.setInvalidPersonalForm(false);

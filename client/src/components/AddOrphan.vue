@@ -154,7 +154,7 @@ import {
   CREATE_MOTHER_MUTATION,
   CREATE_MOTHER_JOB_MUTATION,
   CREATE_SIBLING_MUTATUON
-} from "../grqphql/mutations";
+} from "../graphql/mutations";
 
 export default {
   data() {
