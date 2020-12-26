@@ -390,23 +390,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      "setInvalidGuardianForm",
-      "setGuardianFirstName",
-      "setGuardianMiddleName",
-      "setGuardianLastName",
-      "setGuardianGender",
-      "setGuardianNationality",
-      "setGuardianAddress",
-      "setGuardianRelationToOrphan",
-      "setGuardianTelephone",
-      "setGuardianMobile",
-      "setGuardianPOBox",
-      "setGuardianEmail",
-      "setGuardianJobTitle",
-      "setGuardianMonthlyExpense",
-      "setGuardianConfirmationLetterUrl",
-      "setGuardianIDCardUrl",
-      "setGuadrianDateOfBrith"
+      "setInvalidGuardianForm"
     ]),
     checkGuardianFirstNameValidity: function() {
       const validGuardianFirstName = !this.$v.guardianFirstName.$invalid;
@@ -508,25 +492,7 @@ export default {
         this.checkGuardianConfirmationLetterValidity() &&
         this.checkGuardianIDCardValidity()
       ) {
-        //  dispatch setter actions to the state in the store
-        this.setGuardianFirstName(this.guardianFirstName);
-        this.setGuardianMiddleName(this.guardianMiddleName);
-        this.setGuardianLastName(this.guardianLastName);
-        this.setGuardianGender(this.guardianGender);
-        this.setGuardianNationality(this.guardianNationality);
-        this.setGuardianAddress(this.guardianAddress);
-        this.setGuardianRelationToOrphan(this.guardianRelationToOrphan);
-        this.setGuardianTelephone(this.guardianTelephone);
-        this.setGuardianMobile(this.guardianMobile);
-        this.setGuardianPOBox(this.guardianPOBox);
-        this.setGuardianEmail(this.guardianEmail);
-        this.setGuardianJobTitle(this.guardianJobTitle);
-        this.setGuardianMonthlyExpense(this.guardianMonthlyExpense);
-        this.setGuadrianDateOfBrith(this.guadrianDateOfBrith);
-
         // TODO:DONE Save images to the server and get the url for each
-        // let guardianConfirmationLetterUrl = "",
-        //   guardianIDCardUrl = "";
         const formdata_CL = new FormData();
         formdata_CL.append(
           "guardianConfirmationLetter",
@@ -534,6 +500,8 @@ export default {
           this.guardianConfirmationLetter.name
         );
 
+        // save confirmation letter on server and
+        // get the path then save it locally as a URI
         await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/guardianConfirmationLetter`,
@@ -554,6 +522,8 @@ export default {
           this.guardianIDCard.name
         );
 
+        // save ID card on server and
+        // get the path then save it locally as a URI
         await axios
           .post(
             `${process.env.VUE_APP_BASE_URL}/public/images/guardianIDCard`,
@@ -564,12 +534,6 @@ export default {
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
             this.guardianIDCardUrl = encodeURI(temp.replace("public", ""));
           });
-
-        // TODO:DONE Set the url to their respective state in the store
-        this.setGuardianConfirmationLetterUrl(
-          this.guardianConfirmationLetterUrl
-        );
-        this.setGuardianIDCardUrl(this.guardianIDCardUrl);
 
         // Set global form validity
         this.setInvalidGuardianForm(false);
