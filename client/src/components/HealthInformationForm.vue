@@ -140,9 +140,6 @@ export default {
   methods: {
     ...mapActions([
       "setInvalidHealthForm",
-      "setOrphanPhysicalHealth",
-      "setOrphanPsychologicalHealth",
-      "setOrphanOtherHealthIssues"
     ]),
     checkOrphanPsychologicalHealthValidity: function() {
       this.orphanPsychologicalHealthState =
@@ -178,11 +175,6 @@ export default {
         this.checkOrphanPhysicalHealthValidity() &&
         this.checkOrphanPsychologicalHealthValidity()
       ) {
-        //  dispatch setter actions to the state in the store
-        this.setOrphanPhysicalHealth(this.orphanPhysicalHealth);
-        this.setOrphanPsychologicalHealth(this.orphanPsychologicalHealth);
-        this.setOrphanOtherHealthIssues(this.orphanOtherHealthIssues);
-
         // Set global form validity
         this.setInvalidHealthForm(false);
 
