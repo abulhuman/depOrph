@@ -389,9 +389,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "setInvalidGuardianForm"
-    ]),
+    ...mapActions(["setInvalidGuardianForm"]),
     checkGuardianFirstNameValidity: function() {
       const validGuardianFirstName = !this.$v.guardianFirstName.$invalid;
       this.guardianFirstNameState = validGuardianFirstName;
@@ -538,7 +536,7 @@ export default {
         // Set global form validity
         this.setInvalidGuardianForm(false);
 
-        // emit `guardian-info-complete` event to send guardian info to addOrphan.vue
+        // emit `guardian-info-complete` event to send guardian info to addOrphan.vue hence the entire form is complete
         this.$emit("guardian-info-complete", {
           guardianFirstName: this.guardianFirstName,
           guardianMiddleName: this.guardianMiddleName,
@@ -557,8 +555,6 @@ export default {
           guardianIDCardUrl: this.guardianIDCardUrl,
           guadrianDateOfBrith: this.guadrianDateOfBrith
         });
-        // TODO:DONE Emit a "formComplete" event
-        this.$emit("formComplete");
       } else this.setInvalidGuardianForm(true);
     }
   }

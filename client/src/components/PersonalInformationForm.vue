@@ -237,81 +237,79 @@ export default {
       orphanPhotoPortraitState: null,
 
       tmpOrphanDateOfBirth: "", // TODO:DONE formatted as ISO DateTime
-      tmpOrphanDateOfBirthState: null
+      tmpOrphanDateOfBirthState: null,
     };
   },
   validations: {
     orphanFirstName: {
       required,
       alpha,
-      minLength: minLength(3)
+      minLength: minLength(3),
     },
     orphanFatherName: {
       required,
       alpha,
-      minLength: minLength(3)
+      minLength: minLength(3),
     },
     orphanGrandFatherName: {
       required,
       alpha,
-      minLength: minLength(3)
+      minLength: minLength(3),
     },
     orphanGreatGrandFatherName: {
       required,
       alpha,
-      minLength: minLength(3)
+      minLength: minLength(3),
     },
     tmpOrphanDateOfBirth: {
-      required
+      required,
     },
     orphanPlaceOfBirth: {
       required,
-      alpha
+      alpha,
     },
     orphanBirthCertificate: {
-      required
+      required,
     },
     orphanPhotoPortrait: {
-      required
+      required,
     },
     orphanClan: {
       alpha,
-      minLength: minLength(3)
-    }
+      minLength: minLength(3),
+    },
   },
   computed: {
-    orphanDateOfBirth: function() {
+    orphanDateOfBirth: function () {
       return moment(this.tmpOrphanDateOfBirth).format();
-    }
+    },
   },
   methods: {
-    ...mapActions([
-      "setInvalidPersonalForm",
-    ]),
+    ...mapActions(["setInvalidPersonalForm"]),
     // Orphan Personal Information validation
-    checkOrphanFirstNameValidity: function() {
+    checkOrphanFirstNameValidity: function () {
       const validOrphanFirstName = !this.$v.orphanFirstName.$invalid;
       this.orphanFirstNameState = validOrphanFirstName;
       return validOrphanFirstName;
     },
-    checkOrphanFatherNameValidity: function() {
+    checkOrphanFatherNameValidity: function () {
       const validOrphanFatherName = !this.$v.orphanFatherName.$invalid;
       this.orphanFatherNameState = validOrphanFatherName;
       return validOrphanFatherName;
     },
-    checkOrphanGrandFatherNameValidity: function() {
+    checkOrphanGrandFatherNameValidity: function () {
       const validOrphanGrandFatherName = !this.$v.orphanGrandFatherName
         .$invalid;
       this.orphanGrandFatherNameState = validOrphanGrandFatherName;
       return validOrphanGrandFatherName;
     },
-    checkOrphanGreatGrandFatherNameValidity: function() {
+    checkOrphanGreatGrandFatherNameValidity: function () {
       const validOrphanGreatGrandFatherName = !this.$v
         .orphanGreatGrandFatherName.$invalid;
       this.orphanGreatGrandFatherNameState = validOrphanGreatGrandFatherName;
       return validOrphanGreatGrandFatherName;
     },
-    checkOrphanGenderValidity: function() {
+    checkOrphanGenderValidity: function () {
       if (this.orphanGender === "M" || this.orphanGender === "F") {
         this.orphanGenderState = true;
       } else {
@@ -319,35 +317,35 @@ export default {
       }
       return this.orphanGenderState;
     },
-    checkOrphanDateOfBirthValidity: function() {
+    checkOrphanDateOfBirthValidity: function () {
       const validDateOfBirth = !this.$v.tmpOrphanDateOfBirth.$invalid;
       this.tmpOrphanDateOfBirthState = validDateOfBirth;
       return validDateOfBirth;
     },
-    checkOrphanPlaceOfBirthValidity: function() {
+    checkOrphanPlaceOfBirthValidity: function () {
       const validPlaceOfBirth = !this.$v.orphanPlaceOfBirth.$invalid;
       this.orphanPlaceOfBirthState = validPlaceOfBirth;
       return validPlaceOfBirth;
     },
-    checkOrphanBirthCertificateValidity: function() {
+    checkOrphanBirthCertificateValidity: function () {
       const validOrphanBirthCertificate = !this.$v.orphanBirthCertificate
         .$invalid;
       this.orphanBirthCertificateState = validOrphanBirthCertificate;
       return validOrphanBirthCertificate;
     },
-    checkOrphanPhotoPortraitValidity: function() {
+    checkOrphanPhotoPortraitValidity: function () {
       const validOrphanPhotoPortrait = !this.$v.orphanPhotoPortrait.$invalid;
       this.orphanPhotoPortraitState = validOrphanPhotoPortrait;
       return validOrphanPhotoPortrait;
     },
-    checkOrphanClanValidity: function() {
+    checkOrphanClanValidity: function () {
       const validOrphanClan =
         this.$v.orphanClan.alpha && this.$v.orphanClan.minLength;
       this.orphanClanSate = validOrphanClan;
       return validOrphanClan;
     },
 
-    handleOrphanPersonalSubmit: async function() {
+    handleOrphanPersonalSubmit: async function () {
       if (
         this.checkOrphanFirstNameValidity() &&
         this.checkOrphanFatherNameValidity() &&
@@ -374,13 +372,14 @@ export default {
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanBirthCertificate`,
             formdata_BC
           )
-          .then(res => {
+          .then( res => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
             this.orphanBirthCertificateUrl = encodeURI(
               temp.replace("public", "")
             );
           });
+
 
         const formdata_PP = new FormData();
         formdata_PP.append(
@@ -395,7 +394,7 @@ export default {
             `${process.env.VUE_APP_BASE_URL}/public/images/orphanPhotoPortrait`,
             formdata_PP
           )
-          .then(res => {
+          .then((res) => {
             const temp =
               process.env.VUE_APP_BASE_URL + res.data.replace(/\\/g, "/");
             this.orphanPhotoPortraitUrl = encodeURI(temp.replace("public", ""));
@@ -416,7 +415,7 @@ export default {
           orphanSpokenLanguages: this.orphanSpokenLanguagesInput.toString(),
           orphanDateOfBirth: this.orphanDateOfBirth,
           orphanBirthCertificateUrl: this.orphanBirthCertificateUrl,
-          orphanPhotoPortraitUrl: this.orphanPhotoPortraitUrl
+          orphanPhotoPortraitUrl: this.orphanPhotoPortraitUrl,
         });
 
         // proceed to the next section
@@ -424,8 +423,8 @@ export default {
       } else {
         this.setInvalidPersonalForm(true);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

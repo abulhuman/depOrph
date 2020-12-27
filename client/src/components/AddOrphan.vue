@@ -125,12 +125,10 @@
           </b-alert>
           <GuardianInformationForm
             @guardian-info-complete="onGuardianInfoComplete"
-            @formComplete="sendMutation"
           />
         </b-card-body>
       </b-collapse>
     </b-card>
-    <b-button @click="testMutation">LOG</b-button>
   </div>
 </template>
 
@@ -252,21 +250,7 @@ export default {
       "getInvalidHealthForm",
       "getInvalidEducationForm",
       "getInvalidHouseholdForm",
-      "getInvalidGuardianForm",
-      "getOrphanFirstName",
-      "getOrphanFatherName",
-      "getOrphanGrandFatherName",
-      "getOrphanGreatGrandFatherName",
-      "getOrphanGender",
-      "getOrphanPlaceOfBirth",
-      "getOrphanClan",
-      "getOrphanSpokenLanguages",
-      "getOrphanDateOfBirth",
-      "getOrphanPhysicalHealth",
-      "getOrphanPsychologicalHealth",
-      "getOrphanOtherHealthIssues",
-      "getOrphanNumberOfSponsoredSiblings",
-      "getOrphanHobbies"
+      "getInvalidGuardianForm"
     ])
   },
   methods: {
@@ -423,6 +407,18 @@ export default {
       this.guardianConfirmationLetterUrl = guardianConfirmationLetterUrl;
       this.guardianIDCardUrl = guardianIDCardUrl;
       this.guadrianDateOfBrith = guadrianDateOfBrith;
+
+      if (
+        !this.getInvalidPersonalForm &&
+        !this.getInvalidHealthForm &&
+        !this.getInvalidEducationForm &&
+        !this.getInvalidHouseholdForm &&
+        !this.getInvalidGuardianForm
+      ) {
+        this.sendMutation();
+      } else {
+        console.error(`The form is not complete!!`);
+      }
     },
     orphanRes: async function() {
       // create an orphan on the DB
@@ -471,9 +467,8 @@ export default {
         return this.educationUnEnrolledReason;
       else return "";
     },
-    testMutation: async function() {
-      console.log(`testMutation() From ${this.$vnode.tag}.vue`);
-
+    sendMutation: async function() {
+      // create a new orphan on the server
       const orphanRes = await axios
         .post("/", {
           query: CREATE_ORPHAN_MUTATION,
@@ -544,7 +539,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log("edd: " + educationRes.data.data.createEducation.id);
+      console.log("education: " + educationRes.data.data.createEducation.id);
 
       // create a Father on the DB connected to the above orphan
       const fatherRes = await axios
@@ -561,7 +556,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log("pops: " + fatherRes.data.data.createFather.id);
+      console.log("father: " + fatherRes.data.data.createFather.id);
 
       // create a Guardian on the DB connected to the above orphan
       const guardianRes = await axios
@@ -617,7 +612,7 @@ export default {
           }
         })
         .catch(err => console.log(err));
-      console.log("moms: " + motherRes.data.data.createMother.id);
+      console.log("mother: " + motherRes.data.data.createMother.id);
 
       // if the mother is alive creata a MotherJob record
       // on the DB and connect it to the mother above
@@ -661,23 +656,6 @@ export default {
           console.log("sib: " + siblingRes.data.data.createSibling.id);
         });
       }
-    },
-    testQuery: async function() {
-      const axiosRes = await axios.post("/", {
-        query: `
-          query {
-            orphan(id: 15) {
-              created_at
-              firstName
-              dateOfBirth
-            }
-          }
-          `
-      });
-      console.log(axiosRes.data.data);
-    },
-    sendMutation: /*async */ function() {
-      console.log("sendMutation: From AddOrphan.vue", this.getOrphanFirstName);
     }
   }
 };

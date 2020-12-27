@@ -274,9 +274,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      "setInvalidEducationForm"
-    ]),
+    ...mapActions(["setInvalidEducationForm"]),
     setYear: function() {
       if (this.educationLevel === "KG") {
         this.educationYearOptions = ["Preparatory", "Nursery", "LKG", "UKG"];

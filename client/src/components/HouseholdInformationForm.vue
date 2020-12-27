@@ -1,4 +1,4 @@
-<template>
+script<template>
   <b-form>
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
@@ -761,9 +761,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "setInvalidHouseholdForm",
-    ]),
+    ...mapActions(["setInvalidHouseholdForm"]),
     addSibling: function() {
       if (
         this.newSibling.FullName &&
