@@ -17,7 +17,8 @@
       >
       <el-container class="col-9 mt-3">
         <el-main>
-          <AddOrphan v-if="Add" />
+          <!-- <AddOrphan v-if="Add" /> -->
+          <OrphanTable />
         </el-main>
       </el-container>
     </el-container>
@@ -26,22 +27,24 @@
 
 <script>
 import Header from "@/components/Header";
-import AddOrphan from "@/components/AddOrphan";
+// import AddOrphan from "@/components/AddOrphan";
+import OrphanTable from "@/components/tables/OrphanTable.vue";
 export default {
   data() {
     return {
-      Add: true
+      Add: true,
     };
   },
   components: {
     Header,
-    AddOrphan
+    // AddOrphan,
+    OrphanTable,
   },
   methods: {
     showAdd: function() {
       this.Add = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

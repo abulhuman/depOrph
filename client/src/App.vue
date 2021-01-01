@@ -1,28 +1,28 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <v-app class="overflow-hidden">
+    <!-- <v-app-bar app color="primary" dark> </v-app-bar> -->
+
+    <v-main>
+      <OrphanTable />
+      <!-- <Test /> -->
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import OrphanTable from "@/components/tables/OrphanTable.vue";
+// import Test from "@/components/tables/test.vue";
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: "App",
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  components: {
+    OrphanTable,
+    // Test,
+  },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+  data: () => ({
+    //
+  }),
+};
+</script>
