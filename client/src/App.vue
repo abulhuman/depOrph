@@ -1,7 +1,13 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <v-app class="overflow-hidden">
+    <!-- <v-app-bar app color="primary" dark> </v-app-bar> -->
+
+    <v-main>
+      <Staff />
+      <!-- <OrphanTable /> -->
+      <!-- <Test /> -->
+    </v-main>
+  </v-app>
 </template>
 
 <style>
@@ -35,17 +41,24 @@
   padding: 0;
   margin: 0;
 }
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
+
+<script>
+import Staff from "@/views/Staff.vue";
+// import OrphanTable from "@/components/tables/OrphanTable.vue";
+// import Test from "@/components/tables/test.vue";
+
+export default {
+  name: "App",
+
+  components: {
+    Staff,
+    // OrphanTable,
+    // Test,
+  },
+
+  data: () => ({
+    //
+  }),
+};
+</script>

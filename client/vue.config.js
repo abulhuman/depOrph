@@ -3,5 +3,6 @@ module.exports = {
     apollo: {
       lintGQL: true
     }
-  }
+  },
+  transpileDependencies: ["vuetify"]
 };
