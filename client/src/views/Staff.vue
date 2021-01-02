@@ -106,7 +106,7 @@
       <!-- main content -->
       <div class="mt-1 main">
         <AddOrphan v-if="Add" />
-        <DUMMY_orphanList v-if="home" />
+        <OrphanTable v-if="home" />
         <DUMMY_siteList v-if="sites" />
         <DUMMY_socialWorkerList v-if="socialWorkers" />
       </div>
@@ -117,24 +117,24 @@
 <script>
 import Header from "@/components/Header";
 import AddOrphan from "@/components/AddOrphan";
-import DUMMY_orphanList from "@/components/DUMMY_orphanList";
 import DUMMY_socialWorkerList from "@/components/DUMMY_socialWorkerList";
 import DUMMY_siteList from "@/components/DUMMY_siteList";
+import OrphanTable from "@/components/tables/OrphanTable.vue";
 export default {
   data() {
     return {
       Add: false,
       home: true,
       sites: false,
-      socialWorkers: false
+      socialWorkers: false,
     };
   },
   components: {
     Header,
     AddOrphan,
-    DUMMY_orphanList,
     DUMMY_socialWorkerList,
-    DUMMY_siteList
+    DUMMY_siteList,
+    OrphanTable,
   },
   methods: {
     showAdd: function() {
@@ -160,8 +160,8 @@ export default {
       this.home = false;
       this.sites = false;
       this.socialWorkers = true;
-    }
-  }
+    },
+  },
 };
 </script>
 
