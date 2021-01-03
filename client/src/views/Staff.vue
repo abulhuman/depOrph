@@ -106,7 +106,7 @@
       <!-- main content -->
       <div class="mt-1 main">
         <AddOrphan v-if="Add" />
-        <DUMMY_orphanList v-if="home" />
+        <OrphanList v-if="home" />
         <DUMMY_siteList v-if="sites" />
         <DUMMY_socialWorkerList v-if="socialWorkers" />
       </div>
@@ -117,7 +117,7 @@
 <script>
 import Header from "@/components/Header";
 import AddOrphan from "@/components/AddOrphan";
-import DUMMY_orphanList from "@/components/DUMMY_orphanList";
+import OrphanList from "@/components/OrphanList";
 import DUMMY_socialWorkerList from "@/components/DUMMY_socialWorkerList";
 import DUMMY_siteList from "@/components/DUMMY_siteList";
 export default {
@@ -132,7 +132,7 @@ export default {
   components: {
     Header,
     AddOrphan,
-    DUMMY_orphanList,
+    OrphanList,
     DUMMY_socialWorkerList,
     DUMMY_siteList
   },
