@@ -124,22 +124,22 @@ export default {
       tmpOrphanPhysicalHealthRadio: "",
       tmpOrphanDisability: "",
       orphanPhysicalHealthState: null,
-      tmpOrphanDisabilityState: null,
+      tmpOrphanDisabilityState: null
       //   orphanPhysicalHealth: computed prop, doesn't exist in data(){}, // TODO:DONE format the disabled as "disabled:disability"
     };
   },
   computed: {
-    orphanPhysicalHealth: function () {
+    orphanPhysicalHealth: function() {
       if (this.tmpOrphanPhysicalHealthRadio === "Disabled") {
         return `Disabled: ${this.tmpOrphanDisability}`;
       } else {
         return "Healthy";
       }
-    },
+    }
   },
   methods: {
     ...mapActions(["setInvalidHealthForm"]),
-    checkOrphanPsychologicalHealthValidity: function () {
+    checkOrphanPsychologicalHealthValidity: function() {
       this.orphanPsychologicalHealthState =
         this.orphanPsychologicalHealth === "Sociable" ||
         this.orphanPsychologicalHealth === "Not Sociable";
@@ -168,7 +168,7 @@ export default {
       }
       return this.orphanPhysicalHealthState;
     },
-    handleOrphanHealthSubmit: function () {
+    handleOrphanHealthSubmit: function() {
       if (
         this.checkOrphanPhysicalHealthValidity() &&
         this.checkOrphanPsychologicalHealthValidity()
@@ -180,14 +180,14 @@ export default {
         this.$emit("health-info-complete", {
           orphanPhysicalHealth: this.orphanPhysicalHealth,
           orphanPsychologicalHealth: this.orphanPsychologicalHealth,
-          orphanOtherHealthIssues: this.orphanOtherHealthIssues,
+          orphanOtherHealthIssues: this.orphanOtherHealthIssues
         });
 
         // porceed to the next section
         this.$root.$emit("bv::toggle::collapse", "accordion-3");
       } else this.setInvalidHealthForm(true);
-    },
-  },
+    }
+  }
 };
 </script>
 

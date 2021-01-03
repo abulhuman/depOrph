@@ -120,14 +120,13 @@ import AddOrphan from "@/components/AddOrphan";
 import OrphanList from "@/components/OrphanList";
 import DUMMY_socialWorkerList from "@/components/DUMMY_socialWorkerList";
 import DUMMY_siteList from "@/components/DUMMY_siteList";
-import OrphanTable from "@/components/tables/OrphanTable.vue";
 export default {
   data() {
     return {
       Add: false,
       home: true,
       sites: false,
-      socialWorkers: false,
+      socialWorkers: false
     };
   },
   components: {
@@ -135,8 +134,7 @@ export default {
     AddOrphan,
     OrphanList,
     DUMMY_socialWorkerList,
-    DUMMY_siteList,
-    OrphanTable,
+    DUMMY_siteList
   },
   methods: {
     showAdd: function() {
@@ -162,8 +160,8 @@ export default {
       this.home = false;
       this.sites = false;
       this.socialWorkers = true;
-    },
-  },
+    }
+  }
 };
 </script>
 

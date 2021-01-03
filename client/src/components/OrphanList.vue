@@ -30,9 +30,9 @@
       <b-col lg="6" class="my-1">
         <b-form-group
           v-model="sortDirection"
-          label="Filter On"
+          label="Filter By"
           description="Leave all unchecked to filter on all data"
-          label-cols-sm="3"
+          label-cols-sm="2"
           label-align-sm="right"
           label-size="sm"
           class="mb-0"
@@ -60,8 +60,6 @@
         bordered
         small
         responsive
-        table-variant="light"
-        head-variant="light"
         sticky-header="800px"
         show-empty
         :items="orphans"
@@ -123,7 +121,7 @@
             ></b-form-select>
           </b-form-group>
         </b-col>
-        <b-col sm="7" md="6" class="mt-1">
+        <b-col sm="7" md="5" class="mt-1">
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
@@ -169,8 +167,8 @@ export default {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter((f) => f.sortable)
-        .map((f) => {
+        .filter(f => f.sortable)
+        .map(f => {
           return { text: f.label, value: f.key };
         });
     },
@@ -192,7 +190,7 @@ export default {
     await axios
       .post("/", {
         query: `{
-                allOrphans(take: 59){
+                allOrphans(take: 100){
                     id
                     firstName
                     fatherName
@@ -215,8 +213,8 @@ export default {
             }`
       })
       .then(
-        (res) =>
-          (this.orphans = res.data.data.allOrphans.map((val) => ({
+        res =>
+          (this.orphans = res.data.data.allOrphans.map(val => ({
             id: val.id,
             Name: `${val.firstName} ${val.fatherName} ${val.grandFatherName} ${val.greatGrandFatherName}`,
             Age:
