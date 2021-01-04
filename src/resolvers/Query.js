@@ -166,6 +166,10 @@ async function allSocialWorkers(parent, { take }, context, info) {
   return await context.prisma.socialWorker.findMany({ take });
 }
 
+async function allSites(parent, { take }, context, info) {
+  return await context.prisma.site.findMany({ take });
+}
+
 module.exports = {
   orphan,
   iga_property,
@@ -184,5 +188,6 @@ module.exports = {
   educationalSupport,
   financialSupport,
   allOrphans,
-  allSocialWorkers
+  allSocialWorkers,
+  allSites
 };
