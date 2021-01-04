@@ -109,6 +109,7 @@
         <OrphanList v-if="home" />
         <DUMMY_siteList v-if="sites" />
         <DUMMY_socialWorkerList v-if="socialWorkers" />
+        <!-- <SocialWorkerList v-if="socialWorkers" /> -->
       </div>
     </b-container>
   </div>
@@ -119,6 +120,7 @@ import Header from "@/components/Header";
 import AddOrphan from "@/components/AddOrphan";
 import OrphanList from "@/components/OrphanList";
 import DUMMY_socialWorkerList from "@/components/DUMMY_socialWorkerList";
+// import SocialWorkerList from "@/components/SocialWorkerList";
 import DUMMY_siteList from "@/components/DUMMY_siteList";
 export default {
   data() {
@@ -134,6 +136,7 @@ export default {
     AddOrphan,
     OrphanList,
     DUMMY_socialWorkerList,
+    // SocialWorkerList,
     DUMMY_siteList
   },
   methods: {
