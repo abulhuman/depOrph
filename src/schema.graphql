@@ -18,7 +18,7 @@ type Query {
   educationalSupport(id: ID!): EducationalSupport!
   financialSupport(id: ID!): FinancialSupport!
   otherSupport(id: ID!): OtherSupport!
-  allOrphans(take: Int): [Orphan]!
+  allOrphans(take: Int filter: String): [Orphan]!
   allSocialWorkers(take: Int): [SocialWorker]!
   allSites(take: Int): [Site]!
 }

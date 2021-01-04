@@ -158,8 +158,18 @@ async function financialSupport(parent, args, context, info) {
   return financialSupport;
 }
 
-async function allOrphans(parent, { take }, context, info) {
-  return await context.prisma.orphan.findMany({ take });
+async function allOrphans(parent, { take, filter }, context, info) {
+  const where = filter
+    ? {
+        OR: [
+          { firstName: { contains: filter } },
+          { fatherName: { contains: filter } },
+          { grandFatherName: { contains: filter } },
+          { greatGrandFatherName: { contains: filter } }
+        ]
+      }
+    : {};
+  return await context.prisma.orphan.findMany({ take, where });
 }
 
 async function allSocialWorkers(parent, { take }, context, info) {
