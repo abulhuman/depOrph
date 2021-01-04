@@ -158,8 +158,12 @@ async function financialSupport(parent, args, context, info) {
   return financialSupport;
 }
 
-async function allOrphans(parent, { skip, take }, context, info) {
-  return await context.prisma.orphan.findMany({ skip, take });
+async function allOrphans(parent, { take }, context, info) {
+  return await context.prisma.orphan.findMany({ take });
+}
+
+async function allSocialWorkers(parent, { take }, context, info) {
+  return await context.prisma.socialWorker.findMany({ take });
 }
 
 module.exports = {
@@ -179,5 +183,6 @@ module.exports = {
   otherSupport,
   educationalSupport,
   financialSupport,
-  allOrphans
+  allOrphans,
+  allSocialWorkers
 };

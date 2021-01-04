@@ -18,7 +18,8 @@ type Query {
   educationalSupport(id: ID!): EducationalSupport!
   financialSupport(id: ID!): FinancialSupport!
   otherSupport(id: ID!): OtherSupport!
-  allOrphans(skip: Int, take: Int): [Orphan]!
+  allOrphans(take: Int): [Orphan]!
+  allSocialWorkers(take: Int): [SocialWorker]!
 }
 
 type Mutation {
