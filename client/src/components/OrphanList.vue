@@ -144,6 +144,7 @@ export default {
     return {
       orphans: [],
       fields: [
+        { key: "id", label: "ID", sortable: true, class: "text-left" },
         { key: "Name", label: "Name", sortable: true, class: "text-left" },
         { key: "Age", label: "Age", sortable: true },
         { key: "Gender", label: "Gender", sortable: true },
@@ -188,7 +189,7 @@ export default {
     await axios
       .post("/", {
         query: `{
-                allOrphans(take: 100){
+                allOrphans(take: 100, orderBy: { created_at: desc }){
                     id
                     firstName
                     fatherName
