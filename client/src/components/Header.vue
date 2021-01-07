@@ -10,6 +10,18 @@
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <b-nav-form class="w-300-px" @submit.prevent="onSubmit">
+            <b-form-input
+              size="sm"
+              class="mr-sm-2 w-220-px"
+              placeholder="Search by full name or part of it..."
+              v-model="searchTerm"
+            ></b-form-input>
+            <b-button size="sm" class="my-2 my-sm-0" type="submit"
+              >Search</b-button
+            >
+          </b-nav-form>
+
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template #button-content> User </template>
@@ -23,7 +35,19 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      searchTerm: null
+    };
+  },
+  methods: {
+    onSubmit: function() {
+      this.$emit("searchSubmit", { searchTerm: this.searchTerm });
+      this.searchTerm = null;
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -39,5 +63,13 @@ nav {
     font-family: "porter_sans";
     font-size: 70%;
   }
+}
+
+.w-300-px {
+  width: 300px;
+}
+
+.w-220-px {
+  width: 220px !important;
 }
 </style>

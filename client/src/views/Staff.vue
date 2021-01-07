@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header />
+    <Header @searchSubmit="onSearchSubmit" />
 
     <b-container class="p-0" style="max-width: 100%;">
       <!-- side nav -->
@@ -105,10 +105,11 @@
       </div>
       <!-- main content -->
       <div class="mt-1 main">
-        <AddOrphan v-if="Add" />
+        <AddOrphan v-if="add" />
         <OrphanList v-if="home" />
         <DUMMY_siteList v-if="sites" />
         <DUMMY_socialWorkerList v-if="socialWorkers" />
+        <OrphanSearchList v-if="searchList" :searchTerm="searchTerm" />
       </div>
     </b-container>
   </div>
@@ -120,13 +121,16 @@ import AddOrphan from "@/components/AddOrphan";
 import OrphanList from "@/components/OrphanList";
 import DUMMY_socialWorkerList from "@/components/DUMMY_socialWorkerList";
 import DUMMY_siteList from "@/components/DUMMY_siteList";
+import OrphanSearchList from "@/components/OrphanSearchList";
 export default {
   data() {
     return {
-      Add: false,
+      add: false,
       home: true,
       sites: false,
-      socialWorkers: false
+      socialWorkers: false,
+      searchList: false,
+      searchTerm: null
     };
   },
   components: {
@@ -134,32 +138,48 @@ export default {
     AddOrphan,
     OrphanList,
     DUMMY_socialWorkerList,
-    DUMMY_siteList
+    DUMMY_siteList,
+    OrphanSearchList
   },
   methods: {
     showAdd: function() {
-      this.Add = true;
+      this.add = true;
       this.home = false;
       this.sites = false;
       this.socialWorkers = false;
     },
     showHome: function() {
-      this.Add = false;
+      this.add = false;
       this.home = true;
       this.sites = false;
       this.socialWorkers = false;
     },
     showSites: function() {
-      this.Add = false;
+      this.add = false;
       this.home = false;
       this.sites = true;
       this.socialWorkers = false;
     },
     showSocialWorkers: function() {
-      this.Add = false;
+      this.add = false;
       this.home = false;
       this.sites = false;
       this.socialWorkers = true;
+    },
+    onSearchSubmit: function({ searchTerm }) {
+      // Hide all other content
+      this.add = false;
+      this.home = false;
+      this.sites = false;
+      this.socialWorkers = false;
+      this.searchList = false;
+      console.log(searchTerm);
+      this.searchTerm = searchTerm;
+
+      // show the searchList component
+      this.$nextTick(() => {
+        this.searchList = true;
+      });
     }
   }
 };

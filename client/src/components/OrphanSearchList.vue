@@ -139,11 +139,16 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import { ALL_ORPHANS_SEARCH_QUERY } from "../graphql/Queries";
 export default {
+  props: ["searchTerm"],
   data() {
+    console.log(this.searchTerm);
+    console.log("hello");
     return {
       orphans: [],
       fields: [
+        { key: "id", label: "ID", sortable: true, class: "text-left" },
         { key: "Name", label: "Name", sortable: true, class: "text-left" },
         { key: "Age", label: "Age", sortable: true },
         { key: "Gender", label: "Gender", sortable: true },
@@ -187,28 +192,10 @@ export default {
   async created() {
     await axios
       .post("/", {
-        query: `{
-                allOrphans(take: 100){
-                    id
-                    firstName
-                    fatherName
-                    grandFatherName
-                    greatGrandFatherName
-                    gender
-                    dateOfBirth
-                    sponsorshipStatus
-                    mother{
-                      firstName
-                      middleName
-                      lastName
-                    }
-                    guardian{
-                      firstName
-                      middleName
-                      lastName
-                    }
-                }
-            }`
+        query: ALL_ORPHANS_SEARCH_QUERY,
+        variables: {
+          filter: this.searchTerm
+        }
       })
       .then(
         res =>
