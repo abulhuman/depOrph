@@ -18,7 +18,7 @@ type Query {
   educationalSupport(id: ID!): EducationalSupport!
   financialSupport(id: ID!): FinancialSupport!
   otherSupport(id: ID!): OtherSupport!
-  allOrphans(take: Int filter: String): [Orphan]!
+  allOrphans(take: Int, filter: String, orderBy: OrphanOrderByInput): [Orphan]!
   allSocialWorkers(take: Int): [SocialWorker]!
   allSites(take: Int): [Site]!
 }
@@ -483,3 +483,11 @@ enum educationLevel {
   N_A
 }
 
+enum Sort {
+  asc
+  desc
+}
+
+input OrphanOrderByInput {
+  created_at: Sort
+}
