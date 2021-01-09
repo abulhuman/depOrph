@@ -13,11 +13,107 @@ export const ALL_ORPHANS_SEARCH_QUERY = `
             firstName
             middleName
             lastName
+            phoneNumber
             }
             guardian{
             firstName
             middleName
             lastName
+            mobile
+            }
+        }
+    }`;
+
+export const ORPHAN_FULL_INFORMATION_QUERY = `
+    query($id: ID!){
+        orphan(id: $id) {
+        firstName
+        fatherName
+        grandFatherName
+        greatGrandFatherName
+        gender
+        placeOfBirth
+        dateOfBirth
+        clan
+        spokenLanguages
+        numberOfSponserdSiblings
+        physicalHealthStatus
+        psychologicalHealthStatus
+        otherHealthIssues
+        hobbies
+        sponsorshipStatus
+        sponsoredDate
+        iga_property{
+            ownershipStatus
+            otherProperty
+        }
+        officialdocuments{
+            photoPortraitUrl
+            photoLongUrl
+            birthCertificateUrl
+        }
+        education{
+            enrollmentStatus
+            schoolName
+            typeOfSchool
+            year
+            level
+            reason
+        }
+        father{
+            dateOfDeath
+            causeOfDeath
+            job
+            monthlyIncome
+            dateOfBirth
+            deathCertificateUrl
+        }
+        guardian{
+            firstName
+            middleName
+            lastName
+            gender
+            nationality
+            state
+            zone
+            district
+            kebele
+            relationToOrphan
+            telephone
+            mobile
+            POBox
+            email
+            job
+            dateOfBirth
+            monthlyExpense
+            guardianIDCardUrl
+            guardianConfirmationLetterUrl
+        }
+        mother{
+            firstName
+            middleName
+            lastName
+            dateOfBirth
+            dateOfDeath
+            causeOfDeath
+            phoneNumber
+            maritalStatus
+            vitalStatus
+            monthlyExpense
+            motherjob{
+            currentJobTitle
+            monthlyIncome
+            initDate
+            termDate
+            }
+        }
+        siblings {
+            fullName
+            gender
+            age
+            schoolGrade
+            job
+            maritalStatus
             }
         }
     }`;

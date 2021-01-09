@@ -80,22 +80,24 @@
         <template #row-details="row">
           <b-card>
             <b-row class="mb-2">
-              <b-col sm="3" class="text-sm-right"><b>ID:</b></b-col>
-              <b-col class="p-0 text-left">{{ row.item.id }}</b-col>
-            </b-row>
-            <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right"><b>Mother Name:</b></b-col>
               <b-col class="p-0 text-left">{{ row.item.MotherName }}</b-col>
+              <b-col sm="3" class="text-sm-right"><b>Mother Mobile:</b></b-col>
+              <b-col class="p-0 text-left">{{ row.item.MotherMobile }}</b-col>
             </b-row>
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right"><b>Guardian Name:</b></b-col>
               <b-col class="p-0 text-left">{{ row.item.GuardianName }}</b-col>
+              <b-col sm="3" class="text-sm-right"
+                ><b>Guardian Mobile:</b></b-col
+              >
+              <b-col class="p-0 text-left">{{ row.item.GuardianMobile }}</b-col>
             </b-row>
             <b-button
               pill
               class="float-right"
               size="sm"
-              @click="row.toggleDetails"
+              @click="gotoProfile(row)"
               >View Profile</b-button
             >
           </b-card>
@@ -183,6 +185,9 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    gotoProfile(row) {
+      this.$router.push({ name: "OrphanProfile", params: { id: row.item.id } });
     }
   },
   async created() {
@@ -202,11 +207,13 @@ export default {
                       firstName
                       middleName
                       lastName
+                      phoneNumber
                     }
                     guardian{
                       firstName
                       middleName
                       lastName
+                      mobile
                     }
                 }
             }`
@@ -231,9 +238,15 @@ export default {
             MotherName: val.mother
               ? `${val.mother.firstName} ${val.mother.middleName} ${val.mother.lastName}`
               : "",
+            MotherMobile:
+              val.mother && val.mother.phoneNumber
+                ? val.mother.phoneNumber
+                : "N/A",
             GuardianName: val.guardian
               ? `${val.guardian.firstName} ${val.guardian.middleName} ${val.guardian.lastName}`
               : "",
+            GuardianMobile:
+              val.guardian && val.guardian.mobile ? val.guardian.mobile : "N/A",
             _cellVariants: {
               SponsorshipStatus:
                 val.sponsorshipStatus == "inProgress"

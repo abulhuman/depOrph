@@ -461,9 +461,8 @@ export default {
       else return "N_A";
     },
     reason: function() {
-      if (this.educationDroppedOutReason /*.length*/)
-        return this.educationDroppedOutReason;
-      else if (this.educationUnEnrolledReason /*.length*/)
+      if (this.educationDroppedOutReason) return this.educationDroppedOutReason;
+      else if (this.educationUnEnrolledReason)
         return this.educationUnEnrolledReason;
       else return "";
     },

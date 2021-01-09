@@ -147,33 +147,37 @@ export default {
       this.home = false;
       this.sites = false;
       this.socialWorkers = false;
+      this.searchList = false;
     },
     showHome: function() {
       this.add = false;
       this.home = true;
       this.sites = false;
       this.socialWorkers = false;
+      this.searchList = false;
     },
     showSites: function() {
       this.add = false;
       this.home = false;
       this.sites = true;
       this.socialWorkers = false;
+      this.searchList = false;
     },
     showSocialWorkers: function() {
       this.add = false;
       this.home = false;
       this.sites = false;
       this.socialWorkers = true;
+      this.searchList = false;
     },
     onSearchSubmit: function({ searchTerm }) {
-      // Hide all other content
+      // Hide all other content including previous instances of the search list
       this.add = false;
       this.home = false;
       this.sites = false;
       this.socialWorkers = false;
       this.searchList = false;
-      console.log(searchTerm);
+
       this.searchTerm = searchTerm;
 
       // show the searchList component
@@ -206,7 +210,7 @@ export default {
   flex-direction: column;
   align-items: center;
   border-radius: 0 0.5rem 0.5rem 0;
-  background-color: #343a40;
+  background-color: #6c757d;
 }
 
 ul :first-child {
@@ -240,7 +244,7 @@ ul :last-child {
 }
 
 .sidenav-item:hover {
-  background-color: #6c757d;
+  background-color: #555d64;
 }
 
 .sidenav-link {

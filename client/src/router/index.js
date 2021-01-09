@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Vuelidate from "vuelidate";
 import Staff from "../views/Staff.vue";
+import OrphanProfile from "../components/OrphanProfile.vue";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -20,6 +21,11 @@ const routes = [
     path: "/",
     name: "Staff",
     component: Staff
+  },
+  {
+    path: "/orphan/:id",
+    name: "OrphanProfile",
+    component: OrphanProfile
   }
 ];
 
