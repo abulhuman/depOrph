@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -208,13 +208,13 @@ model Orphan {
   sponsoredgroup            SponsoredGroup?           @relation("orphanTosponsoredgroup", fields: [sponsrGroupId], references: [id])
   siblings                  Sibling[]
 
-  @@index([IGA_PropertyId], name: "IGA_PropertyId")
-  @@index([docsId], name: "docsId")
-  @@index([donorId], name: "donorId")
-  @@index([educationId], name: "educationId")
-  @@index([fatherId], name: "fatherId")
-  @@index([guardianId], name: "guardianId")
-  @@index([motherId], name: "motherId")
+  // @@index([IGA_PropertyId], name: "IGA_PropertyId")
+  // @@index([docsId], name: "docsId")
+  // @@index([donorId], name: "donorId")
+  // @@index([educationId], name: "educationId")
+  // @@index([fatherId], name: "fatherId")
+  // @@index([guardianId], name: "guardianId")
+  // @@index([motherId], name: "motherId")
   @@index([siteId], name: "siteId")
   @@index([sponsrGroupId], name: "sponsrGroupId")
   @@map("orphan")
@@ -259,7 +259,7 @@ model SocialWorker {
   sponsrGroupId  Int?
   sponsoredgroup SponsoredGroup? @relation(fields: [sponsrGroupId], references: [id])
 
-  @@index([sponsrGroupId], name: "sponsrGroupId")
+  // @@index([sponsrGroupId], name: "sponsrGroupId")
   @@map("socialworker")
 }
 
@@ -278,8 +278,8 @@ model SponsoredGroup {
   orphan          Orphan[]       @relation("orphanTosponsoredgroup")
   socialworkers   SocialWorker[]
 
-  @@index([donorId], name: "donorId")
-  @@index([siteId], name: "siteId")
+  // @@index([donorId], name: "donorId")
+  // @@index([siteId], name: "siteId")
   @@index([supportId], name: "supportId")
   @@map("sponsoredgroup")
 }
