@@ -71,13 +71,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use(express.static("/public"));
+app.use(express.static("public"));
 
 app.use(history());
 app.use(cors());
 
 app.post(
-  "/public/images/orphanBirthCertificate/",
+  "/images/orphanBirthCertificate/",
   upload.single("orphanBirthCertificate"),
   function (req, res) {
     return res.send(req.file.path);
@@ -85,7 +85,7 @@ app.post(
 );
 
 app.post(
-  "/public/images/orphanPhotoPortrait/",
+  "/images/orphanPhotoPortrait/",
   upload.single("orphanPhotoPortrait"),
   function (req, res) {
     return res.send(req.file.path);
