@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { ApolloServer } = require("apollo-server-express");
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const history = require("connect-history-api-fallback");
@@ -71,7 +71,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use( express.static("public") );
+app.use(express.static(__dirname + "/public"));
 
 app.use(history());
 app.use(cors());
@@ -117,6 +117,7 @@ app.post(
 );
 
 app.listen({ port: process.env.PORT || 4000 }, () => {
-  console.log(`🖥 Server ready at http://localhost:4000${server.graphqlPath}🖥🖥🖥`);
-}
-);
+  console.log(
+    `🖥 Server ready at http://localhost:4000${server.graphqlPath}🖥🖥🖥`
+  );
+});
