@@ -192,7 +192,7 @@ export default {
   },
   async created() {
     await axios
-      .post("/", {
+      .post("/graphql/", {
         query: `{
                 allOrphans(take: 100, orderBy: { created_at: desc }){
                     id

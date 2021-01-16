@@ -423,7 +423,7 @@ export default {
     orphanRes: async function() {
       // create an orphan on the DB
       return await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_ORPHAN_MUTATION,
           variables: {
             orphanFirstName: this.orphanFirstName,
@@ -469,7 +469,7 @@ export default {
     sendMutation: async function() {
       // create a new orphan on the server
       const orphanRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_ORPHAN_MUTATION,
           variables: {
             orphanFirstName: this.orphanFirstName,
@@ -497,7 +497,7 @@ export default {
 
       // create an Iga_property on the DB connected to the above orphan
       const igaRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_IGA_PROPERTY_MUTATION,
           variables: {
             ownershipStatus: this.igaOwnershipStatus,
@@ -510,7 +510,7 @@ export default {
 
       // create an Officail_documents on the DB connected to the above orphan
       const offDocsRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_OFFICIAL_DOCUMENTS_MUTATION,
           variables: {
             birthCertificateUrl: this.orphanBirthCertificateUrl,
@@ -523,7 +523,7 @@ export default {
 
       // create an Education on the DB connected to the above orphan
       const educationRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_EDUCATION_MUTATION,
           variables: {
             enrollmentStatus: this.educationEnrollmentStatus.toLowerCase(),
@@ -542,7 +542,7 @@ export default {
 
       // create a Father on the DB connected to the above orphan
       const fatherRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_FATHER_MUTATION,
           variables: {
             dateOfDeath: moment(this.fatherDateOfDeath).toISOString(),
@@ -559,7 +559,7 @@ export default {
 
       // create a Guardian on the DB connected to the above orphan
       const guardianRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_GUARDIAN_MUTATION,
           variables: {
             firstName: this.guardianFirstName,
@@ -589,7 +589,7 @@ export default {
 
       // create a Mother on the DB connected to the above orphan
       const motherRes = await axios
-        .post("/", {
+        .post("/graphql/", {
           query: CREATE_MOTHER_MUTATION,
           variables: {
             firstName: this.motherFirstName,
@@ -617,7 +617,7 @@ export default {
       // on the DB and connect it to the mother above
       if (this.motherVitalStatus == "alive") {
         const motherJobRes = await axios
-          .post("/", {
+          .post("/graphql/", {
             query: CREATE_MOTHER_JOB_MUTATION,
             variables: {
               jobTitle: this.motherJobTitle,
@@ -639,7 +639,7 @@ export default {
       if (this.siblings.length) {
         this.siblings.forEach(async sibling => {
           const siblingRes = await axios
-            .post("/", {
+            .post("/graphql/", {
               query: CREATE_SIBLING_MUTATUON,
               variables: {
                 age: sibling.Age,

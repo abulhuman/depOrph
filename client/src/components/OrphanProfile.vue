@@ -461,7 +461,7 @@ export default {
   },
   async beforeMount() {
     await axios
-      .post("/", {
+      .post("/graphql/", {
         query: ORPHAN_FULL_INFORMATION_QUERY,
         variables: { id: this.orphanId }
       })

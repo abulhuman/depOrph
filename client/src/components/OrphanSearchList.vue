@@ -200,7 +200,7 @@ export default {
   },
   async created() {
     await axios
-      .post("/", {
+      .post("/graphql/", {
         query: ALL_ORPHANS_SEARCH_QUERY,
         variables: {
           filter: this.searchTerm
