@@ -62,12 +62,15 @@ server.applyMiddleware({ app });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `./public/images/${file.fieldname}`);
+    // console.log(file);
   },
   filename: function (req, file, cb) {
     const uniquePrefix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, `${uniquePrefix}-${file.originalname}`);
   }
 });
+
+// console.dir(storage.getDestination());
 
 const upload = multer({ storage });
 
@@ -77,15 +80,16 @@ app.use(history());
 app.use(cors());
 
 app.post(
-  "/images/orphanBirthCertificate/",
+  "/public/images/orphanBirthCertificate/",
   upload.single("orphanBirthCertificate"),
   function (req, res) {
+    console.dir(req.file);
     return res.send(req.file.path);
   }
 );
 
 app.post(
-  "/images/orphanPhotoPortrait/",
+  "/public/images/orphanPhotoPortrait/",
   upload.single("orphanPhotoPortrait"),
   function (req, res) {
     return res.send(req.file.path);
@@ -116,8 +120,8 @@ app.post(
   }
 );
 
-app.listen({ port: process.env.PORT || 4000 }, () => {
+app.listen({ port: process.env.PORT || 3000 }, () => {
   console.log(
-    `🖥 Server ready at http://localhost:4000${server.graphqlPath}🖥🖥🖥`
+    `🖥 Server ready at http://localhost:3000${server.graphqlPath} `
   );
 });

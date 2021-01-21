@@ -366,10 +366,12 @@ export default {
           this.orphanBirthCertificate.name
         );
 
+        console.log(this.orphanBirthCertificate);
+
         // save birth certificate on server and get the path then save it locally as a URI
         await axios
           .post(
-            `${process.env.VUE_APP_BASE_URL}/images/orphanBirthCertificate`,
+            `${process.env.VUE_APP_BASE_URL}/public/images/orphanBirthCertificate`,
             formdata_BC
           )
           .then(res => {
@@ -390,7 +392,7 @@ export default {
         // save portrait photo on server and get the path then save it locally as a URI
         await axios
           .post(
-            `${process.env.VUE_APP_BASE_URL}/images/orphanPhotoPortrait`,
+            `${process.env.VUE_APP_BASE_URL}/public/images/orphanPhotoPortrait`,
             formdata_PP
           )
           .then(res => {

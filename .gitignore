@@ -2,3 +2,5 @@
 *.env*
 .vscode
 debug.log
+
+/public/*/*/*
