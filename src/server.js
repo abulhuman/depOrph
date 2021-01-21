@@ -66,7 +66,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     // const uniquePrefix = Date.now();
-    cb(null, `${new Date.getTime()}-${file.originalname}`);
+    cb(null, `${new Date().getTime()}-${file.originalname}`);
   }
 });
 
