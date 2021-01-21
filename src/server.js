@@ -61,12 +61,12 @@ server.applyMiddleware({ app });
 // create file storage middleware to handle image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, `./public/images/${file.fieldname}`);
+    cb(null, `./public/images/${file.fieldname}/`);
     // console.log(file);
   },
   filename: function (req, file, cb) {
-    const uniquePrefix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `${uniquePrefix}-${file.originalname}`);
+    // const uniquePrefix = Date.now();
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
