@@ -24,7 +24,7 @@ const Site = require("./resolvers/Site");
 const app = express();
 
 const prisma = new PrismaClient({
-  errorFormat: "pretty"
+  errorFormat: "minimal"
 });
 
 const resolvers = {

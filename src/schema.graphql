@@ -53,12 +53,32 @@ type Mutation {
     siblings: [ID]
   ): Orphan!
 
+  updateOrphan(
+    id: ID!
+    firstName: String
+    fatherName: String
+    grandFatherName: String
+    greatGrandFatherName: String
+    gender: orphanGender
+    placeOfBirth: String
+    dateOfBirth: DateTime
+    clan: String
+    spokenLanguages: String
+    numberOfSponserdSiblings: Int
+    physicalHealthStatus: String
+    psychologicalHealthStatus: String
+    otherHealthIssues: String
+    hobbies: String
+    sponsorshipStatus: orphanSponsorshipStatus
+    sponsoredDate: DateTime
+  ): Orphan!
+
   createIga_property(
     ownershipStatus: String!
     otherProperty: String
     orphan: ID
   ): Iga_property!
-  
+  # updateIga_property() TODO after the patch is implemented
   createEducation(
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
@@ -67,7 +87,16 @@ type Mutation {
     level: educationLevel
     reason: String
     orphan: ID
+  ): Education!
 
+  updateEducation(
+    id: ID!
+    enrollmentStatus: educationEnrollmentStatus
+    schoolName: String
+    typeOfSchool: educationTypeOfSchool
+    year: String
+    level: educationLevel
+    reason: String
   ): Education!
 
   createFather(
@@ -78,6 +107,17 @@ type Mutation {
     dateOfBirth: DateTime!
     deathCertificateUrl: String!
     orphans: [ID]
+  ): Father!
+
+  updateFather(
+    id: ID!
+    dateOfDeath: DateTime
+    causeOfDeath: String
+    job: String
+    monthlyIncome: Int
+    dateOfBirth: DateTime
+    deathCertificateUrl: String
+    updated_at: DateTime
   ): Father!
   
   createSibling(
@@ -113,6 +153,29 @@ type Mutation {
     orphans: [ID]
   ): Guardian!
 
+  updateGuardian(
+    id: ID!
+    firstName: String
+    middleName: String
+    lastName: String
+    gender: guardianGender
+    nationality: String
+    state: String
+    zone: String
+    district: String
+    kebele: String
+    relationToOrphan: guardianRelationToOrphan
+    telephone: String
+    mobile: String
+    POBox: String
+    email: String
+    job: String
+    dateOfBirth: DateTime
+    monthlyExpense: Float
+    guardianIDCardUrl: String 
+    guardianConfirmationLetterUrl: String
+  ): Guardian!
+
   createMotherJob(
     currentJobTitle: String
     monthlyIncome: Float
@@ -136,11 +199,32 @@ type Mutation {
     orphans: [ID]
   ): Mother!
 
+  updateMother(
+    id: ID!
+    firstName: String
+    middleName: String
+    lastName: String
+    dateOfBirth: DateTime
+    dateOfDeath: DateTime
+    causeOfDeath: String
+    phoneNumber: String
+    maritalStatus: motherMaritalStatus
+    vitalStatus: motherVitalStatus
+    monthlyExpense: Float
+  ): Mother!
+
   createOfficialDocuments(
     photoPortraitUrl: String!
     photoLongUrl: String!
     birthCertificateUrl: String!
     orphan: ID
+  ): OfficialDocuments!
+
+  updateOfficialDocuments(
+    id: ID!
+    photoPortraitUrl: String
+    photoLongUrl: String
+    birthCertificateUrl: String
   ): OfficialDocuments!
 
   createDonor(
@@ -184,17 +268,6 @@ type Mutation {
     sponsoredgroup: ID
   ): Support!
 
-  # createFinalcialSupport(
-  #   financialSupport: FinancialSupportInput!
-  # ): FinancialSupport!
-
-  # createEducationalSupport(
-  #   educationalSupport: EducationalSupportInput!
-  # ): EducationalSupport!
-
-  # createOtherSupport(
-  #   otherSupport: OtherSupportInput!
-  # ): OtherSupport!
 }
 
 type Iga_property {

@@ -1,4 +1,4 @@
-async function orphan(parent, args, context, info) {
+async function orphan(_parent, args, context, _info) {
   const orphan = await context.prisma.orphan.findUnique({
     where: {
       id: Number(args.id)
@@ -8,7 +8,7 @@ async function orphan(parent, args, context, info) {
   return orphan;
 }
 
-async function iga_property(parent, args, context, info) {
+async function iga_property(_parent, args, context, _info) {
   const iga_property = await context.prisma.iga_property.findUnique({
     where: {
       id: Number(args.id)
@@ -18,7 +18,7 @@ async function iga_property(parent, args, context, info) {
   return iga_property;
 }
 
-async function education(parent, args, context, info) {
+async function education(_parent, args, context, _info) {
   const education = await context.prisma.education.findUnique({
     where: {
       id: Number(args.id)
@@ -28,7 +28,7 @@ async function education(parent, args, context, info) {
   return education;
 }
 
-async function father(parent, args, context, info) {
+async function father(_parent, args, context, _info) {
   const father = await context.prisma.father.findUnique({
     where: {
       id: Number(args.id)
@@ -38,7 +38,7 @@ async function father(parent, args, context, info) {
   return father;
 }
 
-async function sibling(parent, args, context, info) {
+async function sibling(_parent, args, context, _info) {
   const sibling = await context.prisma.sibling.findUnique({
     where: {
       id: Number(args.id)
@@ -48,7 +48,11 @@ async function sibling(parent, args, context, info) {
   return sibling;
 }
 
-async function motherJob(parent, args, context, info) {
+async function guardian(_parent, { id }, { prisma }, _info) {
+  return await prisma.guardian.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function motherJob(_parent, args, context, _info) {
   const motherJob = await context.prisma.motherJob.findUnique({
     where: {
       id: Number(args.id)
@@ -58,7 +62,7 @@ async function motherJob(parent, args, context, info) {
   return motherJob;
 }
 
-async function mother(parent, args, context, info) {
+async function mother(_parent, args, context, _info) {
   const mother = await context.prisma.mother.findUnique({
     where: {
       id: Number(args.id)
@@ -68,7 +72,7 @@ async function mother(parent, args, context, info) {
   return mother;
 }
 
-async function donor(parent, args, context, info) {
+async function donor(_parent, args, context, _info) {
   const donor = await context.prisma.donor.findUnique({
     where: {
       id: Number(args.id)
@@ -78,7 +82,7 @@ async function donor(parent, args, context, info) {
   return donor;
 }
 
-async function socialWorker(parent, args, context, info) {
+async function socialWorker(_parent, args, context, _info) {
   const socialWorker = await context.prisma.socialWorker.findUnique({
     where: {
       id: Number(args.id)
@@ -88,7 +92,7 @@ async function socialWorker(parent, args, context, info) {
   return socialWorker;
 }
 
-async function site(parent, args, context, info) {
+async function site(_parent, args, context, _info) {
   const site = await context.prisma.site.findUnique({
     where: {
       id: Number(args.id)
@@ -98,7 +102,7 @@ async function site(parent, args, context, info) {
   return site;
 }
 
-async function sponsoredGroup(parent, args, context, info) {
+async function sponsoredGroup(_parent, args, context, _info) {
   const sponsoredGroup = await context.prisma.sponsoredGroup.findUnique({
     where: {
       id: Number(args.id)
@@ -108,7 +112,7 @@ async function sponsoredGroup(parent, args, context, info) {
   return sponsoredGroup;
 }
 
-async function officialDocuments(parent, args, context, info) {
+async function officialDocuments(_parent, args, context, _info) {
   const docs = await context.prisma.groupOfOrphans.findUnique({
     where: {
       id: Number(args.id)
@@ -118,7 +122,7 @@ async function officialDocuments(parent, args, context, info) {
   return docs;
 }
 
-async function support(parent, args, context, info) {
+async function support(_parent, args, context, _info) {
   const support = await context.prisma.groupOfOrphans.findUnique({
     where: {
       id: Number(args.id)
@@ -128,7 +132,7 @@ async function support(parent, args, context, info) {
   return support;
 }
 
-async function otherSupport(parent, args, context, info) {
+async function otherSupport(_parent, args, context, _info) {
   const otherSupport = await context.prisma.groupOfOrphans.findUnique({
     where: {
       id: Number(args.id)
@@ -138,7 +142,7 @@ async function otherSupport(parent, args, context, info) {
   return otherSupport;
 }
 
-async function educationalSupport(parent, args, context, info) {
+async function educationalSupport(_parent, args, context, _info) {
   const educationalSupport = await context.prisma.groupOfOrphans.findUnique({
     where: {
       id: Number(args.id)
@@ -148,7 +152,7 @@ async function educationalSupport(parent, args, context, info) {
   return educationalSupport;
 }
 
-async function financialSupport(parent, args, context, info) {
+async function financialSupport(_parent, args, context, _info) {
   const financialSupport = await context.prisma.groupOfOrphans.findUnique({
     where: {
       id: Number(args.id)
@@ -158,7 +162,7 @@ async function financialSupport(parent, args, context, info) {
   return financialSupport;
 }
 
-async function allOrphans(parent, { take, filter, orderBy }, context, info) {
+async function allOrphans(_parent, { take, filter, orderBy }, context, _info) {
   const where = filter
     ? {
         OR: [
@@ -172,11 +176,11 @@ async function allOrphans(parent, { take, filter, orderBy }, context, info) {
   return await context.prisma.orphan.findMany({ take, where, orderBy });
 }
 
-async function allSocialWorkers(parent, { take }, context, info) {
+async function allSocialWorkers(_parent, { take }, context, _info) {
   return await context.prisma.socialWorker.findMany({ take });
 }
 
-async function allSites(parent, { take }, context, info) {
+async function allSites(_parent, { take }, context, _info) {
   return await context.prisma.site.findMany({ take });
 }
 
@@ -186,6 +190,7 @@ module.exports = {
   education,
   father,
   sibling,
+  guardian,
   motherJob,
   mother,
   donor,
