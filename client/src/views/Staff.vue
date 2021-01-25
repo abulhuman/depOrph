@@ -1,13 +1,19 @@
 <template>
   <div>
+    <!-- Header component with a custom 'searchSubmit' event( has a payload.searchTerm,
+     details on the header component ) that triggers the 'onSearchSubmit' method  -->
     <Header @searchSubmit="onSearchSubmit" />
 
     <b-container class="p-0" style="max-width: 100%;">
-      <!-- side nav -->
+      <!-- side nav / sidebar animation and build process
+             from YT video: https://www.youtube.com/watch?v=biOMz4puGt8 -->
       <div class="bg-light sidenav">
         <ul class="text-left sidenav-nav">
+          <!-- navigation list items each calls a method upon click event;
+                each method is described below in the <script> -->
           <li class="sidenav-item" @click="showHome">
             <a class="sidenav-link">
+              <!-- Home icon svg from font awesome -->
               <svg
                 aria-hidden="true"
                 focusable="false"
@@ -104,11 +110,18 @@
         </ul>
       </div>
       <!-- main content -->
+      <!-- render each of the following components if their boolean flag is true -->
       <div class="mt-1 main">
+        <!-- addOrphan form -->
         <AddOrphan v-if="add" />
+        <!-- orphan list table -->
         <OrphanList v-if="home" />
+        <!-- placeholder component for site list Table -->
         <DUMMY_siteList v-if="sites" />
+        <!-- placeholder component for socialworker List Table -->
         <DUMMY_socialWorkerList v-if="socialWorkers" />
+        <!-- orphan list table but contains a specific search term taken from the header componet 
+             via custom event and passed to OrphanSearchList via the 'serachTerm' prop -->
         <OrphanSearchList v-if="searchList" :searchTerm="searchTerm" />
       </div>
     </b-container>
@@ -116,6 +129,7 @@
 </template>
 
 <script>
+// import any necessary components
 import Header from "@/components/Header";
 import AddOrphan from "@/components/AddOrphan";
 import OrphanList from "@/components/OrphanList";
@@ -125,11 +139,18 @@ import OrphanSearchList from "@/components/OrphanSearchList";
 export default {
   data() {
     return {
+      // boolean for AddOrphan.vue
       add: false,
+      // boolean for OrphanList.vue true by default
+      // since it is the first thing the staff sees on login
       home: true,
+      // boolean for DUMMY_siteList.vue
       sites: false,
+      // boolean for DUMMY_socialWorkerList.vue
       socialWorkers: false,
+      // boolean for OrphanSearchList.vue
       searchList: false,
+      // searchTerm null by default, to be altered by onSearchSubmit method
       searchTerm: null
     };
   },
@@ -143,6 +164,7 @@ export default {
   },
   methods: {
     showAdd: function() {
+      // sets the add flag true and the rest false, hence show only that
       this.add = true;
       this.home = false;
       this.sites = false;
@@ -150,6 +172,7 @@ export default {
       this.searchList = false;
     },
     showHome: function() {
+      // sets the home flag true and the rest false, hence show only that
       this.add = false;
       this.home = true;
       this.sites = false;
@@ -157,6 +180,7 @@ export default {
       this.searchList = false;
     },
     showSites: function() {
+      // sets the sites flag true and the rest false, hence show only that
       this.add = false;
       this.home = false;
       this.sites = true;
@@ -164,6 +188,7 @@ export default {
       this.searchList = false;
     },
     showSocialWorkers: function() {
+      // sets the socialWorkers flag true and the rest false, hence show only that
       this.add = false;
       this.home = false;
       this.sites = false;
@@ -171,16 +196,17 @@ export default {
       this.searchList = false;
     },
     onSearchSubmit: function({ searchTerm }) {
-      // Hide all other content including previous instances of the search list
+      // sets the add flag true and the rest false, hence show only that and
+      // Hides all other content including previous instances of the search list
       this.add = false;
       this.home = false;
       this.sites = false;
       this.socialWorkers = false;
-      this.searchList = false;
+      this.searchList = false; // hides previous search results
 
       this.searchTerm = searchTerm;
 
-      // show the searchList component
+      // show the searchList component with the current searchTerm
       this.$nextTick(() => {
         this.searchList = true;
       });
@@ -190,6 +216,7 @@ export default {
 </script>
 
 <style scoped>
+/* details on YouTube Video: https://www.youtube.com/watch?v=biOMz4puGt8 */
 .main {
   margin-left: 5rem;
   padding: 0 1em;

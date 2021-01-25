@@ -1,6 +1,8 @@
 <template>
   <b-container>
+    <!-- row for table top controls -->
     <b-row>
+      <!-- first column for [filter text input] -->
       <b-col lg="6" class="my-1">
         <b-form-group
           label="Filter"
@@ -27,6 +29,7 @@
         </b-form-group>
       </b-col>
 
+      <!-- second column for [filter by options{name, age, gender, sponsorshipStatus}] -->
       <b-col lg="6" class="my-1">
         <b-form-group
           v-model="sortDirection"
@@ -53,7 +56,9 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <!-- card with table & bottom controls -->
     <b-card class="b-table-card-body mb-3">
+      <!-- orphans list lable -->
       <b-table
         hover
         striped
@@ -71,20 +76,25 @@
         :per-page="perPage"
         @filtered="onFiltered"
       >
+        <!-- what to show inside the show_details column -->
         <template #cell(show_details)="row">
           <b-button pill size="sm" @click="row.toggleDetails" class="mr-2">
             {{ row.detailsShowing ? "Hide" : "Show" }} Details
           </b-button>
         </template>
 
+        <!-- collapsable details card that shows each row's additional details -->
         <template #row-details="row">
           <b-card>
+            <!-- first row for mother's fullname and phone number -->
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right"><b>Mother Name:</b></b-col>
               <b-col class="p-0 text-left">{{ row.item.MotherName }}</b-col>
               <b-col sm="3" class="text-sm-right"><b>Mother Mobile:</b></b-col>
               <b-col class="p-0 text-left">{{ row.item.MotherMobile }}</b-col>
             </b-row>
+
+            <!-- second row for guardian's fullname and phone number -->
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right"><b>Guardian Name:</b></b-col>
               <b-col class="p-0 text-left">{{ row.item.GuardianName }}</b-col>
@@ -103,7 +113,10 @@
           </b-card>
         </template>
       </b-table>
+
+      <!-- table bottom controls -->
       <b-row>
+        <!-- first column for [items/rows per page{select}] -->
         <b-col sm="5" md="6" class="mt-1">
           <b-form-group
             label="Items per page"
@@ -123,6 +136,8 @@
             ></b-form-select>
           </b-form-group>
         </b-col>
+
+        <!-- second column for [table pagination] -->
         <b-col sm="7" md="5" class="mt-1">
           <b-pagination
             v-model="currentPage"
@@ -168,6 +183,8 @@ export default {
     };
   },
   computed: {
+    // unnecessary computed property;
+    // 😅😅😅forgot to remove it when I copy-pasted code from th docs😅😅😅
     sortOptions() {
       // Create an options list from our fields
       return this.fields
@@ -191,6 +208,8 @@ export default {
     }
   },
   async created() {
+    // on the created hook, request data from
+    // the server and populate the orphans data property array
     await axios
       .post("/graphql/", {
         query: `{

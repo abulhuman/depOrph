@@ -5,11 +5,13 @@
         >CDA <em>|</em> ORPHAN DEPARTMENT</b-navbar-brand
       >
 
+      <!-- navbar links change into button with three lines on smaller screens -->
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <!-- orphan search (db search) input box -->
           <b-nav-form class="w-300-px" @submit.prevent="onSubmit">
             <b-form-input
               size="sm"
@@ -22,6 +24,7 @@
             >
           </b-nav-form>
 
+          <!-- dummy content with no functionality -->
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template #button-content> User </template>
@@ -43,7 +46,10 @@ export default {
   },
   methods: {
     onSubmit: function() {
+      // emit `searchSubmit` event to send seatchTerm info to Staff.vue
       this.$emit("searchSubmit", { searchTerm: this.searchTerm });
+
+      // clear the input
       this.searchTerm = null;
     }
   }

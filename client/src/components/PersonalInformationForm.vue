@@ -3,6 +3,8 @@
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
     >
+
+    <!-- first row for name[first, father, grandfather, greatgrandfather] -->
     <b-form-row>
       <b-col class="text-left col-lg col-sm-auto col-md-auto col-auto">
         <b-form-group
@@ -70,6 +72,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- second row for [gender, date of birth, place of birth] -->
     <b-form-row>
       <b-col class="text-left col-sm-auto col-md-auto col-auto col-lg-2">
         <b-form-group
@@ -124,6 +127,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- third row for [clan, spoken languages{tags}] -->
     <b-form-row>
       <b-col class="text-left col-sm-auto col-md-auto col-auto col-lg">
         <b-form-group
@@ -157,6 +161,8 @@
         </b-form-group>
       </b-col>
     </b-form-row>
+
+    <!-- fourth row for [birth cert.{upload}, protrait photo{upload} -->
     <b-form-row>
       <b-col class="text-left col-lg col-sm-auto col-md-auto col-auto">
         <b-form-group
@@ -191,7 +197,10 @@
         </b-form-group>
       </b-col>
     </b-form-row>
+
     <b-form-row align-h="start">
+      <!-- next button proceeds to the next
+          section of the form after performing validation -->
       <b-button
         align-h="start"
         variant="primary"
@@ -206,6 +215,7 @@
 
 <script>
 import moment from "moment";
+// import validators from vuelidate. See the Docs @ https://vuelidate.js.org/#validators
 import { required, alpha, minLength } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
 import axios from "axios";
@@ -281,11 +291,20 @@ export default {
   },
   computed: {
     orphanDateOfBirth: function() {
+      // turned into computed props for proper ISOString format required by DB
       return moment(this.tmpOrphanDateOfBirth).format();
     }
   },
   methods: {
     ...mapActions(["setInvalidPersonalForm"]),
+
+    // methods that are named check____[somepropertyname]____Validity use two
+    // types of validation i.e., (1) vuelidate for text based inputs & date selectors
+    // (2) manual validation for selects, radios and checkboxes
+    // both use the ["state": boolean] prop provided by bootstrap-vue
+    // true: green bordered input with checkmark indicating input validity
+    // false: red bordered input with exclamationmark indicating input invalidity
+
     // Orphan Personal Information validation
     checkOrphanFirstNameValidity: function() {
       const validOrphanFirstName = !this.$v.orphanFirstName.$invalid;

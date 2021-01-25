@@ -3,6 +3,9 @@
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
     >
+    <!-- Initially show only the enrollment status selector
+        with the default value as '- Select Status -'
+        implemented within the <template> from line#26-30 -->
     <b-form-row>
       <!-- Enrollment Status -->
       <b-col class="text-left col-6">
@@ -36,7 +39,8 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <!-- Enrolled container -->
+    <!-- Enrolled container shows if the enrollment
+        status is selected as enrolled -->
     <b-container
       class="p-0 m-0"
       v-if="educationEnrollmentStatus === 'enrolled'"
@@ -127,7 +131,8 @@
       </b-form-row>
     </b-container>
 
-    <!-- Dropped-out container -->
+    <!-- Dropped-out container shows if enrollment
+        status is selected as dropppedout -->
     <b-container
       class="p-0 m-0"
       v-if="educationEnrollmentStatus === 'droppedout'"
@@ -176,7 +181,8 @@
         </b-col>
       </b-form-row>
     </b-container>
-    <!-- Un-Enrolled container -->
+    <!-- Un-Enrolled container shows if enrollment
+        status is selected as unenrolled-->
     <b-container
       class="p-0 m-0"
       v-if="educationEnrollmentStatus === 'unenrolled'"
@@ -203,6 +209,7 @@
       </b-form-row>
     </b-container>
 
+    <!-- textarea for hobbies and ambitions -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group label-for="hobbies" label="Hobbies &amp; Ambitions">
@@ -218,6 +225,8 @@
       </b-col>
     </b-form-row>
     <b-form-row align-h="start">
+      <!-- next button proceeds to the next
+          section of the form after performing validation -->
       <b-button
         @click="handleEducationSubmit"
         align-h="start"
@@ -276,6 +285,7 @@ export default {
   methods: {
     ...mapActions(["setInvalidEducationForm"]),
     setYear: function() {
+      // dynamically change year based on level
       if (this.educationLevel === "KG") {
         this.educationYearOptions = ["Preparatory", "Nursery", "LKG", "UKG"];
       } else if (this.educationLevel === "GS") {
@@ -308,6 +318,12 @@ export default {
         this.educationUnEnrolledReasonState = null;
       }
     },
+    // methods that are named check____[somepropertyname]____Validity use two
+    // types of validation i.e., (1) vuelidate for text based inputs & date selectors
+    // (2) manual validation for selects, radios and checkboxes
+    // both use the ["state": boolean] prop provided by bootstrap-vue
+    // true: green bordered input with checkmark indicating input validity
+    // false: red bordered input with exclamationmark indicating input invalidity
     checkEducationEnrollmentStatusValidity: function() {
       const validEducationEnrollmentStatus =
         this.educationEnrollmentStatus !== null;
@@ -368,6 +384,7 @@ export default {
     },
 
     handleEducationSubmit: function() {
+      // validation check is done one after the other to guide the user on what to fix first
       if (
         this.checkEducationEnrollmentStatusValidity() &&
         this.checkEducationTypeOfSchoolValidity() &&

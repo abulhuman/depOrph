@@ -3,6 +3,8 @@
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
     >
+
+    <!-- first row for name[first, middle, last] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -54,6 +56,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- second row for [gender, realtion, job] -->
     <b-form-row>
       <b-col class="text-left col-4">
         <b-form-group
@@ -110,6 +113,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- third row for [Date of Birth, Nationality, Address] -->
     <b-form-row>
       <b-col class="text-left col-3">
         <b-form-group
@@ -160,6 +164,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- fourth row for contact info[telephone, mobile, POBox, Email] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -224,6 +229,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- fifth row for documents -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -262,6 +268,8 @@
     </b-form-row>
 
     <b-form-row align-h="start">
+      <!-- next button proceeds to the next
+          section of the form after performing validation -->
       <b-button
         align-h="start"
         variant="primary"
@@ -275,6 +283,8 @@
 
 <script>
 import moment from "moment";
+
+// import validators from vuelidate. See the Docs @ https://vuelidate.js.org/#validators
 import {
   required,
   alpha,
@@ -326,7 +336,7 @@ export default {
       guardianMonthlyExpense: "",
       guardianMonthlyExpenseState: null,
 
-      tmpGuardianDateOfBirth: "", // turned into computed props
+      tmpGuardianDateOfBirth: "", // turned into computed props for proper ISOString format required by DB
       tmpGuardianDateOfBirthState: null,
 
       guardianConfirmationLetter: null,
@@ -384,12 +394,19 @@ export default {
     }
   },
   computed: {
+    // turned into computed props for proper ISOString format required by DB
     guadrianDateOfBrith: function() {
       return moment(this.tmpGuardianDateOfBrith).format();
     }
   },
   methods: {
     ...mapActions(["setInvalidGuardianForm"]),
+    // methods that are named check____[somepropertyname]____Validity use two
+    // types of validation i.e., (1) vuelidate for text based inputs & date selectors
+    // (2) manual validation for selects, radios and checkboxes
+    // both use the ["state": boolean] prop provided by bootstrap-vue
+    // true: green bordered input with checkmark indicating input validity
+    // false: red bordered input with exclamationmark indicating input invalidity
     checkGuardianFirstNameValidity: function() {
       const validGuardianFirstName = !this.$v.guardianFirstName.$invalid;
       this.guardianFirstNameState = validGuardianFirstName;
@@ -475,7 +492,9 @@ export default {
       this.guardianIDCardState = validGuardianIDCard;
       return validGuardianIDCard;
     },
+
     handleGuardianInfoSubmit: async function() {
+      // validation check is done one after the other to guide the user on what to fix first
       if (
         this.checkGuardianFirstNameValidity() &&
         this.checkGuardianMiddleNameValidity() &&

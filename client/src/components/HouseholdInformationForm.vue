@@ -1,9 +1,13 @@
-script<template>
+<template>
   <b-form>
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
     >
+    <!-- father related section -->
     <h5 class="text-left">Father</h5>
+
+    <!-- first row for father's death related data [Date of Birth,
+        Date of Death, Cause of Death] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -54,6 +58,8 @@ script<template>
         </b-form-group>
       </b-col>
     </b-form-row>
+
+    <!-- second row for [job title, monthly income, death certificate{file upload}] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group label="Job Title" label-for="fatherJobTitle">
@@ -99,7 +105,11 @@ script<template>
         </b-form-group>
       </b-col>
     </b-form-row>
+
+    <!-- mother related section -->
     <h5 class="text-left">Mother</h5>
+
+    <!-- first row for name[first, middle, last] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -147,6 +157,8 @@ script<template>
         </b-form-group>
       </b-col>
     </b-form-row>
+
+    <!-- second row for [Date of Birth, Vital Status{select('Alive', 'Passed Away')}] -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -189,8 +201,10 @@ script<template>
         </b-form-group>
       </b-col>
     </b-form-row>
-    <!-- alive container -->
+
+    <!-- alive container: shows when Vital status is set to 'Alive'  -->
     <b-container class="p-0 m-0" v-if="motherVitalStatus === 'alive'">
+      <!-- first row for Marital Status{radios('widow', 'remarried')} -->
       <b-form-row>
         <b-col class="text-left">
           <b-form-group
@@ -219,6 +233,8 @@ script<template>
           </b-form-group></b-col
         >
       </b-form-row>
+
+      <!-- second row for [Job Title, Monthly Income, Source(s) of Income{tags}] -->
       <b-form-row>
         <b-col class="text-left">
           <b-form-group label="Job Title" label-for="motherJobTitle">
@@ -263,6 +279,8 @@ script<template>
           </b-form-group>
         </b-col>
       </b-form-row>
+
+      <!-- third row for [Phone Number, Monthly Expense] -->
       <b-form-row>
         <b-col class="text-left">
           <b-form-group
@@ -298,8 +316,10 @@ script<template>
         </b-col>
       </b-form-row>
     </b-container>
-    <!-- passed away container -->
+
+    <!-- passed away container: shows when Vital Status is set to 'Passed Away' -->
     <b-container class="p-0 m-0" v-if="motherVitalStatus === 'passed'">
+      <!-- just one row for [Cause of Death, Date of Death] -->
       <b-form-row>
         <b-col class="text-left col-4">
           <b-form-group
@@ -336,7 +356,11 @@ script<template>
       </b-form-row>
     </b-container>
 
+    <!-- sibling related section -->
     <h5 class="text-left">Siblings</h5>
+
+    <!-- one row for [Number of Sponsored Siblings, Add sibling details
+        button that triggers modal opening  -->
     <b-form-row>
       <b-col class="text-left col-4">
         <b-form-group
@@ -365,6 +389,7 @@ script<template>
           @cancel.prevent="handleSiblingCancel"
         >
           <form ref="form" @submit.stop.prevent="handleSiblingSubmit">
+            <!-- first row for [Full Name] -->
             <b-form-row>
               <b-col class="text-left">
                 <b-form-group
@@ -385,6 +410,7 @@ script<template>
               </b-col>
             </b-form-row>
 
+            <!-- second row for [Gender, Age] -->
             <b-form-row>
               <b-col class="text-left col-4">
                 <b-form-group
@@ -431,6 +457,7 @@ script<template>
               </b-col>
             </b-form-row>
 
+            <!-- third row for [Education Level] -->
             <b-form-row>
               <b-col class="text-left">
                 <b-form-group
@@ -447,6 +474,7 @@ script<template>
               </b-col>
             </b-form-row>
 
+            <!-- fourth row for [Job] -->
             <b-form-row>
               <b-col class="text-left">
                 <b-form-group label="Job" label-for="siblingJob">
@@ -460,6 +488,7 @@ script<template>
               </b-col>
             </b-form-row>
 
+            <!-- fifth row for [Marital Status{select('unmarried', 'married', 'divorced')} -->
             <b-form-row>
               <b-col class="text-left">
                 <b-form-group
@@ -496,6 +525,8 @@ script<template>
         </b-modal>
       </b-col>
     </b-form-row>
+
+    <!-- table to be populated one by one when sibling details are added -->
     <b-table
       v-if="siblings.length"
       head-variant="light"
@@ -508,7 +539,11 @@ script<template>
       class="text-left col p-0 border-rounded"
     >
     </b-table>
+
+    <!-- house and property related info -->
     <h5 class="text-left">House and Property Info</h5>
+
+    <!-- first row for house ownership status -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -586,6 +621,8 @@ script<template>
         </b-form-group>
       </b-col>
     </b-form-row>
+
+    <!-- second row for other property owned by family -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -603,7 +640,10 @@ script<template>
         ></b-form-group>
       </b-col>
     </b-form-row>
+
     <b-form-row align-h="start">
+      <!-- next button proceeds to the next
+          section of the form after performing validation -->
       <b-button
         align-h="start"
         type="submit"
@@ -618,6 +658,8 @@ script<template>
 
 <script>
 import moment from "moment";
+
+// import validators from vuelidate. See the Docs @ https://vuelidate.js.org/#validators
 import {
   required,
   alpha,
@@ -644,9 +686,9 @@ export default {
       fatherDeathCertificateUrl: null,
       fatherDeathCertificateState: null,
 
-      tmpFatherDateOfBirth: "", // turned into computed props
+      tmpFatherDateOfBirth: "", // turned into computed props for proper ISOString format required by DB
       tmpFatherDateOfBirthState: null,
-      tmpFatherDateOfDeath: "", // turned into computed props
+      tmpFatherDateOfDeath: "", // turned into computed props for proper ISOString format required by DB
       tmpFatherDateOfDeathState: null,
 
       motherFirstName: "",
@@ -670,9 +712,9 @@ export default {
       motherPhoneNumber: "",
       motherPhoneNumberState: null,
 
-      tmpMotherDateOfBirth: "", // add to UI, turned into computed props
+      tmpMotherDateOfBirth: "", // add to UI, turned into computed props for proper ISOString format required by DB
       tmpMotherDateOfBirthState: null,
-      tmpMotherDateOfDeath: "", // TODO:DONE add to schema, turned into computed props
+      tmpMotherDateOfDeath: "", // TODO:DONE add to schema, turned into computed props for proper ISOString format required by DB
       tmpMotherDateOfDeathState: null,
 
       newSibling: {},
@@ -683,7 +725,8 @@ export default {
       siblingMaritalStatusState: null,
       siblings: [],
 
-      // igaOwnershipStatus: "", turned into computed props
+      // igaOwnershipStatus: "", turned into computed props,
+      // needed some modification before being sent to AddOrphan.vue
       igaOtherProperty: "",
       tmpIgaOwnershipStatusRadio: "",
       tmpIgaOwnershipStatusRadioState: null,
@@ -742,15 +785,19 @@ export default {
   },
   computed: {
     fatherDateOfBrith: function() {
+      // turned into computed props for proper ISOString format required by DB
       return moment(this.tmpFatherDateOfBirth).format();
     },
     fatherDateOfDeath: function() {
+      // turned into computed props for proper ISOString format required by DB
       return moment(this.tmpFatherDateOfDeath).format();
     },
     motherDateOfBrith: function() {
+      // turned into computed props for proper ISOString format required by DB
       return moment(this.tmpMotherDateOfBrith).format();
     },
     motherDateOfDeath: function() {
+      // turned into computed props for proper ISOString format required by DB
       return moment(this.tmpMotherDateOfDeath).format();
     },
     igaOwnershipStatus: function() {
@@ -784,6 +831,13 @@ export default {
     update: function(obj, prop, event) {
       this.$set(obj, prop, event);
     },
+
+    // methods that are named check____[somepropertyname]____Validity use two
+    // types of validation i.e., (1) vuelidate for text based inputs & date selectors
+    // (2) manual validation for selects, radios and checkboxes
+    // both use the ["state": boolean] prop provided by bootstrap-vue
+    // true: green bordered input with checkmark indicating input validity
+    // false: red bordered input with exclamationmark indicating input invalidity
 
     // Father info validation
     checkFatherDateOfBirthValidity: function() {
@@ -962,6 +1016,7 @@ export default {
       this.siblingMaritalStatusState = null;
     },
     handleSiblingCancel: function() {
+      // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide("modal-add-sibling");
       });

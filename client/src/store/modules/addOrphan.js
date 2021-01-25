@@ -1,3 +1,6 @@
+// app level validation states since the individual items are separate
+// to make the validation easier
+
 const state = {
   invalidPersonalForm: null,
   invalidHealthForm: null,
@@ -32,6 +35,7 @@ const actions = {
   }
 };
 
+// vuex's term for setters AKA mutations
 const mutations = {
   SET_INVALID_PERSONAL_FORM(state, status) {
     state.invalidPersonalForm = status;

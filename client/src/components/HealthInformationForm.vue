@@ -3,6 +3,8 @@
     <b-form-text class="text-left mb-3"
       >The inputs marked by * are all required</b-form-text
     >
+
+    <!-- physical health radios -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -51,6 +53,7 @@
       </b-col>
     </b-form-row>
 
+    <!-- psychological health radios + input -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -80,6 +83,7 @@
       >
     </b-form-row>
 
+    <!-- other health issues textarea -->
     <b-form-row>
       <b-col class="text-left">
         <b-form-group
@@ -99,6 +103,8 @@
     </b-form-row>
 
     <b-form-row align-h="start">
+      <!-- next button proceeds to the next
+          section of the form after performing validation -->
       <b-button
         align-h="start"
         variant="primary"
@@ -139,6 +145,12 @@ export default {
   },
   methods: {
     ...mapActions(["setInvalidHealthForm"]),
+    // methods that are named check____[somepropertyname]____Validity use two
+    // types of validation i.e., (1) vuelidate for text based inputs & date selectors
+    // (2) manual validation for selects, radios and checkboxes
+    // both use the ["state": boolean] prop provided by bootstrap-vue
+    // true: green bordered input with checkmark indicating input validity
+    // false: red bordered input with exclamationmark indicating input invalidity
     checkOrphanPsychologicalHealthValidity: function() {
       this.orphanPsychologicalHealthState =
         this.orphanPsychologicalHealth === "Sociable" ||
@@ -169,6 +181,7 @@ export default {
       return this.orphanPhysicalHealthState;
     },
     handleOrphanHealthSubmit: function() {
+      // validation check is done one after the other to guide the user on what to fix first
       if (
         this.checkOrphanPhysicalHealthValidity() &&
         this.checkOrphanPsychologicalHealthValidity()

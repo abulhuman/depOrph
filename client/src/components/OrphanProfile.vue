@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!-- this div is entirely copied from the Header Component except
+     for the seach part -->
     <div class="header">
       <b-navbar toggleable="lg" type="light">
         <b-navbar-brand href="#" class="nav-bar-brand"
@@ -21,6 +23,10 @@
         </b-collapse>
       </b-navbar>
     </div>
+    <!-- this jumbotron(an oversized card) contains alot of 
+      <p> data label: {{data value to be displayed}} </p>
+      this is to say that I wont be trying to comment on 
+      every thing that is being displayed, its all self-evident -->
     <b-jumbotron class="m-3 pt-3 text-left">
       <b-row>
         <b-button
@@ -455,11 +461,16 @@ export default {
       this.$router.go(-1);
     },
     async getImgUri() {
+      // i dont know why I made it wait 1 second
+      // before proceeding but i dont recommend changing it
       setTimeout(() => {}, 1000);
       return this.orphanDetails.officialdocuments.photoPortraitUrl;
     }
   },
   async beforeMount() {
+    // before mount hook is used instead of
+    // the created hook like the other components to
+    // ensure access to the router and the data[this.orphanId]
     await axios
       .post("/graphql/", {
         query: ORPHAN_FULL_INFORMATION_QUERY,
