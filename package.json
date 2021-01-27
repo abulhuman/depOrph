@@ -14,11 +14,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@prisma/cli": "^2.13.0",
+    "@prisma/cli": "^2.15.0",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "@prisma/client": "^2.13.0",
+    "@prisma/client": "^2.15.0",
     "apollo-server-express": "^2.19.2",
     "aws-lambda": "^1.0.5",
     "connect-history-api-fallback": "^1.6.0",

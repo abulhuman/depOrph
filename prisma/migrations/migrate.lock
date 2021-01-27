@@ -1,6 +1,0 @@
-# Prisma Migrate lockfile v1
-
-20200827091848-init
-20200827115951-add_social-worker_email
-20200828114852-auto-increment-all-ids
-20200918090614-fix-orphan-sibling
