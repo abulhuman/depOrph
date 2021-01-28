@@ -51,6 +51,7 @@ type Query {
 }
 
 type Mutation {
+#✅
   createDonor(
     companyName: String
     nameInitials: String
@@ -58,7 +59,7 @@ type Mutation {
     peasantAssociations: [ID]
     supportPlans: [ID]
   ): Donor!
-
+#✅
   updateDonor(
     id: ID!
     companyName: String
@@ -67,7 +68,7 @@ type Mutation {
     peasantAssociations: [ID]
     supportPlans: [ID]
   ): Donor!
-
+#✅
   createEducation(
     enrollmentStatus: educationEnrollmentStatus!
     schoolName: String
@@ -78,7 +79,7 @@ type Mutation {
     educationalRecords: [ID]
     orphan: ID
   ): Education!
-
+#✅
   updateEducation(
     id: ID!
     enrollmentStatus: educationEnrollmentStatus
@@ -90,7 +91,7 @@ type Mutation {
     educationalRecords: [ID]
     orphan: ID
   ): Education!
-
+#✅
   createFather(
     dateOfDeath: DateTime!
     causeOfDeath: String
@@ -98,7 +99,7 @@ type Mutation {
     deathCertificateUrl: String!
     orphans: [ID]
   ): Father!
-
+#✅
   updateFather(
     id: ID!
     dateOfDeath: DateTime!
@@ -107,7 +108,7 @@ type Mutation {
     deathCertificateUrl: String!
     orphans: [ID]
   ): Father!
-
+#✅
   createGuardian(
     firstName: String!
     middleName: String!
@@ -130,7 +131,7 @@ type Mutation {
     guardianConfirmationLetterUrl: String!
     orphans: [ID]
   ): Guardian!
-
+#✅
   updateGuardian(
     id: ID!
     firstName: String
@@ -152,8 +153,9 @@ type Mutation {
     monthlyExpense: Float
     guardianIDCardUrl: String
     guardianConfirmationLetterUrl: String
+    orphans: [ID]
   ): Guardian!
-
+#✅
   createMother(
     firstName: String!
     middleName: String!
@@ -168,7 +170,7 @@ type Mutation {
     jobs: [ID]
     orphans: [ID]
   ): Mother!
-
+#✅
   updateMother(
     id: ID!
     firstName: String!
@@ -184,7 +186,7 @@ type Mutation {
     jobs: [ID]
     orphans: [ID]
   ): Mother!
-
+#✅
   createMotherJob(
     currentJobTitle: String
     monthlyIncome: Float
@@ -192,7 +194,7 @@ type Mutation {
     termDate: DateTime
     mother: ID
   ): MotherJob!
-
+#✅
   updateMotherJob(
     id: ID!
     currentJobTitle: String
@@ -201,7 +203,7 @@ type Mutation {
     termDate: DateTime
     mother: ID
   ): MotherJob!
-
+#✅
   createOrphan(
     firstName: String!
     fatherName: String!
@@ -237,7 +239,7 @@ type Mutation {
     siblings: [ID]
     sponsorshipStatuses: [ID]
   ): Orphan!
-
+#✅
   updateOrphan(
     id: ID!
     firstName: String!
@@ -274,7 +276,7 @@ type Mutation {
     siblings: [ID]
     sponsorshipStatuses: [ID]
   ): Orphan!
-
+#✅
   createSocialWorker(
     fullName: String!
     gender: socialWorkerGender
@@ -285,7 +287,7 @@ type Mutation {
     peasantAssociation: ID
     orphans: [ID]
   ): SocialWorker!
-
+#✅
   updateSocialWorker(
     id: ID!
     fullName: String!
@@ -297,7 +299,7 @@ type Mutation {
     peasantAssociation: ID
     orphans: [ID]
   ): SocialWorker!
-
+#🔛⏯▶
   createDistrict(
     districtName: String!
     region: String!
@@ -841,6 +843,34 @@ enum Sort {
   desc
 }
 
+input DonorOrderByInput {
+  created_at: Sort
+}
+
+input GuardianOrderByInput {
+  created_at: Sort
+}
+
+input MotherOrderByInput {
+  created_at: Sort
+}
+
 input OrphanOrderByInput {
+  created_at: Sort
+}
+
+input SocialWorkerOrderByInput {
+  created_at: Sort
+}
+
+input DistrictOrderByInput {
+  created_at: Sort
+}
+
+input PeasantAssociationOrderByInput {
+  created_at: Sort
+}
+
+input SupportPlanOrderByInput {
   created_at: Sort
 }

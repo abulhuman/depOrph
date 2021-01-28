@@ -1,12 +1,12 @@
-function orphans(parent, args, context){
-    return context.prisma.mother.findUnique({ where: { id: parent.id } }).orphans();
+function orphans({ id }, _args, { prisma }) {
+  return prisma.mother.findUnique({ where: { id } }).orphans();
 }
 
-function motherjob(parent, args, context) {
-    return context.prisma.mother.findUnique({ where: { id: parent.id } }).motherjob();
+function jobs({ id }, _args, { prisma }) {
+  return prisma.mother.findUnique({ where: { id } }).jobs();
 }
 
 module.exports = {
-    orphans,
-    motherjob
-}
+  orphans,
+  jobs
+};

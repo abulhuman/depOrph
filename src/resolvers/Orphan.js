@@ -1,47 +1,72 @@
-function iga_property(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).iga_property();
+function house_property({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).house_property();
 }
 
-function officialdocuments(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).officialdocuments();
+function photos({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).photos();
 }
 
-function education(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).education();
+function education({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).education();
 }
 
-function father(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).father();
+function father({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).father();
 }
 
-function guardian(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).guardian();
+function guardian({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).guardian();
 }
 
-function mother(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).mother();
+function mother({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).mother();
 }
 
-function site(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).registeredgroup();
+function district({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).registeredgroup();
 }
 
-function sponsoredgroup(parent, args, context){
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).sponsoredgroup();
+function peasantAssociation({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).peasantAssociation();
 }
 
-function siblings(parent, args, context) {
-    return context.prisma.orphan.findUnique({ where: { id: parent.id } }).siblings();
+function sibling({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).sibling();
+}
+
+function siblings({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).siblings();
+}
+
+function donor({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).donor();
+}
+
+function socialWorker({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).socialWorker();
+}
+
+function supportPlan({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).supportPlan();
+}
+
+function financialRecords({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).financialRecords();
 }
 
 module.exports = {
-    iga_property,
-    officialdocuments,
-    education,
-    father,
-    guardian,
-    mother,
-    site,
-    sponsoredgroup,
-    siblings,
-}
+  house_property,
+  photos,
+  education,
+  father,
+  guardian,
+  mother,
+  district,
+  peasantAssociation,
+  sibling,
+  donor,
+  socialWorker,
+  supportPlan,
+  financialRecords,
+  siblings
+};

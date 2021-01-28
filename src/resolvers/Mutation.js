@@ -1,246 +1,376 @@
-async function createOrphan(parent, args, context, info) {
-  const siblingIds = args.siblings
-    ? [...args.siblings].map((val) => ({ id: Number(val) }))
-    : undefined;
-  const newOrphan = await context.prisma.orphan.create({
+async function createDonor(_parent, args, { prisma }, _info) {
+  const orphansIds = [...args.orphans].map((val) => ({
+    id: parseInt(val)
+  }));
+
+  const pasIds = [...args.peasantAssociations].map((val) => ({
+    id: parseInt(val)
+  }));
+
+  const supPlanIds = [...args.supportPlans].map((val) => ({
+    id: parseInt(val)
+  }));
+  return await prisma.donor.create({
     data: {
-      firstName: args.firstName,
-      fatherName: args.fatherName,
-      grandFatherName: args.grandFatherName,
-      greatGrandFatherName: args.greatGrandFatherName,
-      gender: args.gender,
-      placeOfBirth: args.placeOfBirth,
-      dateOfBirth: args.dateOfBirth,
-      clan: args.clan,
-      spokenLanguages: args.spokenLanguages,
-      numberOfSponserdSiblings: args.numberOfSponserdSiblings,
-      physicalHealthStatus: args.physicalHealthStatus,
-      psychologicalHealthStatus: args.psychologicalHealthStatus,
-      otherHealthIssues: args.otherHealthIssues,
-      hobbies: args.hobbies,
-      sponsorshipStatus: args.sponsorshipStatus,
-      iga_property: args.iga_property
-        ? {
-            connect: {
-              id: Number(args.iga_property)
-            }
-          }
-        : undefined,
-      officialdocuments: args.officialdocuments
-        ? {
-            connect: {
-              id: Number(args.officialdocuments)
-            }
-          }
-        : undefined,
-      education: args.education
-        ? {
-            connect: {
-              id: Number(args.education)
-            }
-          }
-        : undefined,
-      father: args.father
-        ? {
-            connect: {
-              id: Number(args.father)
-            }
-          }
-        : undefined,
-      guardian: args.guardian
-        ? {
-            connect: {
-              id: Number(args.guardian)
-            }
-          }
-        : undefined,
-      mother: args.mother
-        ? {
-            connect: {
-              id: Number(args.mother)
-            }
-          }
-        : undefined,
-      donor: args.donor
-        ? {
-            connect: {
-              id: Number(args.donor)
-            }
-          }
-        : undefined,
-      site: args.site
-        ? {
-            connect: {
-              id: Number(args.site)
-            }
-          }
-        : undefined,
-      sponsoredgroup: args.sponsoredgroup
-        ? {
-            connect: {
-              id: Number(args.sponsoredgroup)
-            }
-          }
-        : undefined,
-      siblings: {
-        connect: [...siblingIds]
+      ...args,
+      orphans: {
+        connect: orphansIds
+      },
+      peasantAssociations: {
+        connect: pasIds
+      },
+      supportPlans: {
+        connect: supPlanIds
       }
     }
   });
-
-  return newOrphan;
 }
+async function updateDonor(_parent, args, { prisma }, _info) {
+  const orphansIds = [...args.orphans].map((val) => ({
+    id: parseInt(val)
+  }));
 
-async function updateOrphan(
-  _parent,
-  {
-    id,
-    firstName,
-    fatherName,
-    grandFatherName,
-    greatGrandFatherName,
-    gender,
-    placeOfBirth,
-    dateOfBirth,
-    clan,
-    spokenLanguages,
-    numberOfSponserdSiblings,
-    physicalHealthStatus,
-    psychologicalHealthStatus,
-    otherHealthIssues,
-    hobbies,
-    sponsorshipStatus,
-    sponsoredDate
-  },
-  { prisma },
-  _info
-) {
-  return await prisma.orphan.update({
-    where: { id: parseInt(id) },
+  const pasIds = [...args.peasantAssociations].map((val) => ({
+    id: parseInt(val)
+  }));
+
+  const supPlanIds = [...args.supportPlans].map((val) => ({
+    id: parseInt(val)
+  }));
+  return await prisma.donor.update({
+    where: {
+      id: parseInt(args.id)
+    },
     data: {
-      firstName,
-      fatherName,
-      grandFatherName,
-      greatGrandFatherName,
-      gender,
-      placeOfBirth,
-      dateOfBirth,
-      clan,
-      spokenLanguages,
-      numberOfSponserdSiblings,
-      physicalHealthStatus,
-      psychologicalHealthStatus,
-      otherHealthIssues,
-      hobbies,
-      sponsorshipStatus,
-      sponsoredDate,
-      updated_at: new Date()
+      ...args,
+      updated_at: new Date(),
+      orphans: {
+        connect: orphansIds
+      },
+      peasantAssociations: {
+        connect: pasIds
+      },
+      supportPlans: {
+        connect: supPlanIds
+      }
     }
   });
 }
 
-async function createIga_property(parent, args, context, info) {
-  const newIga_property = await context.prisma.iga_property.create({
+async function createEducation(_parent, args, { prisma }, _info) {
+  const eddRecs = [...args.educationalRecords].map((val) => ({
+    id: parseInt(val)
+  }));
+  return await prisma.education.create({
     data: {
-      ownershipStatus: args.ownershipStatus,
-      otherProperty: args.otherProperty,
+      ...args,
       orphan: {
         connect: {
-          id: Number(args.orphan)
+          id: parseInt(args.orphan)
         }
+      },
+      educationalRecords: {
+        connect: eddRecs
       }
     }
   });
-  return newIga_property;
 }
 
-async function createEducation(parent, args, context, info) {
-  const newEducation = await context.prisma.education.create({
-    data: {
-      enrollmentStatus: args.enrollmentStatus,
-      schoolName: args.schoolName ? args.schoolName : undefined,
-      typeOfSchool: args.typeOfSchool ? args.typeOfSchool : undefined,
-      year: args.year ? args.year : undefined,
-      level: args.level ? args.level : undefined,
-      reason: args.reason ? args.reason : undefined,
-      orphan: {
-        connect: {
-          id: Number(args.orphan)
-        }
-      }
-    }
-  });
-  return newEducation;
-}
-
-async function updateEducation(
-  _parent,
-  { id, enrollmentStatus, schoolName, typeOfSchool, year, level, reason },
-  { prisma },
-  _info
-) {
+async function updateEducation(_parent, args, { prisma }, _info) {
+  const eddRecs = [...args.educationalRecords].map((val) => ({
+    id: parseInt(val)
+  }));
   return await prisma.education.update({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(args.id) },
     data: {
-      enrollmentStatus,
-      schoolName,
-      typeOfSchool,
-      year,
-      level,
-      reason,
-      updated_at: new Date()
+      ...args,
+      updated_at: new Date(),
+      orphan: {
+        connect: {
+          id: parseInt(args.orphan)
+        }
+      },
+      educationalRecords: {
+        connect: eddRecs
+      }
     }
   });
 }
 
-async function createFather(parent, args, context, info) {
-  const ids = [...args.orphans].map((val) => ({ id: Number(val) }));
-  const newFather = await context.prisma.father.create({
+async function createFather(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  return await prisma.father.create({
     data: {
-      dateOfDeath: args.dateOfDeath,
-      causeOfDeath: args.causeOfDeath,
-      job: args.job,
-      monthlyIncome: args.monthlyIncome,
-      dateOfBirth: args.dateOfBirth,
-      deathCertificateUrl: args.deathCertificateUrl,
+      ...args,
       orphans: {
         connect: ids
       }
     }
   });
-  return newFather;
 }
 
-async function updateFather(
-  _parent,
-  {
-    id,
-    dateOfDeath,
-    causeOfDeath,
-    job,
-    monthlyIncome,
-    dateOfBirth,
-    deathCertificateUrl
-  },
-  { prisma },
-  _info
-) {
+async function updateFather(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
   return await prisma.father.update({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(args.id) },
     data: {
-      dateOfDeath,
-      causeOfDeath,
-      job,
-      monthlyIncome,
-      dateOfBirth,
-      deathCertificateUrl,
-      updated_at: new Date()
+      ...args,
+      updated_at: new Date(),
+      orphans: {
+        connect: ids
+      }
     }
   });
 }
 
-async function createSibling(parent, args, context, info) {
-  const newSibling = await context.prisma.sibling.create({
+async function createGuardian(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  return await prisma.guardian.create({
+    data: {
+      ...args,
+      orphans: {
+        connect: ids
+      }
+    }
+  });
+}
+
+async function updateGuardian(_parent, { args }, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  return await prisma.guardian.update({
+    where: { id: parseInt(args.id) },
+    data: {
+      ...args,
+      updated_at: new Date(),
+      orphans: {
+        connect: ids
+      }
+    }
+  });
+}
+
+async function createMother(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  const jobIds = [...args.motherjob].map((val) => ({ id: parseInt(val) }));
+  return await prisma.mother.create({
+    data: {
+      ...args,
+      jobs: {
+        connect: jobIds
+      },
+      orphans: {
+        connect: ids
+      }
+    }
+  });
+}
+
+async function updateMother(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  const jobIds = [...args.jobs].map((val) => ({ id: parseInt(val) }));
+  return await prisma.mother.update({
+    where: { id: parseInt(args.id) },
+    data: {
+      ...args,
+      updated_at: new Date(),
+      jobs: {
+        connect: jobIds
+      },
+      orphans: {
+        connect: ids
+      }
+    }
+  });
+}
+
+async function createMotherJob(_parent, args, { prisma }, _info) {
+  return await prisma.motherJob.create({
+    data: {
+      ...args,
+      mother: {
+        connect: {
+          id: parseInt(args.mother)
+        }
+      }
+    }
+  });
+}
+
+async function updateMotherJob(_parent, args, { prisma }, _info) {
+  return await prisma.motherJob.create({
+    data: {
+      ...args,
+      updated_at: new Date(),
+      mother: {
+        connect: {
+          id: parseInt(args.mother)
+        }
+      }
+    }
+  });
+}
+
+async function createOrphan(_parent, args, { prisma }, _info) {
+  const siblingIds = args.siblings
+    ? [...args.siblings].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  const finRecIds = args.financialRecords
+    ? [...args.financialRecords].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  const spnsrStsIds = args.sponsorshipStatuses
+    ? [...args.sponsorshipStatuses].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  return await prisma.orphan.create({
+    data: {
+      ...args,
+      district: { connect: { id: parseInt(args.district) } },
+      photos: { connect: { id: parseInt(args.photos) } },
+      donor: { connect: { id: parseInt(args.donor) } },
+      education: { connect: { id: parseInt(args.education) } },
+      father: { connect: { id: parseInt(args.father) } },
+      guardian: { connect: { id: parseInt(args.guardian) } },
+      house_property: { connect: { id: parseInt(args.house_property) } },
+      mother: { connect: { id: parseInt(args.mother) } },
+      peasantAssociation: {
+        connect: { id: parseInt(args.peasantAssociation) }
+      },
+      sibling: { connect: { id: parseInt(args.sibling) } },
+      socialWorker: { connect: { id: parseInt(args.socialWorker) } },
+      supportPlan: { connect: { id: parseInt(args.supportPlan) } },
+      financialRecords: { connect: finRecIds },
+      health: { connect: { id: parseInt(args.health) } },
+      siblings: { connect: siblingIds },
+      sponsorshipStatuses: { connect: spnsrStsIds }
+    }
+  });
+}
+
+async function updateOrphan(_parent, args, { prisma }, _info) {
+  const siblingIds = args.siblings
+    ? [...args.siblings].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  const finRecIds = args.financialRecords
+    ? [...args.financialRecords].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  const spnsrStsIds = args.sponsorshipStatuses
+    ? [...args.sponsorshipStatuses].map((val) => ({ id: parseInt(val) }))
+    : undefined;
+  return await prisma.orphan.update({
+    where: { id: parseInt(args.id) },
+    data: {
+      ...args,
+      updated_at: new Date(),
+      district: { connect: { id: parseInt(args.district) } },
+      photos: { connect: { id: parseInt(args.photos) } },
+      donor: { connect: { id: parseInt(args.donor) } },
+      education: { connect: { id: parseInt(args.education) } },
+      father: { connect: { id: parseInt(args.father) } },
+      guardian: { connect: { id: parseInt(args.guardian) } },
+      house_property: { connect: { id: parseInt(args.house_property) } },
+      mother: { connect: { id: parseInt(args.mother) } },
+      peasantAssociation: {
+        connect: { id: parseInt(args.peasantAssociation) }
+      },
+      sibling: { connect: { id: parseInt(args.sibling) } },
+      socialWorker: { connect: { id: parseInt(args.socialWorker) } },
+      supportPlan: { connect: { id: parseInt(args.supportPlan) } },
+      financialRecords: { connect: finRecIds },
+      health: { connect: { id: parseInt(args.health) } },
+      siblings: { connect: siblingIds },
+      sponsorshipStatuses: { connect: spnsrStsIds }
+    }
+  });
+}
+
+async function createSocialWorker(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  return await prisma.socialWorker.create({
+    data: {
+      ...args,
+      peasantAssociation: {
+        connect: { id: parseInt(args.peasantAssociation) }
+      },
+      orphans: { connect: ids }
+    }
+  });
+}
+
+async function updateSocialWorker(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  return await prisma.socialWorker.update({
+    where: { id: parseInt(args.id) },
+    data: {
+      ...args,
+      updated_at: new Date(),
+      peasantAssociation: {
+        connect: { id: parseInt(args.peasantAssociation) }
+      },
+      orphans: { connect: ids }
+    }
+  });
+}
+// 🔛⏯▶
+async function createDistrict(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  const sponsoredgroupsIds = [...args.sponsoredgroups].map((val) => ({
+    id: parseInt(val)
+  }));
+  return await prisma.site.create({
+    data: {
+      registrationDate: args.registrationDate,
+      siteName: args.siteName,
+      state: args.state,
+      zone: args.zone,
+      district: args.district,
+      kebele: args.kebele,
+      orphans: {
+        connect: ids
+      },
+      sponsoredgroups: {
+        connect: sponsoredgroupsIds
+      }
+    }
+  });
+}
+
+async function updateDistrict(_parent, args, { prisma }, _info) {
+  const ids = [...args.orphans].map((val) => ({ id: parseInt(val) }));
+  const sponsoredgroupsIds = [...args.sponsoredgroups].map((val) => ({
+    id: parseInt(val)
+  }));
+  return await prisma.site.create({
+    data: {
+      registrationDate: args.registrationDate,
+      siteName: args.siteName,
+      state: args.state,
+      zone: args.zone,
+      district: args.district,
+      kebele: args.kebele,
+      orphans: {
+        connect: ids
+      },
+      sponsoredgroups: {
+        connect: sponsoredgroupsIds
+      }
+    }
+  });
+}
+
+async function createIga_property(_parent, args, { prisma }, _info) {
+  return await prisma.iga_property.create({
+    data: {
+      ownershipStatus: args.ownershipStatus,
+      otherProperty: args.otherProperty,
+      orphan: {
+        connect: {
+          id: parseInt(args.orphan)
+        }
+      }
+    }
+  });
+}
+async function createSibling(_parent, args, { prisma }, _info) {
+  return await prisma.sibling.create({
     data: {
       fullName: args.fullName,
       gender: args.gender,
@@ -251,189 +381,23 @@ async function createSibling(parent, args, context, info) {
       orphan: args.orphan
         ? {
             connect: {
-              id: Number(args.orphan)
+              id: parseInt(args.orphan)
             }
           }
         : undefined
     }
   });
-  return newSibling;
 }
 
-async function createGuardian(parent, args, context, info) {
-  const ids = [...args.orphans].map((val) => ({ id: Number(val) }));
-  const newGuardian = await context.prisma.guardian.create({
-    data: {
-      firstName: args.firstName,
-      middleName: args.middleName,
-      lastName: args.lastName,
-      gender: args.gender,
-      nationality: args.nationality,
-      state: args.state,
-      zone: args.zone,
-      district: args.district,
-      kebele: args.kebele,
-      relationToOrphan: args.relationToOrphan,
-      telephone: args.telephone,
-      mobile: args.mobile,
-      POBox: args.POBox,
-      email: args.email,
-      job: args.job,
-      dateOfBirth: args.dateOfBirth,
-      monthlyExpense: parseFloat(args.monthlyExpense),
-      guardianIDCardUrl: args.guardianIDCardUrl,
-      guardianConfirmationLetterUrl: args.guardianConfirmationLetterUrl,
-      orphans: {
-        connect: ids
-      }
-    }
-  });
-  return newGuardian;
-}
-
-async function updateGuardian(
-  _parent,
-  {
-    id,
-    firstName,
-    middleName,
-    lastName,
-    gender,
-    nationality,
-    state,
-    zone,
-    district,
-    kebele,
-    relationToOrphan,
-    telephone,
-    mobile,
-    POBox,
-    email,
-    job,
-    dateOfBirth,
-    monthlyExpense,
-    guardianIDCardUrl,
-    guardianConfirmationLetterUrl
-  },
-  { prisma },
-  _info
-) {
-  return await prisma.guardian.update({
-    where: { id: parseInt(id) },
-    data: {
-      firstName,
-      middleName,
-      lastName,
-      gender,
-      nationality,
-      state,
-      zone,
-      district,
-      kebele,
-      relationToOrphan,
-      telephone,
-      mobile,
-      POBox,
-      email,
-      job,
-      dateOfBirth,
-      monthlyExpense,
-      guardianIDCardUrl,
-      guardianConfirmationLetterUrl,
-      updated_at: new Date()
-    }
-  });
-}
-
-async function createMotherJob(parent, args, context, info) {
-  const newMotherJob = await context.prisma.motherJob.create({
-    data: {
-      currentJobTitle: args.currentJobTitle,
-      monthlyIncome: parseFloat(args.monthlyIncome),
-      initDate: args.initDate,
-      termDate: args.termDate,
-      mother: {
-        connect: {
-          id: Number(args.mother)
-        }
-      }
-    }
-  });
-  return newMotherJob;
-}
-
-async function createMother(parent, args, context, info) {
-  const ids = [...args.orphans].map((val) => ({ id: Number(val) }));
-  const jobIds = [...args.motherjob].map((val) => ({ id: Number(val) }));
-  console.log(args.motherJob);
-  const newMother = await context.prisma.mother.create({
-    data: {
-      firstName: args.firstName,
-      middleName: args.middleName,
-      lastName: args.lastName,
-      dateOfBirth: args.dateOfBirth,
-      phoneNumber: args.phoneNumber,
-      maritalStatus: args.maritalStatus,
-      vitalStatus: args.vitalStatus,
-      dateOfDeath: args.dateOfDeath,
-      causeOfDeath: args.causeOfDeath,
-      monthlyExpense: args.monthlyExpense,
-      motherjob: {
-        connect: jobIds
-      },
-      orphans: {
-        connect: ids
-      }
-    }
-  });
-  return newMother;
-}
-
-async function updateMother(
-  _parent,
-  {
-    id,
-    firstName,
-    middleName,
-    lastName,
-    dateOfBirth,
-    dateOfDeath,
-    causeOfDeath,
-    phoneNumber,
-    maritalStatus,
-    vitalStatus,
-    monthlyExpense
-  },
-  { prisma },
-  _info
-) {
-  return await prisma.mother.update({
-    where: { id: parseInt(id) },
-    data: {
-      firstName,
-      middleName,
-      lastName,
-      dateOfBirth,
-      dateOfDeath,
-      causeOfDeath,
-      phoneNumber,
-      maritalStatus,
-      vitalStatus,
-      monthlyExpense,
-      updated_at: new Date()
-    }
-  });
-}
-
-async function createOfficialDocuments(parent, args, context, info) {
-  return await context.prisma.officialDocuments.create({
+async function createOfficialDocuments(_parent, args, { prisma }, _info) {
+  return await prisma.officialDocuments.create({
     data: {
       photoPortraitUrl: args.photoPortraitUrl,
       photoLongUrl: args.photoLongUrl,
       birthCertificateUrl: args.birthCertificateUrl,
       orphan: {
         connect: {
-          id: Number(args.orphan)
+          id: parseInt(args.orphan)
         }
       }
     }
@@ -457,89 +421,27 @@ async function updateOfficialDocuments(
   });
 }
 
-async function createDonor(parent, args, context, info) {
-  const GroupsIDs = [...args.sponsoredgroups].map((val) => ({
-    id: Number(val)
-  }));
-  const newDonor = await context.prisma.donor.create({
-    data: {
-      companyName: args.companyName,
-      initialReportPreparationDate: args.initialReportPreparationDate,
-      finalReportPreparationDate: args.finalReportPreparationDate,
-      initialDataCollectionDate: args.initialDataCollectionDate,
-      finalDataCollectionDate: args.finalDataCollectionDate,
-      reportDueDate: args.reportDueDate,
-      sponsoredgroups: {
-        connect: GroupsIDs
-      }
-    }
-  });
-  return newDonor;
-}
-
-async function createSocialWorker(parent, args, context, info) {
-  const newSocialWorker = await context.prisma.socialWorker.create({
-    data: {
-      fullName: args.fullName,
-      phoneNumber: args.phoneNumber,
-      email: args.email,
-      sponsoredgroup: args.sponsoredgroup
-        ? {
-            connect: {
-              id: Number(args.sponsoredgroup)
-            }
-          }
-        : undefined
-    }
-  });
-  return newSocialWorker;
-}
-
-async function createSite(parent, args, context, info) {
-  const ids = [...args.orphans].map((val) => ({ id: Number(val) }));
-  const sponsoredgroupsIds = [...args.sponsoredgroups].map((val) => ({
-    id: Number(val)
-  }));
-  const newSite = await context.prisma.site.create({
-    data: {
-      registrationDate: args.registrationDate,
-      siteName: args.siteName,
-      state: args.state,
-      zone: args.zone,
-      district: args.district,
-      kebele: args.kebele,
-      orphans: {
-        connect: ids
-      },
-      sponsoredgroups: {
-        connect: sponsoredgroupsIds
-      }
-    }
-  });
-  return newSite;
-}
-
-async function createSponsoredGroup(parent, args, context, info) {
+async function createSponsoredGroup(_parent, args, { prisma }, _info) {
   const orphansIds = args.orphans
-    ? [...args.orphans].map((val) => ({ id: Number(val) }))
+    ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
     : undefined;
   const socialworkersIds = args.socialworkers
-    ? [...args.socialworkers].map((val) => ({ id: Number(val) }))
+    ? [...args.socialworkers].map((val) => ({ id: parseInt(val) }))
     : undefined;
-  const newSponsoredGroup = await context.prisma.sponsoredGroup.create({
+  return await prisma.sponsoredGroup.create({
     data: {
       sponsorshipDate: args.sponsorshipDate,
       donor: args.donor
         ? {
             connect: {
-              id: Number(args.donor)
+              id: parseInt(args.donor)
             }
           }
         : undefined,
       support: args.support
         ? {
             connect: {
-              id: Number(args.support)
+              id: parseInt(args.support)
             }
           }
         : undefined,
@@ -551,21 +453,19 @@ async function createSponsoredGroup(parent, args, context, info) {
       }
     }
   });
-  return newSponsoredGroup;
 }
 
-async function createSupport(parent, args, context, info) {
-  const newSupport = await context.prisma.support.create({
+async function createSupport(_parent, args, { prisma }, _info) {
+  return await prisma.support.create({
     data: {
       status: args.status,
       sponsoredgroup: {
         connect: {
-          id: Number(args.sponsoredgroup)
+          id: parseInt(args.sponsoredgroup)
         }
       }
     }
   });
-  return newSupport;
 }
 
 module.exports = {

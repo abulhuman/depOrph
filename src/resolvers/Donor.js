@@ -1,7 +1,17 @@
-function sponsoredgroups(parent, args, context){
-    return context.prisma.donor.findUnique({ where: { id: parent.id } }).sponsoredgroups();
+function orphans({ id }, _args, { prisma }) {
+  return prisma.donor.findUnique({ where: { id } }).orphans();
+}
+
+function peasantAssociations({ id }, _args, { prisma }) {
+  return prisma.donor.findUnique({ where: { id } }).peasantAssociations();
+}
+
+function supportPlans({ id }, _args, { prisma }) {
+  return prisma.donor.findUnique({ where: { id } }).supportPlans();
 }
 
 module.exports = {
-    sponsoredgroups,
-}
+  orphans,
+  peasantAssociations,
+  supportPlans
+};

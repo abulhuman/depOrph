@@ -8,18 +8,24 @@ const history = require("connect-history-api-fallback");
 const multer = require("multer");
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
-const Orphan = require("./resolvers/Orphan");
 const Donor = require("./resolvers/Donor");
 const Education = require("./resolvers/Education");
 const Father = require("./resolvers/Father");
 const Guardian = require("./resolvers/Guardian");
-const Iga_property = require("./resolvers/Iga_property");
 const Mother = require("./resolvers/Mother");
 const MotherJob = require("./resolvers/MotherJob");
-const Sibling = require("./resolvers/Sibling");
+const Orphan = require("./resolvers/Orphan");
 const SocialWorker = require("./resolvers/SocialWorker");
-const SponsoredGroup = require("./resolvers/SponsoredGroup");
-const Site = require("./resolvers/Site");
+const District = require("./resolvers/District");
+const EducationalRecord = require("./resolvers/EducationalRecord");
+const FinancialRecord = require("./resolvers/FinancialRecord");
+const Health = require("./resolvers/Health");
+const HealthRecord = require("./resolvers/HealthRecord");
+const House_property = require("./resolvers/House_property");
+const OrphanPhotos = require("./resolvers/OrphanPhotos");
+const PeasantAssociation = require("./resolvers/PeasantAssociation");
+const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
+const SupportPlan = require("./resolvers/SupportPlan");
 
 const app = express();
 
@@ -30,18 +36,24 @@ const prisma = new PrismaClient({
 const resolvers = {
   Query,
   Mutation,
-  Orphan,
   Donor,
   Education,
   Father,
   Guardian,
-  Iga_property,
   Mother,
   MotherJob,
-  Sibling,
+  Orphan,
   SocialWorker,
-  Site,
-  SponsoredGroup
+  District,
+  EducationalRecord,
+  FinancialRecord,
+  Health,
+  HealthRecord,
+  House_property,
+  OrphanPhotos,
+  PeasantAssociation,
+  SponsorshipStatus,
+  SupportPlan
 };
 
 const server = new ApolloServer({
@@ -121,7 +133,5 @@ app.post(
 );
 
 app.listen({ port: process.env.PORT || 3000 }, () => {
-  console.log(
-    `🖥 Server ready at http://localhost:3000${server.graphqlPath} `
-  );
+  console.log(`🖥 Server ready at http://localhost:3000${server.graphqlPath} `);
 });
