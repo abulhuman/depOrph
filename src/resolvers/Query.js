@@ -2,20 +2,12 @@ async function orphan(_parent, { id }, { prisma }, _info) {
   return await prisma.orphan.findUnique({ where: { id: parseInt(id) } });
 }
 
-async function iga_property(_parent, { id }, { prisma }, _info) {
-  return await prisma.iga_property.findUnique({ where: { id: parseInt(id) } });
-}
-
 async function education(_parent, { id }, { prisma }, _info) {
   return await prisma.education.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function father(_parent, { id }, { prisma }, _info) {
   return await prisma.father.findUnique({ where: { id: parseInt(id) } });
-}
-
-async function sibling(_parent, { id }, { prisma }, _info) {
-  return await prisma.sibling.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function guardian(_parent, { id }, { prisma }, _info) {
@@ -157,8 +149,7 @@ async function allOrphans(
         OR: [
           { firstName: { contains: filter } },
           { fatherName: { contains: filter } },
-          { grandFatherName: { contains: filter } },
-          { greatGrandFatherName: { contains: filter } }
+          { grandfatherName: { contains: filter } }
         ]
       }
     : {};
@@ -167,7 +158,7 @@ async function allOrphans(
 
 async function allSocialWorkers(
   _parent,
-  { take, where, orderBy },
+  { take, filter, orderBy },
   { prisma },
   _info
 ) {
@@ -237,10 +228,8 @@ async function allSupportPlans(
 
 module.exports = {
   orphan,
-  iga_property,
   education,
   father,
-  sibling,
   guardian,
   motherJob,
   mother,

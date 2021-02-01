@@ -140,15 +140,15 @@ model Orphan {
   fatherId               Int?
   guardianId             Int?
   educationId            Int?
-  docsId                 Int?
+  photosId               Int?
   donorId                Int?
-  supportplanId          Int?
+  supportPlanId          Int?
   districtId             Int?
   peasantAssociationId   Int?
-  socialworkerId         Int?
+  socialWorkerId         Int?
   house_propertyId       Int?
   district               District?                        @relation("districtToorphan", fields: [districtId], references: [id])
-  photos                 OrphanPhotos?                    @relation("orphanToorphanphotos", fields: [docsId], references: [id])
+  photos                 OrphanPhotos?                    @relation("orphanToorphanphotos", fields: [photosId], references: [id])
   donor                  Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
   education              Education?                       @relation("educationToorphan", fields: [educationId], references: [id])
   father                 Father?                          @relation("fatherToorphan", fields: [fatherId], references: [id])
@@ -157,8 +157,8 @@ model Orphan {
   mother                 Mother?                          @relation("motherToorphan", fields: [motherId], references: [id])
   peasantAssociation     PeasantAssociation?              @relation("orphanTopeasantassociation", fields: [peasantAssociationId], references: [id])
   sibling                Orphan?                          @relation("orphanToorphan_siblingid", fields: [siblingId], references: [id])
-  socialWorker           SocialWorker?                    @relation("orphanTosocialworker", fields: [socialworkerId], references: [id])
-  supportPlan            SupportPlan?                     @relation("orphanTosupportplan", fields: [supportplanId], references: [id])
+  socialWorker           SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
+  supportPlan            SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
   financialRecords       FinancialRecord[]                @relation("financialrecordToorphan")
   health                 Health[]                         @relation("healthToorphan")
   siblings               Orphan[]                         @relation("orphanToorphan_siblingid")
@@ -433,7 +433,7 @@ enum sponsorshipstatus_enum {
 
 enum transaction_type_enum {
   withdrawal
-  diposit
+  deposit
   assign
   re_assign
 }

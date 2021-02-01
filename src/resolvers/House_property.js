@@ -1,7 +1,7 @@
-function orphan({ id }, _args, { prisma }) {
-  return prisma.house_property.findUnique({ where: { id } }).orphan();
+function orphans({ id }, _args, { prisma }) {
+  return prisma.house_property.findUnique({ where: { id } }).orphans();
 }
 
 module.exports = {
-  orphan
+  orphans
 };
