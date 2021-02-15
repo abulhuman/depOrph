@@ -30,10 +30,6 @@ function peasantAssociation({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).peasantAssociation();
 }
 
-function sibling({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).sibling();
-}
-
 function siblings({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).siblings();
 }
@@ -54,8 +50,8 @@ function financialRecords({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).financialRecords();
 }
 
-function health({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).health();
+function healthRecords({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).healthRecords();
 }
 
 function sponsorshipStatuses({ id }, _args, { prisma }) {
@@ -71,12 +67,11 @@ module.exports = {
   mother,
   district,
   peasantAssociation,
-  sibling,
   donor,
   socialWorker,
   supportPlan,
   financialRecords,
-  health,
+  healthRecords,
   sponsorshipStatuses,
   siblings
 };

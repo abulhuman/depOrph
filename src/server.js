@@ -19,7 +19,6 @@ const SocialWorker = require("./resolvers/SocialWorker");
 const District = require("./resolvers/District");
 const EducationalRecord = require("./resolvers/EducationalRecord");
 const FinancialRecord = require("./resolvers/FinancialRecord");
-const Health = require("./resolvers/Health");
 const HealthRecord = require("./resolvers/HealthRecord");
 const House_property = require("./resolvers/House_property");
 const OrphanPhotos = require("./resolvers/OrphanPhotos");
@@ -47,7 +46,6 @@ const resolvers = {
   District,
   EducationalRecord,
   FinancialRecord,
-  Health,
   HealthRecord,
   House_property,
   OrphanPhotos,

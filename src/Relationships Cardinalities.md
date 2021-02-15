@@ -28,18 +28,18 @@
 ### Orphan ✅
 - `Orphan` [1:M] `SponsorshipStatus` - [1:M]
 - `Orphan` [1:M] `FinancialRecord` - [1:M]
-- `Orphan` [1:M] `Health` - [1:1]
+- `Orphan` [1:M] `HealthRecord` - [1:M]
 - `Orphan` [M:1] `Education` - [1:1]
 - `Orphan` [1:M] `OrphanPhotos` - [1:M]
 - `Orphan` [M:1] `House_property` - [1:1] 
-- `Orphan` [N:M] `Sibling` - *TBD*
-- `Orphan` [M:1]  `Father` - [M:1]
+- `Orphan` [N:M] `Sibling` - [N:M]
+- `Orphan` [M:1] `Father` - [M:1]
 - `Orphan` [M:1] `Mother` - [M:1]
 - `Orphan` [M:1] `Guardian` - [M:1] 
 - `Orphan` [M:1] `SocialWorker` - [M:1]
 - `Orphan` [M:1] `PeasntAssociation` - [M:1]
 - `Orphan` [M:1] `District` - [M:1]
-- `Orphan` [M;1] `SupportPlan` - [M:1]
+- `Orphan` [M:1] `SupportPlan` - [M:1]
 - `Orphan` [M:1] `Donor` - [M:1]
 
 ### SocialWorker ✅
@@ -56,17 +56,13 @@
 ### FinancialRecord ✅
 - `FinancialRecord` [M:1] `Orphan` - [M:1]
 
-### Health ✅
-- `Health` [M:!] `Orphan` - [1:1]
-- `Health` [1:M] `HealthRecord` - [1:M]
-
 ### HealthRecord ✅
-- `HealthRecord` [M:1] `Health` - [M:1]
+- `HealthRecord` [M:1] `Orphan` - [M:1]
 
 ### House_property ✅
 - `House_property` [1:M] `Orphan` - [1:M]
 
-### OrphanPhotos ❌
+### OrphanPhotos ✅`
 - `OrphanPhotos` [M:1] `Orphan` - [M:1]
 
 ### PeasantAssociation ✅

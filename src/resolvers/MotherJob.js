@@ -1,4 +1,4 @@
-function mother({ id }, { prisma }) {
+function mother({ id }, _args, { prisma }) {
   return prisma.motherJob.findUnique({ where: { id } }).mother();
 }
 

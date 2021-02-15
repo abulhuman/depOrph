@@ -46,12 +46,6 @@ async function financialRecord(_parent, { id }, { prisma }, _info) {
   });
 }
 
-async function health(_parent, { id }, { prisma }, _info) {
-  return await prisma.health.findUnique({
-    where: { id: parseInt(id) }
-  });
-}
-
 async function healthRecord(_parent, { id }, { prisma }, _info) {
   return await prisma.healthRecord.findUnique({
     where: { id: parseInt(id) }
@@ -236,13 +230,11 @@ module.exports = {
   donor,
   socialWorker,
   district,
-  health,
   healthRecord,
   house_property,
   orphanPhotos,
   educationalRecord,
   financialRecord,
-  health,
   healthRecord,
   peasantAssociation,
   sponsorshipStatus,
