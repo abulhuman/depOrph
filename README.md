@@ -60,13 +60,13 @@ DATABASE_URL =
 First add the Prisma CLI as a development dependency:
 
 ```bash
-npm install @prisma/cli -D
+npm install prisma -D
 ```
 
 Then to map the data model to the database schema, you need to use the `prisma migrate` CLI commands:
 
 ```bash
-npx prisma migrate dev --name init --preview-feature
+npx prisma migrate dev --name init
 ```
 
 This command does two things:

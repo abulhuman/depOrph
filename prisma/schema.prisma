@@ -62,12 +62,12 @@ model Guardian {
   lastName                      String
   gender                        guardian_gender_enum
   relationToOrphan              guardian_relationtoorphan_enum
-  phoneNumber                   String
   email                         String
   POBox                         String?
   dateOfBirth                   DateTime
   guardianIDCardUrl             String
   guardianConfirmationLetterUrl String
+  phoneNumber                   String
   orphans                       Orphan[]                       @relation("guardianToorphan")
 
   @@map("guardian")
@@ -87,7 +87,7 @@ model Mother {
   causeOfDeath   String?
   phoneNumber    String
   maritalStatus  mother_maritalStatus?
-  monthlyExpense Float
+  monthlyExpense Decimal
   jobs           MotherJob[]           @relation("motherTomotherjob")
   orphans        Orphan[]              @relation("motherToorphan")
 
@@ -100,7 +100,7 @@ model MotherJob {
   created_at      DateTime? @default(now())
   updated_at      DateTime?
   currentJobTitle String?
-  monthlyIncome   Float?
+  monthlyIncome   Decimal?
   initDate        DateTime?
   termDate        DateTime?
   motherId        Int?
@@ -128,20 +128,20 @@ model Orphan {
   passportUrl            String?
   thankyouLetterUrl      String?
   birthCertificateUrl    String
-  healthDescription      String
   psychologicalStatus    orphan_psychologicalstatus_enum?
   accountNumber          String?
-  currentBalance         Float?
+  currentBalance         Decimal?
   motherId               Int?
   fatherId               Int?
   guardianId             Int?
   educationId            Int?
   donorId                Int?
-  supportPlanId          Int?
   districtId             Int?
   peasantAssociationId   Int?
-  socialWorkerId         Int?
   house_propertyId       Int?
+  supportPlanId          Int?
+  socialWorkerId         Int?
+  healthDescription      String
   district               District?                        @relation("districtToorphan", fields: [districtId], references: [id])
   donor                  Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
   education              Education?                       @relation("educationToorphan", fields: [educationId], references: [id])
@@ -153,11 +153,11 @@ model Orphan {
   socialWorker           SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
   supportPlan            SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
   financialRecords       FinancialRecord[]                @relation("financialrecordToorphan")
-  photos                 OrphanPhotos[]                   @relation("orphanToorphanphotos")
   healthRecords          HealthRecord[]                   @relation("healthrecordToorphan")
-  siblings               Orphan[]                         @relation("orphan_sibling", references: [id])
-  siblingOf              Orphan[]                         @relation("orphan_sibling", references: [id])
+  photos                 OrphanPhotos[]                   @relation("orphanToorphanphotos")
   sponsorshipStatuses    SponsorshipStatus[]              @relation("orphanTosponsorshipstatus")
+  orphan_B               Orphan[]                         @relation("orphan_sibling")
+  orphan_A               Orphan[]                         @relation("orphan_sibling")
 
   @@map("orphan")
 }
@@ -201,13 +201,13 @@ model EducationalRecord {
   yearDivision     educationalrecord_yeardivision_enum?
   quarter          educationalrecord_quarter_enum?
   semester         educationalrecord_semester_enum?
-  totalMark        Float?
+  totalMark        Decimal?
   numberOfSubjects Int?
-  average          Float?
+  average          Decimal?
   rank             Int?
   reportCardUrl    String?
-  semesterGPA      Float?
-  cumulativeGPA    Float?
+  semesterGPA      Decimal?
+  cumulativeGPA    Decimal?
   educationId      Int?
   education        Education?                           @relation("educationToeducationalrecord", fields: [educationId], references: [id])
 
@@ -220,7 +220,7 @@ model FinancialRecord {
   updated_at        DateTime?
   transactionDate   DateTime?
   transactionType   transaction_type_enum?
-  amount            Float?
+  amount            Decimal?
   reason            financialrecord_reason_enum?
   specialCaseReason String?
   orphanId          Int?
@@ -238,7 +238,7 @@ model HealthRecord {
   diagnosis             String?
   doctorsRecommendation String?
   restRecommended       String?
-  totalMedicalExpense   Float?
+  totalMedicalExpense   Decimal?
   medicalCerificateUrl  String?
   orphanId              Int?
   orphan                Orphan?   @relation("healthrecordToorphan", fields: [orphanId], references: [id])
@@ -287,11 +287,11 @@ model PeasantAssociation {
 
 model SponsorshipStatus {
   id         Int                     @id @default(autoincrement())
+  status     sponsorshipstatus_enum?
+  orphanId   Int?
   created_at DateTime?               @default(now())
   updated_at DateTime?
-  status     sponsorshipstatus_enum?
   date       DateTime
-  orphanId   Int?
   orphan     Orphan?                 @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
 
   @@map("sponsorshipstatus")
@@ -301,11 +301,11 @@ model SupportPlan {
   id             Int       @id @default(autoincrement())
   created_at     DateTime? @default(now())
   updated_at     DateTime?
-  totalFund_fc   Float?
+  totalFund_fc   Decimal?
   currency       String?
-  totalFund_brr  Float?
-  adminFee_brr   Float?
-  netPayment_brr Float?
+  totalFund_brr  Decimal?
+  adminFee_brr   Decimal?
+  netPayment_brr Decimal?
   initDate       DateTime?
   termDate       DateTime?
   donorId        Int?
@@ -326,7 +326,7 @@ enum education_level_enum {
   gradeSchool
   underGraduate
   postGraduate
-  N_A            @map("N/A")
+  N_A @map("N/A")
 }
 
 enum education_typeofschool_enum {
@@ -384,7 +384,7 @@ enum guardian_relationtoorphan_enum {
 enum mother_maritalStatus {
   married
   widow
-  N_A      @map("N/A")
+  N_A @map("N/A")
 }
 
 enum mother_vitalStatus {
