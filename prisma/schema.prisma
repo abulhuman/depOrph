@@ -207,8 +207,8 @@ model Orphan {
   healthRecords          HealthRecord[]                   @relation("healthrecordToorphan")
   photos                 OrphanPhotos[]                   @relation("orphanToorphanphotos")
   sponsorshipStatuses    SponsorshipStatus[]              @relation("orphanTosponsorshipstatus")
-  orphan_B               Orphan[]                         @relation("orphan_sibling")
-  orphan_A               Orphan[]                         @relation("orphan_sibling")
+  siblings               Orphan[]                         @relation("orphan_sibling")
+  siblingOf              Orphan[]                         @relation("orphan_sibling")
 
   @@map("orphan")
 }

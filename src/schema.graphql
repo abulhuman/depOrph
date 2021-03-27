@@ -9,15 +9,20 @@ type Query {
   motherJob(id: ID!): MotherJob!
   orphan(id: ID!): Orphan!
   socialWorker(id: ID!): SocialWorker!
+  region(id: ID!): Region!
+  zone(id: ID!): Zone!
   district(id: ID!): District!
+  village(id: ID!): Village!
   educationalRecord(id: ID!): EducationalRecord!
   financialRecord(id: ID!): FinancialRecord!
   healthRecord(id: ID!): HealthRecord!
   house_property(id: ID!): House_property!
   orphanPhotos(id: ID!): OrphanPhotos!
-  peasantAssociation(id: ID!): PeasantAssociation!
   sponsorshipStatus(id: ID!): SponsorshipStatus!
   supportPlan(id: ID!): SupportPlan!
+  head(id: ID!): Head!
+  coordinator(id: ID!): Coordinator!
+  user(id: ID!): User!
 
   allDonors(take: Int, filter: String, orderBy: DonorOrderByInput): [Donor]!
   allGuardians(
@@ -32,29 +37,39 @@ type Query {
     filter: String
     orderBy: SocialWorkerOrderByInput
   ): [SocialWorker]!
+  allRegions(take: Int, filter: String, orderBy: RegionOrderByInput): [Region]!
+  allZones(take: Int, filter: String, orderBy: ZoneOrderByInput): [Zone]!
   allDistricts(
     take: Int
     filter: String
     orderBy: DistrictOrderByInput
   ): [District]!
-  allPeasantAssociations(
+  allVillages(
     take: Int
     filter: String
-    orderBy: PeasantAssociationOrderByInput
-  ): [PeasantAssociation]!
+    orderBy: VillageOrderByInput
+  ): [Village]!
   allSupportPlans(
     take: Int
     filter: String
     orderBy: SupportPlanOrderByInput
   ): [SupportPlan]!
+  allCoordinators(
+    take: Int
+    filter: String
+    orderBy: CoordinatorOrderByInput
+  ): [Coordinator]!
+  allUsers(take: Int, filter: String, orderBy: UserOrderByInput): [User]!
 }
 
 type Mutation {
   createDonor(
     companyName: String!
     nameInitials: String!
+    coordinatorId: ID
+    userId: ID
     orphans: [ID]
-    peasantAssociations: [ID]
+    villages: [ID]
     supportPlans: [ID]
   ): Donor!
 
@@ -62,6 +77,8 @@ type Mutation {
     id: ID!
     companyName: String
     nameInitials: String
+    coordinatorId: ID
+    userId: ID
     orphans: [ID]
     peasantAssociations: [ID]
     supportPlans: [ID]
@@ -91,6 +108,8 @@ type Mutation {
   ): Education!
 
   createFather(
+    firstName: String!
+    lastName: String!
     dateOfDeath: DateTime!
     causeOfDeath: String!
     dateOfBirth: DateTime!
@@ -100,6 +119,8 @@ type Mutation {
 
   updateFather(
     id: ID!
+    firstName: String
+    lastName: String
     dateOfDeath: DateTime
     causeOfDeath: String
     dateOfBirth: DateTime
@@ -112,17 +133,15 @@ type Mutation {
     middleName: String!
     lastName: String!
     gender: guardianGender!
-    region: String!
-    zone: String!
-    district: String!
-    peasantAssociation: String!
-    relationToOrphan: guardianRelationToOrphan!
-    mobile: String!
-    POBox: String
-    email: String!
     dateOfBirth: DateTime!
+    relationToOrphan: guardianRelationToOrphan!
+    email: String!
+    mobileNumber: String!
+    telephoneNumber: String
+    nationality: guardianNationality!
     guardianIDCardUrl: String!
     guardianConfirmationLetterUrl: String!
+    guardianLegalConfirmationLetterUrl: String!
     orphans: [ID]
   ): Guardian!
 
@@ -132,32 +151,30 @@ type Mutation {
     middleName: String
     lastName: String
     gender: guardianGender
-    state: String
-    zone: String
-    district: String
-    kebele: String
-    relationToOrphan: guardianRelationToOrphan
-    mobile: String
-    POBox: String
-    email: String
-    job: String
     dateOfBirth: DateTime
-    monthlyExpense: Float
+    relationToOrphan: guardianRelationToOrphan
+    email: String
+    mobileNumber: String
+    telephoneNumber: String
+    nationality: guardianNationality
     guardianIDCardUrl: String
     guardianConfirmationLetterUrl: String
+    guardianLegalConfirmationLetterUrl: String
     orphans: [ID]
   ): Guardian!
 
   createMother(
+    created_at: DateTime
+    updated_at: DateTime
     firstName: String!
     middleName: String!
     lastName: String!
+    vitalStatus: motherVitalStatus!
     dateOfBirth: DateTime!
     dateOfDeath: DateTime
     causeOfDeath: String
-    phoneNumber: String!
+    mobileNumber: String!
     maritalStatus: motherMaritalStatus
-    vitalStatus: motherVitalStatus!
     monthlyExpense: Float!
     jobs: [ID]
     orphans: [ID]
@@ -168,19 +185,19 @@ type Mutation {
     firstName: String
     middleName: String
     lastName: String
+    vitalStatus: motherVitalStatus
     dateOfBirth: DateTime
     dateOfDeath: DateTime
     causeOfDeath: String
-    phoneNumber: String
+    mobileNumber: String
     maritalStatus: motherMaritalStatus
-    vitalStatus: motherVitalStatus
     monthlyExpense: Float
     jobs: [ID]
     orphans: [ID]
   ): Mother!
 
   createMotherJob(
-    currentJobTitle: String
+    jobTitle: String
     monthlyIncome: Float
     initDate: DateTime
     termDate: DateTime
@@ -189,17 +206,58 @@ type Mutation {
 
   updateMotherJob(
     id: ID!
-    currentJobTitle: String
+    jobTitle: String
     monthlyIncome: Float
     initDate: DateTime
     termDate: DateTime
     motherId: ID
   ): MotherJob!
 
+  createRegion(name: String!, zones: [ID]): Region!
+
+  updateRegion(id: ID!, name: String, zones: [ID]): Region!
+
+  createZone(name: String!, regionId: ID, zones: [ID]): Zone!
+
+  updateZone(id: ID!, name: String, regionId: ID, zones: [ID]): Zone!
+
+  createDistrict(
+    name: String!
+    coordinatorId: ID
+    zoneId: ID
+    villages: [ID]
+    socialWorkers: [ID]
+  ): District!
+
+  updateDistrict(
+    id: ID!
+    name: String
+    coordinatorId: ID
+    zoneId: ID
+    villages: [ID]
+    socialWorkers: [ID]
+  ): District!
+
+  createVillage(
+    registrationDate: DateTime!
+    name: String
+    coordiantorId: ID
+    districtId: ID
+    donorId: ID
+    orphans: [ID]
+  ): Village!
+
+  updateVillage(
+    registrationDate: DateTime
+    name: String
+    coordiantorId: ID
+    districtId: ID
+    donorId: ID
+    orphans: [ID]
+  ): Village!
+
   createOrphan(
     firstName: String!
-    fatherName: String!
-    grandfatherName: String!
     gender: orphanGender!
     placeOfBirth: String!
     dateOfBirth: DateTime!
@@ -215,28 +273,26 @@ type Mutation {
     psychologicalStatus: orphanPsychologicalStatus
     accountNumber: String
     currentBalance: Float
-    districtId: ID
     donorId: ID
+    educationId: ID
     fatherId: ID
     guardianId: ID
     house_propertyId: ID
     motherId: ID
-    peasantAssociationId: ID
+    villageId: ID
     socialWorkerId: ID
     supportPlanId: ID
-    educationId: ID
-    photos: [ID]
     financialRecords: [ID]
     healthRecords: [ID]
-    siblings: [ID]
+    photos: [ID]
     sponsorshipStatuses: [ID]
+    siblings: [ID]
+    siblingOf: [ID]
   ): Orphan!
 
   updateOrphan(
     id: ID!
     firstName: String
-    fatherName: String
-    grandfatherName: String
     gender: orphanGender
     placeOfBirth: String
     dateOfBirth: DateTime
@@ -252,62 +308,53 @@ type Mutation {
     psychologicalStatus: orphanPsychologicalStatus
     accountNumber: String
     currentBalance: Float
-    districtId: ID
     donorId: ID
+    educationId: ID
     fatherId: ID
     guardianId: ID
     house_propertyId: ID
     motherId: ID
-    peasantAssociationId: ID
+    villageId: ID
     socialWorkerId: ID
     supportPlanId: ID
-    educationId: ID
-    photos: [ID]
     financialRecords: [ID]
     healthRecords: [ID]
-    # siblings: [ID]
+    photos: [ID]
     sponsorshipStatuses: [ID]
+    siblings: [ID]
+    siblingOf: [ID]
   ): Orphan!
 
   createSocialWorker(
-    fullName: String!
+    firstName: String!
+    middleName: String!
+    lastName: String!
     gender: socialWorkerGender
-    phoneNumber: String!
+    dateOfBirth: DateTime
+    mobileNumber: String!
     email: String!
     initDate: DateTime
     termDate: DateTime
-    peasantAssociationId: ID
+    userId: ID
+    districtId: ID
     orphans: [ID]
   ): SocialWorker!
 
   updateSocialWorker(
     id: ID!
-    fullName: String
+    firstName: String
+    middleName: String
+    lastName: String
     gender: socialWorkerGender
-    phoneNumber: String
+    dateOfBirth: DateTime
+    mobileNumber: String
     email: String
     initDate: DateTime
     termDate: DateTime
-    peasantAssociationId: ID
+    userId: ID
+    districtId: ID
     orphans: [ID]
   ): SocialWorker!
-
-  createDistrict(
-    districtName: String!
-    region: String!
-    zone: String!
-    orphans: [ID]
-    peasantAssociations: [ID]
-  ): District!
-
-  updateDistrict(
-    id: ID!
-    districtName: String
-    region: String
-    zone: String
-    orphans: [ID]
-    peasantAssociations: [ID]
-  ): District!
 
   createEducationalRecord(
     yearDivision: ERYearDivision
@@ -357,25 +404,10 @@ type Mutation {
     orphanId: ID
   ): FinancialRecord!
 
-  createHealthRecord(
-    medicalCenterName: String
-    dateOfExamination: DateTime
-    diagnosis: String
-    doctorsRecommendation: String
-    restRecommended: String
-    totalMedicalExpense: Float
-    medicalCerificateUrl: String
-    orphanId: ID
-  ): HealthRecord!
+  createHealthRecord(medicalCerificateUrl: String, orphanId: ID): HealthRecord!
 
   updateHealthRecord(
     id: ID!
-    medicalCenterName: String
-    dateOfExamination: DateTime
-    diagnosis: String
-    doctorsRecommendation: String
-    restRecommended: String
-    totalMedicalExpense: Float
     medicalCerificateUrl: String
     orphanId: ID
   ): HealthRecord!
@@ -406,25 +438,6 @@ type Mutation {
     orphan: ID
   ): OrphanPhotos!
 
-  createPeasantAssociation(
-    registrationDate: DateTime!
-    paName: String
-    districtId: ID
-    donorId: ID
-    orphans: [ID]
-    socialWorkers: [ID]
-  ): PeasantAssociation!
-
-  updatePeasantAssociation(
-    id: ID!
-    registrationDate: DateTime
-    paName: String
-    districtId: ID
-    donorId: ID
-    orphans: [ID]
-    socialWorkers: [ID]
-  ): PeasantAssociation!
-
   createSponsorshipStatus(
     status: orphanSponsorshipStatus
     date: DateTime!
@@ -439,9 +452,12 @@ type Mutation {
   ): SponsorshipStatus!
 
   createSupportPlan(
-    totalFund_fc: Float
-    currency: String
-    totalFund_brr: Float
+    collectiveFund_fc: Float
+    individualFund_fc: Float
+    foreignCurrency: Float
+    supportPeriod: int
+    exchangeRate: Float
+    individualFund_brr: Float
     adminFee_brr: Float
     netPayment_brr: Float
     initDate: DateTime
@@ -451,10 +467,12 @@ type Mutation {
   ): SupportPlan!
 
   updateSupportPlan(
-    id: ID!
-    totalFund_fc: Float!
-    currency: String
-    totalFund_brr: Float
+    collectiveFund_fc: Float
+    individualFund_fc: Float
+    foreignCurrency: Float
+    supportPeriod: int
+    exchangeRate: Float
+    individualFund_brr: Float
     adminFee_brr: Float
     netPayment_brr: Float
     initDate: DateTime
@@ -462,6 +480,63 @@ type Mutation {
     donorId: ID
     orphans: [ID]
   ): SupportPlan!
+
+  createHead(
+    firstName: String!
+    middleName: String!
+    lastName: String!
+    userId: ID
+  ): Head!
+
+  updateHead(
+    id: ID!
+    firstName: String
+    middleName: String
+    lastName: String
+    userId: ID
+  ): Head!
+
+  createCoordinator(
+    firstName: String!
+    middleName: String!
+    lastName: String!
+    userId: ID
+    villages: [ID]
+    districts: [ID]
+    donors: [ID]
+  ): Coordinator!
+
+  updateCoordinator(
+    id: ID!
+    firstName: String
+    middleName: String
+    lastName: String
+    userId: ID
+    villages: [ID]
+    districts: [ID]
+    donors: [ID]
+  ): Coordinator!
+
+  createUser(
+    role: userRoles!
+    email: String!
+    password: String
+    coordinators: [ID]
+    heads: [ID]
+    socialWorkers: [ID]
+    donors: [ID]
+  ): User!
+
+  updateUser(
+    id: ID!
+    role: userRoles!
+    email: String!
+    password: String
+    coordinators: [ID]
+    heads: [ID]
+    socialWorkers: [ID]
+    donors: [ID]
+  ): User!
 }
 
 type Donor {
@@ -470,7 +545,7 @@ type Donor {
   updated_at: DateTime
   companyName: String!
   nameInitials: String!
-  coordiantor: Coordiantor
+  coordinator: Coordinator
   user: User
   orphans: [Orphan]
   villages: [Village]
@@ -575,7 +650,7 @@ type District {
   created_at: DateTime
   updated_at: DateTime
   name: String!
-  coordiantor: Coordiantor
+  coordinator: Coordinator
   zone: Zone
   villages: [Village]
   socialWorkers: [SocialWorker]
@@ -587,7 +662,7 @@ type Village {
   updated_at: DateTime
   registrationDate: DateTime!
   name: String
-  coordiantor: Coordiantor
+  coordinator: Coordinator
   district: District
   donor: Donor
   orphans: [Orphan]
@@ -626,8 +701,8 @@ type Orphan {
   healthRecords: [HealthRecord]
   photos: [OrphanPhotos]
   sponsorshipStatuses: [SponsorshipStatus]
-  orphan_B: [Orphan]
-  orphan_A: [Orphan]
+  siblings: [Orphan]
+  siblingOf: [Orphan]
 }
 
 type SocialWorker {
@@ -900,7 +975,7 @@ enum FRReason {
 enum userRoles {
   Admin
   Head
-  Coordiantor
+  Coordinator
   Donor
   SocailWorker
   Guest
@@ -912,33 +987,134 @@ enum Sort {
 }
 
 input DonorOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  companyName: Sort
+  nameInitials: Sort
 }
 
 input GuardianOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  firstName: Sort
+  middleName: Sort
+  lastName: Sort
+  gender: Sort
+  dateOfBirth: Sort
+  relationToOrphan: Sort
+  email: Sort
+  mobileNumber: Sort
+  telephoneNumber: Sort
 }
 
 input MotherOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  firstName: Sort
+  middleName: Sort
+  lastName: Sort
+  vitalStatus: Sort
+  dateOfBirth: Sort
+  dateOfDeath: Sort
+  causeOfDeath: Sort
+  mobileNumber: Sort
+  maritalStatus: Sort
+  monthlyExpense: Sort
 }
 
 input OrphanOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  firstName: Sort
+  gender: Sort
+  placeOfBirth: Sort
+  dateOfBirth: Sort
+  spokenLanguages: Sort
+  gradeAgeMismatchReason: Sort
+  hobbies: Sort
+  religion: Sort
+  healthDescription: Sort
+  psychologicalStatus: Sort
+  accountNumber: Sort
+  currentBalance: Sort
 }
 
 input SocialWorkerOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  firstName: Sort
+  middleName: Sort
+  lastName: Sort
+  gender: Sort
+  mobileNumber: Sort
+  email: Sort
+  initDate: Sort
+  termDate: Sort
+}
+
+input RegionOrderByInput {
+  id: Sort
+  created_at: Sort
+  updated_at: Sort
+  name: Sort
+}
+
+input ZoneOrderByInput {
+  id: Sort
+  created_at: Sort
+  updated_at: Sort
+  name: Sort
 }
 
 input DistrictOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  name: Sort
 }
 
-input PeasantAssociationOrderByInput {
+input VillageOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  registrationDate: Sort
+  name: Sort
 }
 
 input SupportPlanOrderByInput {
+  id: Sort
   created_at: Sort
+  updated_at: Sort
+  collectiveFund_fc: Sort
+  individualFund_fc: Sort
+  foreignCurrency: Sort
+  supportPeriod: Sort
+  exchangeRate: Sort
+  individualFund_brr: Sort
+  adminFee_brr: Sort
+  netPayment_brr: Sort
+  initDate: Sort
+  termDate: Sort
+}
+
+input CoordinatorOrderByInput {
+  id: Sort
+  created_at: Sort
+  updated_at: Sort
+  firstName: Sort
+  middleName: Sort
+  lastName: Sort
+}
+
+input UserOrderByInput {
+  id: Sort
+  created_at: Sort
+  updated_at: Sort
+  role: Sort
+  email: Sort
 }
