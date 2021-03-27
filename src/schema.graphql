@@ -470,8 +470,10 @@ type Donor {
   updated_at: DateTime
   companyName: String!
   nameInitials: String!
+  coordiantor: Coordiantor
+  user: User
   orphans: [Orphan]
-  peasantAssociations: [PeasantAssociation]
+  villages: [Village]
   supportPlans: [SupportPlan]
 }
 
@@ -493,6 +495,8 @@ type Father {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
+  firstName: String!
+  lastName: String!
   dateOfDeath: DateTime!
   causeOfDeath: String!
   dateOfBirth: DateTime!
@@ -508,13 +512,15 @@ type Guardian {
   middleName: String!
   lastName: String!
   gender: guardianGender!
-  relationToOrphan: guardianRelationToOrphan!
-  phoneNumber: String!
-  email: String!
-  POBox: String
   dateOfBirth: DateTime!
+  relationToOrphan: guardianRelationToOrphan!
+  email: String!
+  mobileNumber: String!
+  telephoneNumber: String
+  nationality: guardianNationality!
   guardianIDCardUrl: String!
   guardianConfirmationLetterUrl: String!
+  guardianLegalConfirmationLetterUrl: String!
   orphans: [Orphan]
 }
 
@@ -525,12 +531,12 @@ type Mother {
   firstName: String!
   middleName: String!
   lastName: String!
+  vitalStatus: motherVitalStatus!
   dateOfBirth: DateTime!
   dateOfDeath: DateTime
   causeOfDeath: String
-  phoneNumber: String!
-  maritalStatus: motherMaritalStatus!
-  vitalStatus: motherVitalStatus!
+  mobileNumber: String!
+  maritalStatus: motherMaritalStatus
   monthlyExpense: Float!
   jobs: [MotherJob]
   orphans: [Orphan]
@@ -540,11 +546,51 @@ type MotherJob {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  currentJobTitle: String
+  jobTitle: String
   monthlyIncome: String
   initDate: DateTime
   termDate: DateTime
   mother: Mother
+}
+
+type Region {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  name: String!
+  zones: [Zone]
+}
+
+type Zone {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  name: String!
+  region: Region
+  districts: [District]
+}
+
+type District {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  name: String!
+  coordiantor: Coordiantor
+  zone: Zone
+  villages: [Village]
+  socialWorkers: [SocialWorker]
+}
+
+type Village {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  registrationDate: DateTime!
+  name: String
+  coordiantor: Coordiantor
+  district: District
+  donor: Donor
+  orphans: [Orphan]
 }
 
 type Orphan {
@@ -552,8 +598,6 @@ type Orphan {
   created_at: DateTime
   updated_at: DateTime
   firstName: String!
-  fatherName: String!
-  grandfatherName: String!
   gender: orphanGender!
   placeOfBirth: String!
   dateOfBirth: DateTime!
@@ -569,46 +613,39 @@ type Orphan {
   psychologicalStatus: orphanPsychologicalStatus
   accountNumber: String
   currentBalance: Float
-  district: District
   donor: Donor
   education: Education
   father: Father
   guardian: Guardian
   house_property: House_property
   mother: Mother
-  peasantAssociation: PeasantAssociation
+  village: Village
   socialWorker: SocialWorker
   supportPlan: SupportPlan
-  photos: [OrphanPhotos]
   financialRecords: [FinancialRecord]
   healthRecords: [HealthRecord]
-  siblings: [Orphan]
+  photos: [OrphanPhotos]
   sponsorshipStatuses: [SponsorshipStatus]
+  orphan_B: [Orphan]
+  orphan_A: [Orphan]
 }
 
 type SocialWorker {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  fullName: String!
+  firstName: String!
+  middleName: String!
+  lastName: String!
   gender: socialWorkerGender
-  phoneNumber: String!
+  dateOfBirth: DateTime
+  mobileNumber: String!
   email: String!
   initDate: DateTime
   termDate: DateTime
-  peasantAssociation: PeasantAssociation
+  user: User
+  district: District
   orphans: [Orphan]
-}
-
-type District {
-  id: ID!
-  created_at: DateTime
-  updated_at: DateTime
-  districtName: String!
-  region: String!
-  zone: String!
-  orphans: [Orphan]
-  peasantAssociations: [PeasantAssociation]
 }
 
 type EducationalRecord {
@@ -644,12 +681,6 @@ type HealthRecord {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  medicalCenterName: String
-  dateOfExamination: DateTime
-  diagnosis: String
-  doctorsRecommendation: String
-  restRecommended: String
-  totalMedicalExpense: Float
   medicalCerificateUrl: String
   orphan: Orphan
 }
@@ -672,18 +703,6 @@ type OrphanPhotos {
   orphan: Orphan
 }
 
-type PeasantAssociation {
-  id: ID!
-  created_at: DateTime
-  updated_at: DateTime
-  registrationDate: DateTime!
-  paName: String
-  district: District
-  donor: Donor
-  orphans: [Orphan]
-  socialWorkers: [SocialWorker]
-}
-
 type SponsorshipStatus {
   id: ID!
   created_at: DateTime
@@ -694,21 +713,57 @@ type SponsorshipStatus {
 }
 
 type SupportPlan {
-  # TODO add individualFund_fc: Float, exchangeRate: Float & supportPeriod: Int!
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  totalFund_fc: Float! # Bulk donation for all in this plan
-  # individualFund_fc: Float! # donation for each orphan
-  currency: String
-  totalFund_brr: Float
+  collectiveFund_fc: Float
+  individualFund_fc: Float
+  foreignCurrency: Float
+  supportPeriod: int
+  exchangeRate: Float
+  individualFund_brr: Float
   adminFee_brr: Float
-  netPayment_brr: Float # initially assi
-  # intended period in months
+  netPayment_brr: Float
   initDate: DateTime
   termDate: DateTime
   donor: Donor
   orphans: [Orphan]
+}
+
+type Head {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  user: User
+}
+
+type Coordinator {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  user: User
+  villages: [Village]
+  districts: [District]
+  donors: [Donor]
+}
+
+type User {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  role: userRoles!
+  email: String!
+  password: String
+  coordinators: [Coordinator]
+  heads: [Head]
+  socialWorkers: [SocialWorker]
+  donors: [Donor]
 }
 
 enum orphanGender {
@@ -722,6 +777,7 @@ enum orphanReligion {
   Buddhism
   Hinduism
   Judaism
+  Other
 }
 
 enum orphanPsychologicalStatus {
@@ -732,10 +788,10 @@ enum orphanPsychologicalStatus {
   normal
 }
 
-enum orphanSponsorshipStatus {
-  inProgress
+enum sponsorshipStatus {
+  processing
+  pending
   active
-  suspended
   graduated
 }
 
@@ -760,6 +816,17 @@ enum guardianRelationToOrphan {
   cousin
   niece
   nephew
+  legalGuardian
+}
+
+enum guardianNationality {
+  Djiboutian
+  Ethiopian
+  Eritrean
+  Kenyan
+  Somali
+  South_Sudanese
+  Sudanese
 }
 
 enum motherMaritalStatus {
@@ -786,6 +853,7 @@ enum educationTypeOfSchool {
 }
 
 enum educationLevel {
+  religiousEducation
   preSchool
   gradeSchool
   underGraduate
@@ -827,6 +895,15 @@ enum FRReason {
   HW
   NW
   SCW
+}
+
+enum userRoles {
+  Admin
+  Head
+  Coordiantor
+  Donor
+  SocailWorker
+  Guest
 }
 
 enum Sort {

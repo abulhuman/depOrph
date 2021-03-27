@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Donor {
-  id                  Int           @id @default(autoincrement())
-  created_at          DateTime?     @default(now())
-  updated_at          DateTime?
-  companyName         String        @default("")
-  nameInitials        String        @default("")
-  userId              Int?
-  coordinatorId       Int?
-  coordinator         Coordinator?  @relation(fields: [coordinatorId], references: [id])
-  user                User?         @relation(fields: [userId], references: [id])
-  orphans             Orphan[]      @relation("donorToorphan")
-  peasantAssociations Village[]     @relation("donorTovillage")
-  supportPlans        SupportPlan[] @relation("donorTosupportplan")
+  id            Int           @id @default(autoincrement())
+  created_at    DateTime?     @default(now())
+  updated_at    DateTime?
+  companyName   String        @default("")
+  nameInitials  String        @default("")
+  userId        Int?
+  coordinatorId Int?
+  coordinator   Coordinator?  @relation(fields: [coordinatorId], references: [id])
+  user          User?         @relation(fields: [userId], references: [id])
+  orphans       Orphan[]      @relation("donorToorphan")
+  villages      Village[]     @relation("donorTovillage")
+  supportPlans  SupportPlan[] @relation("donorTosupportplan")
 
   @@map("donor")
 }
@@ -98,15 +98,15 @@ model Mother {
 }
 
 model MotherJob {
-  id              Int       @id @default(autoincrement())
-  created_at      DateTime? @default(now())
-  updated_at      DateTime?
-  currentJobTitle String?
-  monthlyIncome   Float?
-  initDate        DateTime?
-  termDate        DateTime?
-  motherId        Int?
-  mother          Mother?   @relation("motherTomotherjob", fields: [motherId], references: [id])
+  id            Int       @id @default(autoincrement())
+  created_at    DateTime? @default(now())
+  updated_at    DateTime?
+  jobTitle      String?
+  monthlyIncome Float?
+  initDate      DateTime?
+  termDate      DateTime?
+  motherId      Int?
+  mother        Mother?   @relation("motherTomotherjob", fields: [motherId], references: [id])
 
   @@map("motherjob")
 }
@@ -116,7 +116,7 @@ model Region {
   created_at DateTime? @default(now())
   updated_at DateTime?
   name       String    @default("")
-  zone       Zone[]
+  zones      Zone[]
 
   @@map("region")
 }
@@ -317,25 +317,28 @@ model SponsorshipStatus {
 }
 
 model SupportPlan {
-  id             Int       @id @default(autoincrement())
-  created_at     DateTime? @default(now())
-  updated_at     DateTime?
-  fund_fc        Float?
-  currency       String?
-  fund_brr       Float?
-  adminFee_brr   Float?
-  netPayment_brr Float?
-  period         Int?
-  initDate       DateTime?
-  termDate       DateTime?
-  donorId        Int?
-  donor          Donor?    @relation("donorTosupportplan", fields: [donorId], references: [id])
-  orphans        Orphan[]  @relation("orphanTosupportplan")
+  id                 Int       @id @default(autoincrement())
+  created_at         DateTime? @default(now())
+  updated_at         DateTime?
+  collectiveFund_fc  Float?
+  individualFund_fc  Float?
+  foreignCurrency    String?
+  supportPeriod      Int?
+  exchangeRate       Float?
+  individualFund_brr Float?
+  adminFee_brr       Float?
+  netPayment_brr     Float?
+  initDate           DateTime?
+  termDate           DateTime?
+  donorId            Int?
+  donor              Donor?    @relation("donorTosupportplan", fields: [donorId], references: [id])
+  orphans            Orphan[]  @relation("orphanTosupportplan")
 
   @@map("supportplan")
 }
 
 model Head {
+  // 🚀
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
   updated_at DateTime?
@@ -465,8 +468,8 @@ enum mother_maritalStatus {
 }
 
 enum mother_vitalStatus {
-  alive
   passed
+  alive
 }
 
 enum orphan_gender_enum {
