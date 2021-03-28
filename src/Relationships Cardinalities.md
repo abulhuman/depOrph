@@ -4,8 +4,10 @@
 **Database - Server**
 
 ### Donor ✅
+- `Donor` [M:1] `Coordinator` - [M:1]
+- `Donor` [M:1] `User` - [M:1]
 - `Donor` [1:M] `SupportPlan` - [1:M]
-- `Donor` [1:M] `PeasantAssociation` - [1:M]
+- `Donor` [1:M] `Village` - [1:M]
 - `Donor` [1:M] `Orphan` - [1:M]
 
 ### Education ✅

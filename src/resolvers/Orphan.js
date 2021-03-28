@@ -1,9 +1,5 @@
-function house_property({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).house_property();
-}
-
-function photos({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).photos();
+function donor({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).donor();
 }
 
 function education({ id }, _args, { prisma }) {
@@ -18,24 +14,16 @@ function guardian({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).guardian();
 }
 
+function house_property({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).house_property();
+}
+
 function mother({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).mother();
 }
 
-function district({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).district();
-}
-
-function peasantAssociation({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).peasantAssociation();
-}
-
-function siblings({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).siblings();
-}
-
-function donor({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).donor();
+function village({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).village();
 }
 
 function socialWorker({ id }, _args, { prisma }) {
@@ -54,8 +42,20 @@ function healthRecords({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).healthRecords();
 }
 
+function photos({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).photos();
+}
+
 function sponsorshipStatuses({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).sponsorshipStatuses();
+}
+
+function siblings({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).siblings();
+}
+
+function siblingOf({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).siblingOf();
 }
 
 module.exports = {
@@ -65,13 +65,13 @@ module.exports = {
   father,
   guardian,
   mother,
-  district,
-  peasantAssociation,
+  village,
   donor,
   socialWorker,
   supportPlan,
   financialRecords,
   healthRecords,
   sponsorshipStatuses,
-  siblings
+  siblings,
+  siblingOf
 };

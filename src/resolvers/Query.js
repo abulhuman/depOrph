@@ -1,5 +1,5 @@
-async function orphan(_parent, { id }, { prisma }, _info) {
-  return await prisma.orphan.findUnique({ where: { id: parseInt(id) } });
+async function donor(_parent, { id }, { prisma }, _info) {
+  return await prisma.donor.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function education(_parent, { id }, { prisma }, _info) {
@@ -8,6 +8,10 @@ async function education(_parent, { id }, { prisma }, _info) {
 
 async function father(_parent, { id }, { prisma }, _info) {
   return await prisma.father.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function orphan(_parent, { id }, { prisma }, _info) {
+  return await prisma.orphan.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function guardian(_parent, { id }, { prisma }, _info) {
@@ -22,16 +26,24 @@ async function mother(_parent, { id }, { prisma }, _info) {
   return await prisma.mother.findUnique({ where: { id: parseInt(id) } });
 }
 
-async function donor(_parent, { id }, { prisma }, _info) {
-  return await prisma.donor.findUnique({ where: { id: parseInt(id) } });
-}
-
 async function socialWorker(_parent, { id }, { prisma }, _info) {
   return await prisma.socialWorker.findUnique({ where: { id: parseInt(id) } });
 }
 
+async function region(_parent, { id }, { prisma }, _info) {
+  return await prisma.region.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function zone(_parent, { id }, { prisma }, _info) {
+  return await prisma.zone.findUnique({ where: { id: parseInt(id) } });
+}
+
 async function district(_parent, { id }, { prisma }, _info) {
   return await prisma.district.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function village(_parent, { id }, { prisma }, _info) {
+  return await prisma.village.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function educationalRecord(_parent, { id }, { prisma }, _info) {
@@ -64,12 +76,6 @@ async function orphanPhotos(_parent, { id }, { prisma }, _info) {
   });
 }
 
-async function peasantAssociation(_parent, { id }, { prisma }, _info) {
-  return await prisma.peasantAssociation.findUnique({
-    where: { id: parseInt(id) }
-  });
-}
-
 async function sponsorshipStatus(_parent, { id }, { prisma }, _info) {
   return await prisma.sponsorshipStatus.findUnique({
     where: { id: parseInt(id) }
@@ -77,9 +83,19 @@ async function sponsorshipStatus(_parent, { id }, { prisma }, _info) {
 }
 
 async function supportPlan(_parent, { id }, { prisma }, _info) {
-  return await prisma.supportPlan.findUnique({
-    where: { id: parseInt(id) }
-  });
+  return await prisma.supportPlan.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function head(_parent, { id }, { prisma }, _info) {
+  return await prisma.head.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function coordinator(_parent, { id }, { prisma }, _info) {
+  return await prisma.coordinator.findUnique({ where: { id: parseInt(id) } });
+}
+
+async function user(_parent, { id }, { prisma }, _info) {
+  return await prisma.user.findUnique({ where: { id: parseInt(id) } });
 }
 
 async function allDonors(
@@ -138,15 +154,7 @@ async function allOrphans(
   { prisma },
   _info
 ) {
-  const where = filter
-    ? {
-        OR: [
-          { firstName: { contains: filter } },
-          { fatherName: { contains: filter } },
-          { grandfatherName: { contains: filter } }
-        ]
-      }
-    : {};
+  const where = filter ? { firstName: { contains: filter } } : {};
   return await prisma.orphan.findMany({ take, where, orderBy });
 }
 
@@ -159,15 +167,40 @@ async function allSocialWorkers(
   const where = filter
     ? {
         OR: [
-          { fullName: { contains: filter } },
+          { firstName: { contains: filter } },
+          { middleName: { contains: filter } },
+          { lastName: { contains: filter } },
           { gender: { contains: filter } },
-          { phoneNumber: { contains: filter } },
+          { mobileNumber: { contains: filter } },
           { email: { contains: filter } }
         ]
       }
     : {};
 
   return await prisma.socialWorker.findMany({ take, where, orderBy });
+}
+
+async function allRegions(
+  _parent,
+  { take, filter, orderBy },
+  { prisma },
+  _info
+) {
+  const where = filter
+    ? {
+        name: { contains: filter }
+      }
+    : {};
+  return await prisma.region.findMany({ take, where, orderBy });
+}
+
+async function allZones(_parent, { take, filter, orderBy }, { prisma }, _info) {
+  const where = filter
+    ? {
+        name: { contains: filter }
+      }
+    : {};
+  return await prisma.zone.findMany({ take, where, orderBy });
 }
 
 async function allDistricts(
@@ -178,17 +211,13 @@ async function allDistricts(
 ) {
   const where = filter
     ? {
-        OR: [
-          { districtName: { contains: filter } },
-          { region: { contains: filter } },
-          { zone: { contains: filter } }
-        ]
+        name: { contains: filter }
       }
     : {};
   return await prisma.district.findMany({ take, where, orderBy });
 }
 
-async function allPeasantAssociations(
+async function allVillages(
   _parent,
   { take, filter, orderBy },
   { prisma },
@@ -196,11 +225,11 @@ async function allPeasantAssociations(
 ) {
   const where = filter
     ? {
-        paName: { contains: filter }
+        name: { contains: filter }
       }
     : {};
 
-  return await prisma.peasantAssociation.findMany({ take, where, orderBy });
+  return await prisma.village.findMany({ take, where, orderBy });
 }
 
 async function allSupportPlans(
@@ -212,8 +241,9 @@ async function allSupportPlans(
   const where = filter
     ? {
         OR: [
-          { currency: { contains: filter } },
-          { totalFund_fc: { contains: filter } }
+          { foreignCurrency: { contains: filter } },
+          { collectiveFund_fc: { contains: filter } },
+          { individualFund_fc: { contains: filter } }
         ]
       }
     : {};
@@ -229,23 +259,30 @@ module.exports = {
   mother,
   donor,
   socialWorker,
+  region,
+  zone,
   district,
+  village,
   healthRecord,
   house_property,
   orphanPhotos,
   educationalRecord,
   financialRecord,
   healthRecord,
-  peasantAssociation,
   sponsorshipStatus,
   supportPlan,
+  head,
+  coordinator,
+  user,
 
   allDonors,
   allOrphans,
   allSocialWorkers,
   allGuardians,
   allMothers,
+  allRegions,
+  allZones,
   allDistricts,
-  allPeasantAssociations,
+  allVillages,
   allSupportPlans
 };

@@ -80,7 +80,7 @@ type Mutation {
     coordinatorId: ID
     userId: ID
     orphans: [ID]
-    peasantAssociations: [ID]
+    villages: [ID]
     supportPlans: [ID]
   ): Donor!
 
@@ -217,9 +217,9 @@ type Mutation {
 
   updateRegion(id: ID!, name: String, zones: [ID]): Region!
 
-  createZone(name: String!, regionId: ID, zones: [ID]): Zone!
+  createZone(name: String!, regionId: ID, districts: [ID]): Zone!
 
-  updateZone(id: ID!, name: String, regionId: ID, zones: [ID]): Zone!
+  updateZone(id: ID!, name: String, regionId: ID, districts: [ID]): Zone!
 
   createDistrict(
     name: String!
@@ -248,6 +248,7 @@ type Mutation {
   ): Village!
 
   updateVillage(
+    id: ID!
     registrationDate: DateTime
     name: String
     coordiantorId: ID
@@ -439,14 +440,14 @@ type Mutation {
   ): OrphanPhotos!
 
   createSponsorshipStatus(
-    status: orphanSponsorshipStatus
+    status: sponsorshipStatus
     date: DateTime!
     orphanId: ID
   ): SponsorshipStatus!
 
   updateSponsorshipStatus(
     id: ID!
-    status: orphanSponsorshipStatus
+    status: sponsorshipStatus
     date: DateTime
     orphanId: ID
   ): SponsorshipStatus!
@@ -455,7 +456,7 @@ type Mutation {
     collectiveFund_fc: Float
     individualFund_fc: Float
     foreignCurrency: Float
-    supportPeriod: int
+    supportPeriod: Int
     exchangeRate: Float
     individualFund_brr: Float
     adminFee_brr: Float
@@ -470,7 +471,7 @@ type Mutation {
     collectiveFund_fc: Float
     individualFund_fc: Float
     foreignCurrency: Float
-    supportPeriod: int
+    supportPeriod: Int
     exchangeRate: Float
     individualFund_brr: Float
     adminFee_brr: Float
@@ -782,7 +783,7 @@ type SponsorshipStatus {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  status: orphanSponsorshipStatus
+  status: sponsorshipStatus
   date: DateTime!
   orphan: Orphan
 }
@@ -794,7 +795,7 @@ type SupportPlan {
   collectiveFund_fc: Float
   individualFund_fc: Float
   foreignCurrency: Float
-  supportPeriod: int
+  supportPeriod: Int
   exchangeRate: Float
   individualFund_brr: Float
   adminFee_brr: Float

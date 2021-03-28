@@ -1,4 +1,4 @@
-# Mutation Imlementation Guide
+# Mutation Implementation Guide
 
 ## Connect one-to-many relations as many-to-one
 

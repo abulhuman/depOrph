@@ -1,5 +1,9 @@
-function peasantAssociation({ id }, _args, { prisma }) {
-  return prisma.socialWorker.findUnique({ where: { id } }).peasantAssociation();
+function user({ id }, _args, { prisma }) {
+  return prisma.socialWorker.findUnique({ where: { id } }).user();
+}
+
+function district({ id }, _args, { prisma }) {
+  return prisma.socialWorker.findUnique({ where: { id } }).district();
 }
 
 function orphans({ id }, _args, { prisma }) {
@@ -7,6 +11,7 @@ function orphans({ id }, _args, { prisma }) {
 }
 
 module.exports = {
-  peasantAssociation,
+  user,
+  district,
   orphans
 };

@@ -22,7 +22,7 @@ const FinancialRecord = require("./resolvers/FinancialRecord");
 const HealthRecord = require("./resolvers/HealthRecord");
 const House_property = require("./resolvers/House_property");
 const OrphanPhotos = require("./resolvers/OrphanPhotos");
-const PeasantAssociation = require("./resolvers/PeasantAssociation");
+const Village = require("./resolvers/Village");
 const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
 const SupportPlan = require("./resolvers/SupportPlan");
 
@@ -49,7 +49,7 @@ const resolvers = {
   HealthRecord,
   House_property,
   OrphanPhotos,
-  PeasantAssociation,
+  Village,
   SponsorshipStatus,
   SupportPlan
 };

@@ -1,12 +1,22 @@
-function orphans({ id }, _args, { prisma }) {
-  return prisma.district.findUnique({ where: { id } }).orphans();
+function coordinator({ id }, _args, { prisma }) {
+  return prisma.district.findUnique({ where: { id } }).coordinator();
 }
 
-function peasantAssociations({ id }, _args, { prisma }) {
-  return prisma.district.findUnique({ where: { id } }).peasantAssociations();
+function zone({ id }, _args, { prisma }) {
+  return prisma.district.findUnique({ where: { id } }).zone();
+}
+
+function villages({ id }, _args, { prisma }) {
+  return prisma.district.findUnique({ where: { id } }).villages();
+}
+
+function socialWorkers({ id }, _args, { prisma }) {
+  return prisma.district.findUnique({ where: { id } }).socialWorker();
 }
 
 module.exports = {
-  orphans,
-  peasantAssociations
+  coordinator,
+  zone,
+  villages,
+  socialWorkers
 };
