@@ -250,6 +250,59 @@ async function allSupportPlans(
   return await prisma.supportPlan.findMany({ take, where, orderBy });
 }
 
+async function allHeads(
+  _parent,
+  { take, filter, orderBy },
+  { prisma },
+  _info
+) {
+  const where = filter
+    ? {
+        OR: [
+          { firstName: { contains: filter } },
+          { middleName: { contains: filter } },
+          { lastName: { contains: filter } }
+        ]
+      }
+    : {};
+  return await prisma.head.findMany({ take, where, orderBy });
+}
+
+async function allCoordinators(
+  _parent,
+  { take, filter, orderBy },
+  { prisma },
+  _info
+) {
+  const where = filter
+    ? {
+        OR: [
+          { firstName: { contains: filter } },
+          { middleName: { contains: filter } },
+          { lastName: { contains: filter } }
+        ]
+      }
+    : {};
+  return await prisma.coordinator.findMany({ take, where, orderBy });
+}
+
+async function allUsers(
+  _parent,
+  { take, filter, orderBy },
+  { prisma },
+  _info
+) {
+  const where = filter
+    ? {
+        OR: [
+          { role: { contains: filter } },
+          { email: { contains: filter } }
+        ]
+      }
+    : {};
+  return await prisma.user.findMany({ take, where, orderBy });
+}
+
 module.exports = {
   orphan,
   education,
@@ -284,5 +337,8 @@ module.exports = {
   allZones,
   allDistricts,
   allVillages,
-  allSupportPlans
+  allSupportPlans,
+  allHeads,
+  allCoordinators,
+  allUsers
 };

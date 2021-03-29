@@ -1,17 +1,17 @@
 function coordinators({ id }, _args, { prisma }) {
-  return prisma.education.findUnique({ where: { id } }).coordinators();
+  return prisma.user.findUnique({ where: { id } }).coordinators();
 }
 
 function heads({ id }, _args, { prisma }) {
-  return prisma.education.findUnique({ where: { id } }).heads();
+  return prisma.user.findUnique({ where: { id } }).heads();
 }
 
 function socialWorkers({ id }, _args, { prisma }) {
-  return prisma.education.findUnique({ where: { id } }).socialWorkers();
+  return prisma.user.findUnique({ where: { id } }).socialWorkers();
 }
 
 function donors({ id }, _args, { prisma }) {
-  return prisma.education.findUnique({ where: { id } }).donors();
+  return prisma.user.findUnique({ where: { id } }).donors();
 }
 
 module.exports = {

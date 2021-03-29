@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://devAdem:Shangquan1!@127.0.0.1:5432/depOrph"
+  url      = env("DATABASE_URL")
 }
 
 model Donor {
@@ -516,7 +516,7 @@ enum transaction_type_enum {
 enum userRoles_enum {
   Admin
   Head
-  Coordiantor
+  Coordinator
   Donor
   SocailWorker
   Guest

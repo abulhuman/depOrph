@@ -16,15 +16,20 @@ const Mother = require("./resolvers/Mother");
 const MotherJob = require("./resolvers/MotherJob");
 const Orphan = require("./resolvers/Orphan");
 const SocialWorker = require("./resolvers/SocialWorker");
+const Region = require("./resolvers/Region");
+const Zone = require("./resolvers/Zone");
 const District = require("./resolvers/District");
+const Village = require("./resolvers/Village");
 const EducationalRecord = require("./resolvers/EducationalRecord");
 const FinancialRecord = require("./resolvers/FinancialRecord");
 const HealthRecord = require("./resolvers/HealthRecord");
 const House_property = require("./resolvers/House_property");
 const OrphanPhotos = require("./resolvers/OrphanPhotos");
-const Village = require("./resolvers/Village");
 const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
 const SupportPlan = require("./resolvers/SupportPlan");
+const Head = require("./resolvers/Head");
+const Coordinator = require("./resolvers/Coordinator");
+const User = require("./resolvers/User");
 
 const app = express();
 
@@ -43,15 +48,20 @@ const resolvers = {
   MotherJob,
   Orphan,
   SocialWorker,
+  Region,
+  Zone,
   District,
+  Village,
   EducationalRecord,
   FinancialRecord,
   HealthRecord,
   House_property,
   OrphanPhotos,
-  Village,
   SponsorshipStatus,
-  SupportPlan
+  SupportPlan,
+  Head,
+  Coordinator,
+  User
 };
 
 const server = new ApolloServer({

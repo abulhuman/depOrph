@@ -54,6 +54,7 @@ type Query {
     filter: String
     orderBy: SupportPlanOrderByInput
   ): [SupportPlan]!
+  allHeads(take: Int, filter: String, orderBy: HeadOrderByInput): [Head]!
   allCoordinators(
     take: Int
     filter: String
@@ -530,8 +531,8 @@ type Mutation {
 
   updateUser(
     id: ID!
-    role: userRoles!
-    email: String!
+    role: userRoles
+    email: String
     password: String
     coordinators: [ID]
     heads: [ID]
@@ -1101,6 +1102,12 @@ input SupportPlanOrderByInput {
   netPayment_brr: Sort
   initDate: Sort
   termDate: Sort
+}
+
+input HeadOrderByInput {
+  firstName: Sort
+  middleName: Sort
+  lastName: Sort
 }
 
 input CoordinatorOrderByInput {
