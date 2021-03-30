@@ -165,8 +165,6 @@ type Mutation {
   ): Guardian!
 
   createMother(
-    created_at: DateTime
-    updated_at: DateTime
     firstName: String!
     middleName: String!
     lastName: String!
@@ -242,7 +240,7 @@ type Mutation {
   createVillage(
     registrationDate: DateTime!
     name: String
-    coordiantorId: ID
+    coordinatorId: ID
     districtId: ID
     donorId: ID
     orphans: [ID]
@@ -252,7 +250,7 @@ type Mutation {
     id: ID!
     registrationDate: DateTime
     name: String
-    coordiantorId: ID
+    coordinatorId: ID
     districtId: ID
     donorId: ID
     orphans: [ID]
@@ -437,7 +435,7 @@ type Mutation {
     id: ID!
     photoPortraitUrl: String
     photoLongUrl: String
-    orphan: ID
+    orphanId: ID
   ): OrphanPhotos!
 
   createSponsorshipStatus(
@@ -456,7 +454,7 @@ type Mutation {
   createSupportPlan(
     collectiveFund_fc: Float
     individualFund_fc: Float
-    foreignCurrency: Float
+    foreignCurrency: String
     supportPeriod: Int
     exchangeRate: Float
     individualFund_brr: Float
@@ -469,9 +467,10 @@ type Mutation {
   ): SupportPlan!
 
   updateSupportPlan(
+    id: ID!
     collectiveFund_fc: Float
     individualFund_fc: Float
-    foreignCurrency: Float
+    foreignCurrency: String
     supportPeriod: Int
     exchangeRate: Float
     individualFund_brr: Float
@@ -539,6 +538,13 @@ type Mutation {
     socialWorkers: [ID]
     donors: [ID]
   ): User!
+
+  login(email: String!, password: String!): AuthPayload!
+  register(role: userRoles, email: String!, password: String!): AuthPayload!
+}
+
+type AuthPayload {
+  user: User!
 }
 
 type Donor {
@@ -795,7 +801,7 @@ type SupportPlan {
   updated_at: DateTime
   collectiveFund_fc: Float
   individualFund_fc: Float
-  foreignCurrency: Float
+  foreignCurrency: String
   supportPeriod: Int
   exchangeRate: Float
   individualFund_brr: Float
@@ -1094,7 +1100,7 @@ input SupportPlanOrderByInput {
   updated_at: Sort
   collectiveFund_fc: Sort
   individualFund_fc: Sort
-  foreignCurrency: Sort
+  foreignCurrency: String
   supportPeriod: Sort
   exchangeRate: Sort
   individualFund_brr: Sort

@@ -66,7 +66,7 @@ model Guardian {
   dateOfBirth                        DateTime                       @default("1970-01-01T00:00:00.000Z")
   relationToOrphan                   guardian_relationtoorphan_enum @default(mother)
   email                              String                         @default("")
-  moblieNumber                       String                         @default("")
+  mobileNumber                       String                         @default("")
   telephoneNumber                    String?
   nationality                        guardian_nationality_enum      @default(Ethiopian)
   guardianIDCardUrl                  String                         @default("")
@@ -372,7 +372,7 @@ model User {
   created_at    DateTime?      @default(now())
   updated_at    DateTime?
   role          userRoles_enum @default(Guest)
-  email         String         @default("")
+  email         String         @default("") @unique
   password      String?
   coordinators  Coordinator[]
   heads         Head[]

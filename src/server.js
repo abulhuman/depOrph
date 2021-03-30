@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { ApolloServer } = require("apollo-server-express");
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
@@ -69,35 +70,52 @@ const server = new ApolloServer({
   resolvers,
   context: ({ req }) => {
     return {
-      ...req,
+      req,
       prisma
     };
   }
 });
 
-// create express middleware
-server.applyMiddleware({ app });
 
 // create file storage middleware to handle image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `./public/images/${file.fieldname}/`);
-    // console.log(file);
   },
   filename: function (req, file, cb) {
-    // const uniquePrefix = Date.now();
     cb(null, `${new Date().getTime()}-${file.originalname}`);
   }
 });
 
-// console.dir(storage.getDestination());
+const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
+
+app.use(
+  session({
+    name: "sessionId",
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 15 //* 60 * 24 * 7 // 7 days
+    }
+  })
+  );
+  // create express middleware
+  server.applyMiddleware({ app });
 
 const upload = multer({ storage });
 
 app.use(express.static("public"));
 
 app.use(history());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: `http://192.168.1.199:${process.env.PORT}`
+  })
+);
 
 app.post(
   "/public/images/orphanBirthCertificate/",
@@ -140,6 +158,14 @@ app.post(
   }
 );
 
-app.listen({ port: process.env.PORT || 3000 }, () => {
-  console.log(`🖥 Server ready at http://localhost:3000${server.graphqlPath} `);
-});
+app.listen(
+  {
+    port: process.env.PORT || 3000,
+    hostname: "192.168.1.199"
+  },
+  () => {
+    console.log(
+      `🖥 Server ready at http://192.168.1.199:3000${server.graphqlPath} `
+    );
+  }
+);

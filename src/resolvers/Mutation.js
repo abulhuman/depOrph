@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 async function createDonor(_parent, args, { prisma }, _info) {
   const orphansIds = args.orphans
     ? [...args.orphans].map((val) => ({
@@ -281,10 +283,10 @@ async function createRegion(_parent, args, { prisma }, _info) {
   const zonesIds = args.zones
     ? [...args.zones].map((val) => ({ id: parseInt(val) }))
     : [];
-  return await prisma.zone.create({
+  return await prisma.region.create({
     data: {
       ...args,
-      zone: {
+      zones: {
         connect: zonesIds
       }
     }
@@ -298,12 +300,12 @@ async function updateRegion(_parent, args, { prisma }, _info) {
   const zonesIds = args.zones
     ? [...args.zones].map((val) => ({ id: parseInt(val) }))
     : [];
-  return await prisma.zone.update({
+  return await prisma.region.update({
     where: { id },
     data: {
       ...args,
       updated_at: new Date(),
-      zone: {
+      zones: {
         connect: zonesIds
       }
     }
@@ -352,25 +354,23 @@ async function updateZone(_parent, args, { prisma }, _info) {
 }
 
 async function createDistrict(_parent, args, { prisma }, _info) {
-  const orphansIds = args.orphans
-    ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
+  const villageIds = args.villages
+    ? [...args.villages].map((val) => ({
+        id: parseInt(val)
+      }))
     : [];
-  const villageIds = [...args.villageIds].map((val) => ({
-    id: parseInt(val)
-  }));
-  const socialWorkersIds = [...args.socialWorkersIds].map((val) => ({
-    id: parseInt(val)
-  }));
+  const socialWorkersIds = args.socialWorkers
+    ? [...args.socialWorkers].map((val) => ({
+        id: parseInt(val)
+      }))
+    : [];
   return await prisma.district.create({
     data: {
       ...args,
-      orphans: {
-        connect: orphansIds
-      },
       villages: {
         connect: villageIds
       },
-      cooridnatorId: args.coordinatorId ? parseInt(args.coordinatorId) : null,
+      coordinatorId: args.coordinatorId ? parseInt(args.coordinatorId) : null,
       zoneId: args.zoneId ? parseInt(args.zoneId) : null,
       socialWorkers: {
         connect: socialWorkersIds
@@ -430,18 +430,13 @@ async function createVillage(_parent, args, { prisma }, _info) {
         id: parseInt(val)
       }))
     : [];
-  const socialWorkersIds = args.socialWorkers
-    ? [...args.socialWorkers].map((val) => ({
-        id: parseInt(val)
-      }))
-    : [];
   return await prisma.village.create({
     data: {
       ...args,
       districtId: args.districtId ? parseInt(args.districtId) : null,
       donorId: args.donorId ? parseInt(args.donorId) : null,
-      orphans: { connect: orphansIds },
-      socialWorkers: { connect: socialWorkersIds }
+      coordinatorId: args.coordinatorId ? parseInt(args.coordinatorId) : null,
+      orphans: { connect: orphansIds }
     }
   });
 }
@@ -670,9 +665,9 @@ async function createSocialWorker(_parent, args, { prisma }, _info) {
   return await prisma.socialWorker.create({
     data: {
       ...args,
-      villagesId: args.villagesId ? parseInt(args.villagesId) : null,
-      orphans: { connect: orphansIds },
-      userId: args.userId ? parseInt(args.userId) : null
+      userId: args.userId ? parseInt(args.userId) : null,
+      districtId: args.districtId ? parseInt(args.districtId) : null,
+      orphans: { connect: orphansIds }
     }
   });
 }
@@ -1032,6 +1027,41 @@ async function updateUser(_parent, args, { prisma }, _info) {
   });
 }
 
+async function login(_parent, { email, password }, { req, prisma }, _info) {
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  if (!user) {
+    throw new Error(`No such user found for email: ${email}`);
+  }
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) {
+    throw new Error(`Invalid password`);
+  }
+  req.session.userId = user.id;
+  req.session.userRole = user.role;
+  return {
+    user
+  };
+}
+
+async function register(
+  _parent,
+  { role, email, password },
+  { req, prisma },
+  _info
+) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: { role, email, password: hashedPassword }
+  });
+  req.session.userId = user.id;
+  req.session.userRole = user.role;
+  return {
+    user
+  };
+}
+
 module.exports = {
   createDonor,
   updateDonor,
@@ -1076,5 +1106,7 @@ module.exports = {
   createCoordinator,
   updateCoordinator,
   createUser,
-  updateUser
+  updateUser,
+  login,
+  register
 };
