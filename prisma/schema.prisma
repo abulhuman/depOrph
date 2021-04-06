@@ -223,7 +223,6 @@ model SocialWorker {
   gender       socialworker_gender_enum?
   dateOfBirth  DateTime?
   mobileNumber String                    @default("")
-  email        String                    @default("")
   initDate     DateTime?
   termDate     DateTime?
   districtId   Int?
@@ -376,7 +375,7 @@ model User {
   password      String?
   coordinators  Coordinator[]
   heads         Head[]
-  socialworkers SocialWorker[]
+  socialWorkers SocialWorker[]
   donors        Donor[]
 
   @@map("user")

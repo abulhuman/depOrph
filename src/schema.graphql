@@ -332,7 +332,6 @@ type Mutation {
     gender: socialWorkerGender
     dateOfBirth: DateTime
     mobileNumber: String!
-    email: String!
     initDate: DateTime
     termDate: DateTime
     userId: ID
@@ -348,7 +347,6 @@ type Mutation {
     gender: socialWorkerGender
     dateOfBirth: DateTime
     mobileNumber: String
-    email: String
     initDate: DateTime
     termDate: DateTime
     userId: ID
@@ -723,7 +721,6 @@ type SocialWorker {
   gender: socialWorkerGender
   dateOfBirth: DateTime
   mobileNumber: String!
-  email: String!
   initDate: DateTime
   termDate: DateTime
   user: User

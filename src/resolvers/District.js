@@ -11,7 +11,7 @@ function villages({ id }, _args, { prisma }) {
 }
 
 function socialWorkers({ id }, _args, { prisma }) {
-  return prisma.district.findUnique({ where: { id } }).socialWorker();
+  return prisma.district.findUnique({ where: { id } }).socialWorkers();
 }
 
 module.exports = {

@@ -1,3 +1,5 @@
+const { userRoles_enum } = require("@prisma/client");
+
 async function donor(_parent, { id }, { prisma }, _info) {
   return await prisma.donor.findUnique({ where: { id: parseInt(id) } });
 }
@@ -250,12 +252,7 @@ async function allSupportPlans(
   return await prisma.supportPlan.findMany({ take, where, orderBy });
 }
 
-async function allHeads(
-  _parent,
-  { take, filter, orderBy },
-  { prisma },
-  _info
-) {
+async function allHeads(_parent, { take, filter, orderBy }, { prisma }, _info) {
   const where = filter
     ? {
         OR: [
@@ -286,20 +283,32 @@ async function allCoordinators(
   return await prisma.coordinator.findMany({ take, where, orderBy });
 }
 
-async function allUsers(
-  _parent,
-  { take, filter, orderBy },
-  { prisma },
-  _info
-) {
+async function allUsers(_parent, { take, filter, orderBy }, { prisma }, _info) {
+  const roleFilter =
+    filter == "Admin"
+      ? userRoles_enum.Admin
+      : filter == "SocialWorker"
+      ? userRoles_enum.SocailWorker
+      : filter == "Head"
+      ? userRoles_enum.Head
+      : filter == "Donor"
+      ? userRoles_enum.Donor
+      : userRoles_enum.Guest;
+
   const where = filter
     ? {
         OR: [
-          { role: { contains: filter } },
+          { role: { equals: roleFilter } },
           { email: { contains: filter } }
         ]
       }
     : {};
+  const xwhere = {
+    OR: [
+      { email: { endsWith: "prisma.io" } },
+      { email: { endsWith: "gmail.com" } }
+    ]
+  };
   return await prisma.user.findMany({ take, where, orderBy });
 }
 

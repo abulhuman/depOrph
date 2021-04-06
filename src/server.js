@@ -76,7 +76,6 @@ const server = new ApolloServer({
   }
 });
 
-
 // create file storage middleware to handle image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -101,9 +100,9 @@ app.use(
       maxAge: 1000 * 15 //* 60 * 24 * 7 // 7 days
     }
   })
-  );
-  // create express middleware
-  server.applyMiddleware({ app });
+);
+// create express middleware
+server.applyMiddleware({ app });
 
 const upload = multer({ storage });
 
@@ -113,7 +112,7 @@ app.use(history());
 app.use(
   cors({
     credentials: true,
-    origin: `http://192.168.1.199:${process.env.PORT}`
+    origin: `http://${process.env.HOSTNAME}:${process.env.PORT}`
   })
 );
 
@@ -161,11 +160,13 @@ app.post(
 app.listen(
   {
     port: process.env.PORT || 3000,
-    hostname: "192.168.1.199"
+    hostname: process.env.HOSTNAME || "127.0.0.1"
   },
   () => {
     console.log(
-      `🖥 Server ready at http://192.168.1.199:3000${server.graphqlPath} `
+      `🖥 Server ready at http://${process.env.HOSTNAME}:${
+        process.env.PORT || 3000
+      }${server.graphqlPath} `
     );
   }
 );
