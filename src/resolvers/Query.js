@@ -1,4 +1,10 @@
 const { userRoles_enum } = require("@prisma/client");
+const moment = require("moment");
+const {
+  getUser,
+  AuthenticationError,
+  AuthorizationError
+} = require("../utils");
 
 async function donor(_parent, { id }, { prisma }, _info) {
   return await prisma.donor.findUnique({ where: { id: parseInt(id) } });
@@ -283,7 +289,12 @@ async function allCoordinators(
   return await prisma.coordinator.findMany({ take, where, orderBy });
 }
 
-async function allUsers(_parent, { take, filter, orderBy }, { prisma }, _info) {
+async function allUsers(
+  _parent,
+  { take, filter, orderBy },
+  { prisma, req },
+  _info
+) {
   const roleFilter =
     filter == "Admin"
       ? userRoles_enum.Admin
@@ -297,19 +308,20 @@ async function allUsers(_parent, { take, filter, orderBy }, { prisma }, _info) {
 
   const where = filter
     ? {
-        OR: [
-          { role: { equals: roleFilter } },
-          { email: { contains: filter } }
-        ]
+        OR: [{ role: { equals: roleFilter } }, { email: { contains: filter } }]
       }
     : {};
-  const xwhere = {
-    OR: [
-      { email: { endsWith: "prisma.io" } },
-      { email: { endsWith: "gmail.com" } }
-    ]
-  };
-  return await prisma.user.findMany({ take, where, orderBy });
+    
+  if (getUser(req).userId) {
+    console.log("Authenticated as SocailWorker? ", getUser(req).userRole == userRoles_enum.SocailWorker ? "yes": "no");
+    if (getUser(req).userRole == userRoles_enum.Head) {
+      console.log("Authorized");
+      return await prisma.user.findMany({ take, where, orderBy });
+    } 
+    throw new AuthorizationError();
+  }
+  throw new AuthenticationError();
+
 }
 
 module.exports = {

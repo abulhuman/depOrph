@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const moment = require("moment");
 
 async function createDonor(_parent, args, { prisma }, _info) {
   const orphansIds = args.orphans
@@ -1027,6 +1028,23 @@ async function updateUser(_parent, args, { prisma }, _info) {
   });
 }
 
+async function register(
+  _parent,
+  { role, email, password },
+  { req, prisma },
+  _info
+) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: { role, email, password: hashedPassword }
+  });
+  req.session.userId = user.id;
+  req.session.userRole = user.role;
+  return {
+    user
+  };
+}
+
 async function login(_parent, { email, password }, { req, prisma }, _info) {
   const user = await prisma.user.findUnique({
     where: { email }
@@ -1045,21 +1063,15 @@ async function login(_parent, { email, password }, { req, prisma }, _info) {
   };
 }
 
-async function register(
-  _parent,
-  { role, email, password },
-  { req, prisma },
-  _info
-) {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
-    data: { role, email, password: hashedPassword }
-  });
-  req.session.userId = user.id;
-  req.session.userRole = user.role;
-  return {
-    user
-  };
+function logout(_parent, _args, { req }, _info) {  
+  return new Promise((res) =>
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("logout err: ", err);
+      }
+      res(true);
+    })
+  );
 }
 
 module.exports = {
@@ -1107,6 +1119,7 @@ module.exports = {
   updateCoordinator,
   createUser,
   updateUser,
+  register,
   login,
-  register
+  logout
 };

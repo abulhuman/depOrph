@@ -537,8 +537,9 @@ type Mutation {
     donors: [ID]
   ): User!
 
-  login(email: String!, password: String!): AuthPayload!
   register(role: userRoles, email: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  logout: Boolean!
 }
 
 type AuthPayload {

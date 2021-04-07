@@ -27,6 +27,7 @@
     "express": "latest",
     "express-session": "latest",
     "graphql": "latest",
+    "moment": "^2.29.1",
     "multer": "latest",
     "node-gyp": "latest"
   }

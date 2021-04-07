@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, ApolloError } = require("apollo-server-express");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -95,13 +95,24 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 15 //* 60 * 24 * 7 // 7 days
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 4.32e+7 // 12 hours 
     }
   })
 );
-// create express middleware
+
+// const authMiddleware = (req, _res, next) => {
+//   if (req.session.userId) {
+//     next();
+//   }
+//   throw new ApolloError(
+//     "Not Authenticated.",
+//     "BAD_USER_INPUT"
+//   );
+// }
+// app.use(authMiddleware);
+// apply express middleware
 server.applyMiddleware({ app });
 
 const upload = multer({ storage });
