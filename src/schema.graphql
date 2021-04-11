@@ -983,7 +983,7 @@ enum userRoles {
   Head
   Coordinator
   Donor
-  SocailWorker
+  SocialWorker
   Guest
 }
 

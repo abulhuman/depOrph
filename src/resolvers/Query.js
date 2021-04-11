@@ -410,7 +410,7 @@ async function allUsers(
     filter == "Admin"
       ? userRoles_enum.Admin
       : filter == "SocialWorker"
-      ? userRoles_enum.SocailWorker
+      ? userRoles_enum.SocialWorker
       : filter == "Head"
       ? userRoles_enum.Head
       : filter == "Donor"

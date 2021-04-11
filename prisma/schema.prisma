@@ -517,6 +517,6 @@ enum userRoles_enum {
   Head
   Coordinator
   Donor
-  SocailWorker
+  SocialWorker
   Guest
 }
