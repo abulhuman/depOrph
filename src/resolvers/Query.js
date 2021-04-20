@@ -181,7 +181,7 @@ async function allDonors(
 ) {
   const where = filter
     ? {
-        companyName: { contains: filter }
+        companyName: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -199,9 +199,9 @@ async function allGuardians(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter } },
-          { middleName: { contains: filter } },
-          { lastName: { contains: filter } }
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -220,9 +220,9 @@ async function allMothers(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter } },
-          { middleName: { contains: filter } },
-          { lastName: { contains: filter } }
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -238,7 +238,15 @@ async function allOrphans(
   { prisma, req },
   _info
 ) {
-  const where = filter ? { firstName: { contains: filter } } : {};
+  const where = filter
+    ? {
+        firstName: { contains: filter, mode: "insensitive" },
+        father: { 
+          firstName: { contains: filter, mode: "insensitive" },
+          lastName: { contains: filter, mode: "insensitive" }
+         }
+      }
+    : {};
   if (getUser(req).userId) {
     return await prisma.orphan.findMany({ take, where, orderBy });
   }
@@ -254,12 +262,12 @@ async function allSocialWorkers(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter } },
-          { middleName: { contains: filter } },
-          { lastName: { contains: filter } },
-          { gender: { contains: filter } },
-          { mobileNumber: { contains: filter } },
-          { email: { contains: filter } }
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } },
+          { gender: { contains: filter, mode: "insensitive" } },
+          { mobileNumber: { contains: filter, mode: "insensitive" } },
+          { email: { contains: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -277,7 +285,7 @@ async function allRegions(
 ) {
   const where = filter
     ? {
-        name: { contains: filter }
+        name: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -294,7 +302,7 @@ async function allZones(
 ) {
   const where = filter
     ? {
-        name: { contains: filter }
+        name: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -311,7 +319,7 @@ async function allDistricts(
 ) {
   const where = filter
     ? {
-        name: { contains: filter }
+        name: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -328,7 +336,7 @@ async function allVillages(
 ) {
   const where = filter
     ? {
-        name: { contains: filter }
+        name: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -346,9 +354,9 @@ async function allSupportPlans(
   const where = filter
     ? {
         OR: [
-          { foreignCurrency: { contains: filter } },
-          { collectiveFund_fc: { contains: filter } },
-          { individualFund_fc: { contains: filter } }
+          { foreignCurrency: { contains: filter, mode: "insensitive" } },
+          { collectiveFund_fc: { equals: filter, mode: "insensitive" } },
+          { individualFund_fc: { equals: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -367,9 +375,9 @@ async function allHeads(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter } },
-          { middleName: { contains: filter } },
-          { lastName: { contains: filter } }
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -388,9 +396,9 @@ async function allCoordinators(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter } },
-          { middleName: { contains: filter } },
-          { lastName: { contains: filter } }
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
         ]
       }
     : {};
@@ -419,7 +427,10 @@ async function allUsers(
 
   const where = filter
     ? {
-        OR: [{ role: { equals: roleFilter } }, { email: { contains: filter } }]
+        OR: [
+          { role: { equals: roleFilter } },
+          { email: { contains: filter, mode: "insensitive" } }
+        ]
       }
     : {};
 

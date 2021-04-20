@@ -68,7 +68,7 @@ type Mutation {
     companyName: String!
     nameInitials: String!
     coordinatorId: ID
-    userId: ID
+    userId: ID!
     orphans: [ID]
     villages: [ID]
     supportPlans: [ID]
@@ -334,7 +334,7 @@ type Mutation {
     mobileNumber: String!
     initDate: DateTime
     termDate: DateTime
-    userId: ID
+    userId: ID!
     districtId: ID
     orphans: [ID]
   ): SocialWorker!
@@ -454,6 +454,7 @@ type Mutation {
     individualFund_fc: Float
     foreignCurrency: String
     supportPeriod: Int
+    adminFeePercentage: Float
     exchangeRate: Float
     individualFund_brr: Float
     adminFee_brr: Float
@@ -470,6 +471,7 @@ type Mutation {
     individualFund_fc: Float
     foreignCurrency: String
     supportPeriod: Int
+    adminFeePercentage: Float
     exchangeRate: Float
     individualFund_brr: Float
     adminFee_brr: Float
@@ -484,7 +486,7 @@ type Mutation {
     firstName: String!
     middleName: String!
     lastName: String!
-    userId: ID
+    userId: ID!
   ): Head!
 
   updateHead(
@@ -499,7 +501,7 @@ type Mutation {
     firstName: String!
     middleName: String!
     lastName: String!
-    userId: ID
+    userId: ID!
     villages: [ID]
     districts: [ID]
     donors: [ID]
@@ -553,7 +555,7 @@ type Donor {
   companyName: String!
   nameInitials: String!
   coordinator: Coordinator
-  user: User
+  user: User!
   orphans: [Orphan]
   villages: [Village]
   supportPlans: [SupportPlan]
@@ -724,7 +726,7 @@ type SocialWorker {
   mobileNumber: String!
   initDate: DateTime
   termDate: DateTime
-  user: User
+  user: User!
   district: District
   orphans: [Orphan]
 }
@@ -801,6 +803,7 @@ type SupportPlan {
   individualFund_fc: Float
   foreignCurrency: String
   supportPeriod: Int
+  adminFeePercentage: Float
   exchangeRate: Float
   individualFund_brr: Float
   adminFee_brr: Float
@@ -818,7 +821,7 @@ type Head {
   firstName: String!
   middleName: String!
   lastName: String!
-  user: User
+  user: User!
 }
 
 type Coordinator {
@@ -828,7 +831,7 @@ type Coordinator {
   firstName: String!
   middleName: String!
   lastName: String!
-  user: User
+  user: User!
   villages: [Village]
   districts: [District]
   donors: [Donor]
@@ -1100,6 +1103,7 @@ input SupportPlanOrderByInput {
   individualFund_fc: Sort
   foreignCurrency: String
   supportPeriod: Sort
+  adminFeePercentage: Sort
   exchangeRate: Sort
   individualFund_brr: Sort
   adminFee_brr: Sort

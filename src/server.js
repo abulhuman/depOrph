@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { ApolloServer, ApolloError } = require("apollo-server-express");
+const { ApolloServer } = require("apollo-server-express");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");

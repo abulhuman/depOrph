@@ -323,6 +323,7 @@ model SupportPlan {
   individualFund_fc  Float?
   foreignCurrency    String?
   supportPeriod      Int?
+  adminFeePercentage Float?
   exchangeRate       Float?
   individualFund_brr Float?
   adminFee_brr       Float?
