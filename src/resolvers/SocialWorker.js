@@ -2,8 +2,12 @@ function user({ id }, _args, { prisma }) {
   return prisma.socialWorker.findUnique({ where: { id } }).user();
 }
 
-function district({ id }, _args, { prisma }) {
-  return prisma.socialWorker.findUnique({ where: { id } }).district();
+function districts({ id }, _args, { prisma }) {
+  return prisma.socialWorker.findUnique({ where: { id } }).districts();
+}
+
+function villages({ id }, _args, { prisma }) {
+  return prisma.socialWorker.findUnique({ where: { id } }).villages();
 }
 
 function orphans({ id }, _args, { prisma }) {
@@ -12,6 +16,7 @@ function orphans({ id }, _args, { prisma }) {
 
 module.exports = {
   user,
-  district,
+  districts,
+  villages,
   orphans
 };

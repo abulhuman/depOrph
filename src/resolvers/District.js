@@ -14,9 +14,14 @@ function socialWorkers({ id }, _args, { prisma }) {
   return prisma.district.findUnique({ where: { id } }).socialWorkers();
 }
 
+function donors({ id }, _args, { prisma }) {
+  return prisma.district.findUnique({ where: { id } }).donors();
+}
+
 module.exports = {
   coordinator,
   zone,
   villages,
-  socialWorkers
+  socialWorkers,
+  donors
 };

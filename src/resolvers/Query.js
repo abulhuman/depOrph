@@ -1,5 +1,8 @@
-const { userRoles_enum } = require("@prisma/client");
-const moment = require("moment");
+const {
+  userRoles_enum,
+  orphan_gender_enum,
+  sponsorshipstatus_enum
+} = require("@prisma/client");
 const {
   getUser,
   AuthenticationError,
@@ -181,7 +184,8 @@ async function allDonors(
 ) {
   const where = filter
     ? {
-        companyName: { contains: filter, mode: "insensitive" }
+        companyName: { contains: filter, mode: "insensitive" },
+        nameInitials: { contains: filter, mode: "insensitive" }
       }
     : {};
   if (getUser(req).userId) {
@@ -238,13 +242,38 @@ async function allOrphans(
   { prisma, req },
   _info
 ) {
+  const genderFilter =
+    String(filter).toUpperCase() === "M"
+      ? orphan_gender_enum.M
+      : orphan_gender_enum.F;
+
+  const sponsorshipstatusFilter =
+    String(filter).toLowerCase() === "processing"
+      ? sponsorshipstatus_enum.processing
+      : String(filter).toLowerCase() === "active"
+      ? sponsorshipstatus_enum.active
+      : String(filter).toLowerCase() === "pending"
+      ? sponsorshipstatus_enum.pending
+      : sponsorshipstatus_enum.graduated;
+
   const where = filter
     ? {
-        firstName: { contains: filter, mode: "insensitive" },
-        father: { 
-          firstName: { contains: filter, mode: "insensitive" },
-          lastName: { contains: filter, mode: "insensitive" }
-         }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          {
+            father: {
+              firstName: { contains: filter, mode: "insensitive" },
+              lastName: { contains: filter, mode: "insensitive" }
+            }
+          },
+          { age: { equals: parseInt(filter) } },
+          { gender: { equals: genderFilter } },
+          {
+            sponsorshipStatus: {
+              status: { equals: sponsorshipstatusFilter }
+            }
+          }
+        ]
       }
     : {};
   if (getUser(req).userId) {

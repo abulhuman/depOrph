@@ -70,6 +70,7 @@ type Mutation {
     coordinatorId: ID
     userId: ID!
     orphans: [ID]
+    districts: [ID]
     villages: [ID]
     supportPlans: [ID]
   ): Donor!
@@ -81,6 +82,7 @@ type Mutation {
     coordinatorId: ID
     userId: ID
     orphans: [ID]
+    districts: [ID]
     villages: [ID]
     supportPlans: [ID]
   ): Donor!
@@ -226,6 +228,7 @@ type Mutation {
     zoneId: ID
     villages: [ID]
     socialWorkers: [ID]
+    donors: [ID]
   ): District!
 
   updateDistrict(
@@ -235,12 +238,14 @@ type Mutation {
     zoneId: ID
     villages: [ID]
     socialWorkers: [ID]
+    donors: [ID]
   ): District!
 
   createVillage(
     registrationDate: DateTime!
     name: String
     coordinatorId: ID
+    socialWorkerId: ID
     districtId: ID
     donorId: ID
     orphans: [ID]
@@ -251,6 +256,7 @@ type Mutation {
     registrationDate: DateTime
     name: String
     coordinatorId: ID
+    socialWorkerId: ID
     districtId: ID
     donorId: ID
     orphans: [ID]
@@ -335,7 +341,8 @@ type Mutation {
     initDate: DateTime
     termDate: DateTime
     userId: ID!
-    districtId: ID
+    districts: [ID]
+    villages: [ID]
     orphans: [ID]
   ): SocialWorker!
 
@@ -350,7 +357,8 @@ type Mutation {
     initDate: DateTime
     termDate: DateTime
     userId: ID
-    districtId: ID
+    districts: [ID]
+    villages: [ID]
     orphans: [ID]
   ): SocialWorker!
 
@@ -461,8 +469,8 @@ type Mutation {
     netPayment_brr: Float
     initDate: DateTime
     termDate: DateTime
-    donorId: ID
-    orphans: [ID]
+    donorId: ID!
+    orphans: [ID!]!
   ): SupportPlan!
 
   updateSupportPlan(
@@ -557,6 +565,7 @@ type Donor {
   coordinator: Coordinator
   user: User!
   orphans: [Orphan]
+  districts: [District]
   villages: [Village]
   supportPlans: [SupportPlan]
 }
@@ -663,6 +672,7 @@ type District {
   zone: Zone
   villages: [Village]
   socialWorkers: [SocialWorker]
+  donors: [Donor]
 }
 
 type Village {
@@ -672,6 +682,7 @@ type Village {
   registrationDate: DateTime!
   name: String
   coordinator: Coordinator
+  socialWorker: SocialWorker
   district: District
   donor: Donor
   orphans: [Orphan]
@@ -727,7 +738,8 @@ type SocialWorker {
   initDate: DateTime
   termDate: DateTime
   user: User!
-  district: District
+  districts: [District]
+  villages: [Village]
   orphans: [Orphan]
 }
 

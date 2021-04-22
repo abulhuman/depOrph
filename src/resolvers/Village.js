@@ -2,6 +2,10 @@ function coordinator({ id }, _args, { prisma }) {
   return prisma.village.findUnique({ where: { id } }).coordinator();
 }
 
+function socialWorker({ id }, _args, { prisma }) {
+  return prisma.village.findUnique({ where: { id } }).socialWorker();
+}
+
 function district({ id }, _args, { prisma }) {
   return prisma.village.findUnique({ where: { id } }).district();
 }
@@ -16,6 +20,7 @@ function orphans({ id }, _args, { prisma }) {
 
 module.exports = {
   coordinator,
+  socialWorker,
   district,
   donor,
   orphans
