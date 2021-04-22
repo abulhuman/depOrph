@@ -65,6 +65,7 @@ const resolvers = {
   User
 };
 
+/** create an ApolloServer instance to handle the graphql server */
 const server = new ApolloServer({
   typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8"),
   resolvers,
@@ -76,6 +77,27 @@ const server = new ApolloServer({
   }
 });
 
+const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
+
+/** use a session with a rondom string as a session
+ *  secret for authentication with a cookie that 
+ * expires after 12 hours of being set (login),
+ * then the user is required to login again
+ */
+app.use(
+  session({
+    name: "sessionId",
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 4.32e+7 // 12 hours
+    }
+  })
+);
+
 // create file storage middleware to handle image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -86,46 +108,30 @@ const storage = multer.diskStorage({
   }
 });
 
-const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
-
-app.use(
-  session({
-    name: "sessionId",
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 4.32e+7 // 12 hours 
-    }
-  })
-);
-
-// const authMiddleware = (req, _res, next) => {
-//   if (req.session.userId) {
-//     next();
-//   }
-//   throw new ApolloError(
-//     "Not Authenticated.",
-//     "BAD_USER_INPUT"
-//   );
-// }
-// app.use(authMiddleware);
-// apply express middleware
-server.applyMiddleware({ app });
 
 const upload = multer({ storage });
 
 app.use(express.static("public"));
 
+/** handle all routing by the front-end
+ * Single Page Application (SPA, vue.js in our case)
+ */
 app.use(history());
+
+/** enable cors using the cors() express middleware */
 app.use(
   cors({
     credentials: true,
-    origin: `http://${process.env.HOSTNAME}:${process.env.PORT}`
+    origin: [
+      `http://${process.env.HOSTNAME}:${process.env.PORT}`, // main node-express application server origin address
+      `http://localhost:3000/`, // dev server origin address
+      `http://127.0.0.1:3000/` // dev server origin address
+    ]
   })
 );
+
+/** cors: false -- disables the apollo-server-express cors to allow the cors() middleware use*/
+server.applyMiddleware({ app, cors: false });
 
 app.post(
   "/public/images/orphanBirthCertificate/",
@@ -168,6 +174,7 @@ app.post(
   }
 );
 
+/** start server and listen for connections using the express application */
 app.listen(
   {
     port: process.env.PORT || 3000,
