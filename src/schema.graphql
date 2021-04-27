@@ -32,6 +32,8 @@ type Query {
   ): [Guardian]!
   allMothers(take: Int, filter: String, orderBy: MotherOrderByInput): [Mother]!
   allOrphans(take: Int, filter: String, orderBy: OrphanOrderByInput): [Orphan]!
+  someOrphansByIds(orphansIds: [ID]!): [Orphan]!
+  someOrphansByDonorId(take: Int, donorId: ID!, orderBy: OrphanOrderByInput): [Orphan]!
   allSocialWorkers(
     take: Int
     filter: String
