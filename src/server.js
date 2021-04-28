@@ -32,6 +32,8 @@ const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
 const User = require("./resolvers/User");
 
+const { getUser } = require("./utils");
+
 const app = express();
 
 const prisma = new PrismaClient({
@@ -80,7 +82,7 @@ const server = new ApolloServer({
 const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
 
 /** use a session with a rondom string as a session
- *  secret for authentication with a cookie that 
+ *  secret for authentication with a cookie that
  * expires after 12 hours of being set (login),
  * then the user is required to login again
  */
@@ -93,7 +95,7 @@ app.use(
     cookie: {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 4.32e+7 // 12 hours
+      maxAge: 4.32e7 // 12 hours
     }
   })
 );
@@ -108,8 +110,25 @@ const storage = multer.diskStorage({
   }
 });
 
-
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: function fileFilter(req, file, cb) {
+    /** allow uploads only for authenticated users */
+    try {
+      /** The function should call `cb` with a boolean
+       * to indicate if the file should be accepted
+       *
+       * To accept the file pass `true`
+       * To reject this file pass `false`
+       */
+      if (getUser(req).userId) cb(null, true);
+      else cb(null, false);
+    } catch (error) {
+      /** You can always pass an error if something goes wrong */
+      cb(error);
+    }
+  }
+});
 
 app.use(express.static("public"));
 
@@ -137,7 +156,6 @@ app.post(
   "/public/images/orphanBirthCertificate/",
   upload.single("orphanBirthCertificate"),
   function (req, res) {
-    console.dir(req.file);
     return res.send(req.file.path);
   }
 );
@@ -182,7 +200,10 @@ app.listen(
   },
   () => {
     console.log(
-      `🖥 Server ready at http://${process.env.HOSTNAME}:${
+      `💻 Server ready at http://${process.env.HOSTNAME}:${
+        process.env.PORT || 3000
+      }`,
+      `\n⌛ Playground ready at http://${process.env.HOSTNAME}:${
         process.env.PORT || 3000
       }${server.graphqlPath} `
     );
