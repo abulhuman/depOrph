@@ -152,6 +152,7 @@ app.use(
 /** cors: false -- disables the apollo-server-express cors to allow the cors() middleware use*/
 server.applyMiddleware({ app, cors: false });
 
+/** post end points for image/pdf upload */
 app.post(
   "/public/images/orphanBirthCertificate/",
   upload.single("orphanBirthCertificate"),
@@ -161,8 +162,40 @@ app.post(
 );
 
 app.post(
-  "/public/images/orphanPhotoPortrait/",
-  upload.single("orphanPhotoPortrait"),
+  "/public/images/orphanIdCard/",
+  upload.single("orphanIdCard"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
+  "/public/images/orphanPassport/",
+  upload.single("orphanPassport"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
+  "/public/images/orphanThankyouLetter/",
+  upload.single("orphanThankyouLetter"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
+  "/public/images/orphanPhotosPhotoPortrait/",
+  upload.single("orphanPhotosPhotoPortrait"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
+  "/public/images/orphanPhotosLongPortrait/",
+  upload.single("orphanPhotosLongPortrait"),
   function (req, res) {
     return res.send(req.file.path);
   }
@@ -185,8 +218,24 @@ app.post(
 );
 
 app.post(
+  "/public/images/guardianLegalConfirmationLetter/",
+  upload.single("guardianLegalConfirmationLetter"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
   "/public/images/guardianIDCard/",
   upload.single("guardianIDCard"),
+  function (req, res) {
+    return res.send(req.file.path);
+  }
+);
+
+app.post(
+  "/public/images/healthRecordMedicalCertificate/",
+  upload.single("healthRecordMedicalCertificate"),
   function (req, res) {
     return res.send(req.file.path);
   }
