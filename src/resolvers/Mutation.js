@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
 const { getUser, AuthenticationError } = require("../utils");
 
 async function createDonor(_parent, args, { prisma, req }, _info) {
@@ -195,6 +196,33 @@ async function updateFather(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+    /** TODO delete file logic */
+    if (args.deathCertificateUrl) {
+      const previousFather = await prisma.father.findUnique({ where: { id } });
+
+      const previousFatherLocaldeathCertificateUrl = `public/${String(
+        previousFather.deathCertificateUrl
+      ).substring(
+        String(previousFather.deathCertificateUrl).indexOf(`images`)
+      )}`;
+
+      // check if the file url has changed
+      if (previousFather.deathCertificateUrl !== args.deathCertificateUrl) {
+        // check if the file exists
+        fs.stat(previousFatherLocaldeathCertificateUrl, function (err) {
+          // throw error to console if file is not found
+          if (err) {
+            return console.error(err);
+          }
+          // attempt to delete the file
+          fs.unlink(previousFatherLocaldeathCertificateUrl, function (err) {
+            // throw error to console if file deletion fails
+            if (err) return console.error(err);
+            console.log("file deleted successfully");
+          });
+        });
+      }
+    }
 
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
@@ -234,6 +262,8 @@ async function updateGuardian(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+
+     /** TODO @implement delete file logic */
 
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
@@ -656,6 +686,8 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
+     /** TODO @implement delete file logic */
+
     const previousDonor = await prisma.orphan
       .findUnique({ where: { id } })
       .donor();
@@ -852,6 +884,9 @@ async function updateEducationalRecord(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+
+     /** TODO @implement delete file logic */
+
     const previousEducation = await prisma.educationalRecord
       .findUnique({ where: { id } })
       .education();
@@ -886,6 +921,7 @@ async function updateFinancialRecord(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+
     const previousOrphan = await prisma.financialRecord
       .findUnique({ where: { id } })
       .orphan();
@@ -918,6 +954,9 @@ async function updateHealthRecord(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+
+     /** TODO @implement delete file logic */
+
     const previousOrphan = await prisma.healthRecord
       .findUnique({ where: { id } })
       .orphan();
@@ -985,6 +1024,8 @@ async function updateOrphanPhotos(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
+     /** TODO @implement delete file logic */
+
     const previousOrphan = await prisma.orphanPhotos
       .findUnique({ where: { id } })
       .orphan();
@@ -1017,6 +1058,7 @@ async function updateSponsorshipStatus(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+
     const previousOrphan = await prisma.sponsorshipStatus
       .findUnique({ where: { id } })
       .orphan();
@@ -1053,6 +1095,7 @@ async function updateSupportPlan(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+    
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
       : [];
