@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, ApolloError } = require("apollo-server-express");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -100,7 +100,7 @@ app.use(
   })
 );
 
-// create file storage middleware to handle image uploads
+// create file storage multer options
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `./public/images/${file.fieldname}/`);
@@ -110,32 +110,43 @@ const storage = multer.diskStorage({
   }
 });
 
+// create file filter function to filter files
+function fileFilter(req, file, cb) {
+  /** The function should call `cb` with a boolean
+   * to indicate if the file should be accepted
+   *
+   * To accept the file pass `true`
+   * To reject this file pass `false`
+   */
+
+  try {
+    /** allow uploads only for authenticated users */
+    if (getUser(req).userId) {
+      /** Filter files to accept only images and pdf
+       *  allow uploads for files that have
+       *  the extension in ["jpg", "jpeg", "bmp", "png"]
+       *  all case insensetive */
+      if (String(file.originalname).match(/.*\.(gif|jpe?g|bmp|png)$/gim)) {
+        /** TODO add `pdf` to file extension list if it was decided to */
+        cb(null, true);
+      } else {
+        throw new ApolloError("Unsupported image type");
+      }
+    } else cb(null, false);
+  } catch (error) {
+    /** You can always pass an error if something goes wrong */
+    cb(error);
+  }
+};
+
+/** create a multer instance to handle image uploads, and
+ * pass it the storage options and the file filter function created above */
 const upload = multer({
   storage,
-  fileFilter: function fileFilter(req, file, cb) {
-    /** allow uploads only for authenticated users */
-    try {
-      /** The function should call `cb` with a boolean
-       * to indicate if the file should be accepted
-       *
-       * To accept the file pass `true`
-       * To reject this file pass `false`
-       */
-      if (getUser(req).userId) cb(null, true);
-      else cb(null, false);
-    } catch (error) {
-      /** You can always pass an error if something goes wrong */
-      cb(error);
-    }
-  }
+  fileFilter
 });
 
 app.use(express.static("public"));
-
-/** handle all routing by the front-end
- * Single Page Application (SPA, vue.js in our case)
- */
-app.use(history());
 
 /** enable cors using the cors() express middleware */
 app.use(
@@ -151,6 +162,11 @@ app.use(
 
 /** cors: false -- disables the apollo-server-express cors to allow the cors() middleware use*/
 server.applyMiddleware({ app, cors: false });
+
+/** handle all routing by the front-end
+ * Single Page Application (SPA, vue.js in our case)
+ */
+app.use(history());
 
 /** post end points for image/pdf upload */
 app.post(
