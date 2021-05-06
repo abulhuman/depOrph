@@ -33,6 +33,7 @@ const Coordinator = require("./resolvers/Coordinator");
 const User = require("./resolvers/User");
 
 const { getUser } = require("./utils");
+const { GraphQLError } = require("graphql");
 
 const app = express();
 
@@ -71,11 +72,16 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8"),
   resolvers,
-  context: ({ req }) => {
+  context: ({ req, res }) => {
     return {
       req,
+      res,
       prisma
     };
+  },
+  formatError: (error)=>{
+    if(error.originalError instanceof ApolloError) return error;
+    return new GraphQLError(error)
   }
 });
 

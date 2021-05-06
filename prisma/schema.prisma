@@ -57,23 +57,23 @@ model Father {
 }
 
 model Guardian {
-  id                                 Int                            @id @default(autoincrement())
-  created_at                         DateTime?                      @default(now())
-  updated_at                         DateTime?
-  firstName                          String                         @default("")
-  middleName                         String                         @default("")
-  lastName                           String                         @default("")
-  gender                             guardian_gender_enum           @default(M)
-  dateOfBirth                        DateTime                       @default("1970-01-01T00:00:00.000Z")
-  relationToOrphan                   guardian_relationtoorphan_enum @default(mother)
-  email                              String                         @default("")
-  mobileNumber                       String                         @default("")
-  telephoneNumber                    String?
-  nationality                        guardian_nationality_enum      @default(Ethiopian)
-  guardianIDCardUrl                  String                         @default("")
-  guardianConfirmationLetterUrl      String                         @default("")
-  guardianLegalConfirmationLetterUrl String                         @default("")
-  orphans                            Orphan[]                       @relation("guardianToorphan")
+  id                         Int                            @id @default(autoincrement())
+  created_at                 DateTime?                      @default(now())
+  updated_at                 DateTime?
+  firstName                  String                         @default("")
+  middleName                 String                         @default("")
+  lastName                   String                         @default("")
+  gender                     guardian_gender_enum           @default(M)
+  dateOfBirth                DateTime                       @default("1970-01-01T00:00:00.000Z")
+  relationToOrphan           guardian_relationtoorphan_enum @default(mother)
+  email                      String                         @default("")
+  mobileNumber               String                         @default("")
+  telephoneNumber            String?
+  nationality                guardian_nationality_enum      @default(Ethiopian)
+  iDCardUrl                  String                         @default("")
+  confirmationLetterUrl      String                         @default("")
+  legalConfirmationLetterUrl String?                        @default("")
+  orphans                    Orphan[]                       @relation("guardianToorphan")
 
   @@map("guardian")
 }

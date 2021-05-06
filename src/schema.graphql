@@ -144,9 +144,9 @@ type Mutation {
     mobileNumber: String!
     telephoneNumber: String
     nationality: guardianNationality!
-    guardianIDCardUrl: String!
-    guardianConfirmationLetterUrl: String!
-    guardianLegalConfirmationLetterUrl: String!
+    iDCardUrl: String!
+    confirmationLetterUrl: String!
+    legalConfirmationLetterUrl: String
     orphans: [ID]
   ): Guardian!
 
@@ -162,9 +162,9 @@ type Mutation {
     mobileNumber: String
     telephoneNumber: String
     nationality: guardianNationality
-    guardianIDCardUrl: String
-    guardianConfirmationLetterUrl: String
-    guardianLegalConfirmationLetterUrl: String
+    iDCardUrl: String
+    confirmationLetterUrl: String
+    legalConfirmationLetterUrl: String
     orphans: [ID]
   ): Guardian!
 
@@ -613,9 +613,9 @@ type Guardian {
   mobileNumber: String!
   telephoneNumber: String
   nationality: guardianNationality!
-  guardianIDCardUrl: String!
-  guardianConfirmationLetterUrl: String!
-  guardianLegalConfirmationLetterUrl: String!
+  iDCardUrl: String!
+  confirmationLetterUrl: String!
+  legalConfirmationLetterUrl: String!
   orphans: [Orphan]
 }
 

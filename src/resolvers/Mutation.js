@@ -1,6 +1,7 @@
+const { ApolloError } = require("apollo-server-errors");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
-const { getUser, AuthenticationError } = require("../utils");
+const { getUser, AuthenticationError, updateImage } = require("../utils");
 
 async function createDonor(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
@@ -196,33 +197,14 @@ async function updateFather(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
-    /** TODO delete file logic */
-    if (args.deathCertificateUrl) {
-      const previousFather = await prisma.father.findUnique({ where: { id } });
 
-      const previousFatherLocaldeathCertificateUrl = `public/${String(
-        previousFather.deathCertificateUrl
-      ).substring(
-        String(previousFather.deathCertificateUrl).indexOf(`images`)
-      )}`;
-
-      // check if the file url has changed
-      if (previousFather.deathCertificateUrl !== args.deathCertificateUrl) {
-        // check if the file exists
-        fs.stat(previousFatherLocaldeathCertificateUrl, function (err) {
-          // throw error to console if file is not found
-          if (err) {
-            return console.error(err);
-          }
-          // attempt to delete the file
-          fs.unlink(previousFatherLocaldeathCertificateUrl, function (err) {
-            // throw error to console if file deletion fails
-            if (err) return console.error(err);
-            console.log("file deleted successfully");
-          });
-        });
-      }
-    }
+    await updateImage(
+      prisma,
+      id,
+      args.deathCertificateUrl,
+      `deathCertificateUrl`,
+      `father`
+    );
 
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
@@ -258,12 +240,81 @@ async function createGuardian(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function updateGuardian(_parent, args, { prisma, req }, _info) {
+async function updateGuardian(_parent, args, { prisma, req, res }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
 
-     /** TODO @implement delete file logic */
+    /** TODO @implement delete file logic */
+
+    /** delete file logic for guardianIDCard */
+    // if (args.guardianIDCardUrl) {
+    //   console.log(`1. Inside first if()`);
+    //   const previousGuardian = await prisma.guardian.findUnique({
+    //     where: { id }
+    //   });
+    //   if (previousGuardian) {
+    //     console.log(`2. Inside second if()`);
+    //     // throw new ApolloError('Indside second if()', 'TEST_ERROR')
+    //     console.log(
+    //       `2.1 Did the IDCardUrl change? ${
+    //         previousGuardian.guardianIDCardUrl !== args.guardianIDCardUrl
+    //       }`
+    //     );
+    //     try {
+    //       if (fs.statSync(args.guardianIDCardUrl))
+    //         console.log(`new file exists`);
+    //     } catch (err) {
+    //       if (err.code === "ENOENT") {
+    //         throw new ApolloError(`file ${args.guardianIDCardUrl} not found`, `FILE_NOT_FOUND`);
+    //       }
+    //       console.log(err);
+    //     }
+    //     // else
+    //     // fs.stat(args.guardianIDCardUrl, (err, stat) => {
+    //     //   if (!err) {
+    //     //     console.log(`file exists`);
+    //     //   }
+    //     //   throw new ApolloError(
+    //     //     `${args.guardianIDCardUrl} not found, ${err}`,
+    //     //     `FILE_NOT_FOUND`
+    //     //   );
+    //     // });
+    //     // todo ==separator==
+    //     // if (previousGuardian.guardianIDCardUrl !== args.guardianIDCardUrl) {
+    //     //   console.log(`3. Inside third if()`);
+    //     //   fs.stat
+    //     // }
+    //   } else
+    //     throw new ApolloError(
+    //       `Guardian with id ${id} is not found`,
+    //       `RECORD_NOT_FOUND`
+    //     );
+    // }
+
+    await updateImage(
+      prisma,
+      id,
+      args.iDCardUrl,
+      `iDCardUrl`,
+      `guardian`
+    );
+
+    await updateImage(
+      prisma,
+      id,
+      args.confirmationLetterUrl,
+      `confirmationLetterUrl`,
+      `guardian`
+    );
+
+    await updateImage(
+      prisma,
+      id,
+      args.legalConfirmationLetterUrl,
+      `legalConfirmationLetterUrl`,
+      `guardian`
+    );
 
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
@@ -627,12 +678,6 @@ async function createOrphan(_parent, args, { prisma, req }, _info) {
     const photosIds = args.photos
       ? [...args.photos].map((val) => ({ id: parseInt(val) }))
       : [];
-    const siblingsIds = args.siblings
-      ? [...args.siblings].map((val) => ({ id: parseInt(val) }))
-      : [];
-    const siblingOfIds = args.siblingOf
-      ? [...args.siblingOf].map((val) => ({ id: parseInt(val) }))
-      : [];
     const finRecIds = args.financialRecords
       ? [...args.financialRecords].map((val) => ({
           id: parseInt(val)
@@ -686,7 +731,23 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-     /** TODO @implement delete file logic */
+    // update all images of orphan
+    await updateImage(prisma, id, args.idCardUrl, `idCardUrl`, `orphan`);
+    await updateImage(prisma, id, args.passportUrl, `passportUrl`, `orphan`);
+    await updateImage(
+      prisma,
+      id,
+      args.thankyouLetterUrl,
+      `thankyouLetterUrl`,
+      `orphan`
+    );
+    await updateImage(
+      prisma,
+      id,
+      args.birthCertificateUrl,
+      `birthCertificateUrl`,
+      `orphan`
+    );
 
     const previousDonor = await prisma.orphan
       .findUnique({ where: { id } })
@@ -741,12 +802,6 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
 
     const photosIds = args.photos
       ? [...args.photos].map((val) => ({ id: parseInt(val) }))
-      : [];
-    const siblingsIds = args.siblings
-      ? [...args.siblings].map((val) => ({ id: parseInt(val) }))
-      : [];
-    const siblingOfIds = args.siblingOf
-      ? [...args.siblingOf].map((val) => ({ id: parseInt(val) }))
       : [];
     const financialRecordsIds = args.financialRecords
       ? [...args.financialRecords].map((val) => ({
@@ -885,7 +940,14 @@ async function updateEducationalRecord(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-     /** TODO @implement delete file logic */
+    // update report card
+    await updateImage(
+      prisma,
+      id,
+      args.reportCardUrl,
+      `reportCardUrl`,
+      `educationalRecord`
+    );
 
     const previousEducation = await prisma.educationalRecord
       .findUnique({ where: { id } })
@@ -955,7 +1017,14 @@ async function updateHealthRecord(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-     /** TODO @implement delete file logic */
+    // update medical cerificate
+    await updateImage(
+      prisma,
+      id,
+      args.medicalCerificateUrl,
+      `medicalCerificateUrl`,
+      `healthRecord`
+    );
 
     const previousOrphan = await prisma.healthRecord
       .findUnique({ where: { id } })
@@ -1024,7 +1093,21 @@ async function updateOrphanPhotos(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-     /** TODO @implement delete file logic */
+    // update both(portait and long) photos
+    await updateImage(
+      prisma,
+      id,
+      args.photoPortraitUrl,
+      `photoPortraitUrl`,
+      `orphanPhotos`
+    );
+    await updateImage(
+      prisma,
+      id,
+      args.photoLongUrl,
+      `photoLongUrl`,
+      `orphanPhotos`
+    );
 
     const previousOrphan = await prisma.orphanPhotos
       .findUnique({ where: { id } })
@@ -1095,7 +1178,7 @@ async function updateSupportPlan(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
-    
+
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
       : [];
