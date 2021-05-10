@@ -79,9 +79,9 @@ const server = new ApolloServer({
       prisma
     };
   },
-  formatError: (error)=>{
-    if(error.originalError instanceof ApolloError) return error;
-    return new GraphQLError(error)
+  formatError: (error) => {
+    if (error.originalError instanceof ApolloError) return error;
+    return new GraphQLError(error);
   }
 });
 
@@ -143,7 +143,7 @@ function fileFilter(req, file, cb) {
     /** You can always pass an error if something goes wrong */
     cb(error);
   }
-};
+}
 
 /** create a multer instance to handle image uploads, and
  * pass it the storage options and the file filter function created above */
@@ -154,20 +154,20 @@ const upload = multer({
 
 app.use(express.static("public"));
 
-/** enable cors using the cors() express middleware */
-app.use(
-  cors({
-    credentials: true,
-    origin: [
-      `http://${process.env.HOSTNAME}:${process.env.PORT}`, // main node-express application server origin address
-      `http://localhost:3000/`, // dev server origin address
-      `http://127.0.0.1:3000/` // dev server origin address
-    ]
-  })
-);
+/** set corsOptions to enable cors in the server.applyMiddleware() */
 
-/** cors: false -- disables the apollo-server-express cors to allow the cors() middleware use*/
-server.applyMiddleware({ app, cors: false });
+const corsOptions = {
+  credentials: true,
+  origin: [
+    `http://${process.env.HOSTNAME}:${process.env.PORT}`, // main node-express application server origin address
+    `http://127.0.0.1:3000/`, // dev server origin address
+    `http://localhost:3000/`, // dev server origin address
+    "http://localhost:8080" // front-end dev server origin address
+  ]
+};
+
+/** cors: crosOptions -- enables the apollo-server-express cors with the corsOptions */
+server.applyMiddleware({ app, cors: corsOptions });
 
 /** handle all routing by the front-end
  * Single Page Application (SPA, vue.js in our case)
