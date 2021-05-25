@@ -543,10 +543,6 @@ type Mutation {
     role: userRoles
     email: String
     password: String
-    coordinators: [ID]
-    heads: [ID]
-    socialWorkers: [ID]
-    donors: [ID]
   ): User!
 
   register(role: userRoles, email: String!, password: String!): AuthPayload!
