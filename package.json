@@ -29,6 +29,7 @@
     "graphql": "latest",
     "moment": "^2.29.1",
     "multer": "latest",
-    "node-gyp": "latest"
+    "node-gyp": "latest",
+    "pdf-poppler": "^0.2.1"
   }
 }

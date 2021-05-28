@@ -2,7 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const { ApolloServer, ApolloError } = require("apollo-server-express");
 const express = require("express");
 const session = require("express-session");
-const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const history = require("connect-history-api-fallback");
@@ -32,7 +31,7 @@ const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
 const User = require("./resolvers/User");
 
-const { getUser } = require("./utils");
+const { getUser, convertImage } = require("./utils");
 const { GraphQLError } = require("graphql");
 
 const app = express();
@@ -132,8 +131,7 @@ function fileFilter(req, file, cb) {
        *  allow uploads for files that have
        *  the extension in ["jpg", "jpeg", "bmp", "png"]
        *  all case insensetive */
-      if (String(file.originalname).match(/.*\.(gif|jpe?g|bmp|png)$/gim)) {
-        /** TODO add `pdf` to file extension list if it was decided to */
+      if (String(file.originalname).match(/.*\.(gif|jpe?g|bmp|png|pdf)$/gim)) {
         cb(null, true);
       } else {
         throw new ApolloError("Unsupported image type");
@@ -177,90 +175,145 @@ app.use(history());
 /** post end points for image/pdf upload */
 app.post(
   "/public/images/orphanBirthCertificate/",
-  upload.single("orphanBirthCertificate"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanBirthCertificate"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/orphanIdCard/",
-  upload.single("orphanIdCard"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanIdCard"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/orphanPassport/",
-  upload.single("orphanPassport"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanPassport"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/orphanThankyouLetter/",
-  upload.single("orphanThankyouLetter"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanThankyouLetter"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/orphanPhotosPhotoPortrait/",
-  upload.single("orphanPhotosPhotoPortrait"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanPhotosPhotoPortrait"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/orphanPhotosLongPortrait/",
-  upload.single("orphanPhotosLongPortrait"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("orphanPhotosLongPortrait"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/fatherDeathCertificate/",
-  upload.single("fatherDeathCertificate"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("fatherDeathCertificate"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/guardianConfirmationLetter/",
-  upload.single("guardianConfirmationLetter"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("guardianConfirmationLetter"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/guardianLegalConfirmationLetter/",
-  upload.single("guardianLegalConfirmationLetter"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("guardianLegalConfirmationLetter"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/guardianIDCard/",
-  upload.single("guardianIDCard"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("guardianIDCard"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 app.post(
   "/public/images/healthRecordMedicalCertificate/",
-  upload.single("healthRecordMedicalCertificate"),
-  function (req, res) {
-    return res.send(req.file.path);
-  }
+  upload.single("healthRecordMedicalCertificate"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
 );
 
 /** start server and listen for connections using the express application */
