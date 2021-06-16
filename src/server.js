@@ -320,14 +320,14 @@ app.post(
 app.listen(
   {
     port: process.env.PORT || 3000,
-    hostname: process.env.HOSTNAME || "127.0.0.1"
+    hostname: process.env.HOSTNAME || "localhost"
   },
   () => {
     console.log(
-      `💻 Server ready at http://${process.env.HOSTNAME}:${
+      `💻 Server ready at http://${process.env.HOSTNAME || "localhost" }:${
         process.env.PORT || 3000
       }`,
-      `\n⌛ Playground ready at http://${process.env.HOSTNAME}:${
+      `\n⌛ Playground ready at http://${process.env.HOSTNAME || "localhost" }:${
         process.env.PORT || 3000
       }${server.graphqlPath} `
     );

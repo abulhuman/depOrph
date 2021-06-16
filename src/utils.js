@@ -1,7 +1,7 @@
 const { ApolloError } = require("apollo-server-express");
 const fs = require("fs");
 const path = require('path');
-const pdf = require('pdf-poppler');
+// const pdf = require('pdf-poppler');
 
 function convertImage(pdfPath, outDir) {
   let conversionOptions = {
