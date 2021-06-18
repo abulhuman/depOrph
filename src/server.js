@@ -239,8 +239,8 @@ app.post(
 );
 
 app.post(
-  "/public/images/orphanPhotosLongPortrait/",
-  upload.single("orphanPhotosLongPortrait"),(req, res) => {
+  "/public/images/orphanPhotosPhotoLong/",
+  upload.single("orphanPhotosPhotoLong"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
       convertImage(req.file.path, req.file.destination).then((data) =>

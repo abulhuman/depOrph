@@ -2,6 +2,7 @@ const { ApolloError } = require("apollo-server-express");
 const fs = require("fs");
 const path = require('path');
 // const pdf = require('pdf-poppler');
+// ! // TODO implement pdf conversion on a linux supported pdf-library 
 
 function convertImage(pdfPath, outDir) {
   let conversionOptions = {
