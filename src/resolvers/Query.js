@@ -248,8 +248,10 @@ async function allOrphans(
       : orphan_gender_enum.F;
 
   const sponsorshipstatusFilter =
-    String(filter).toLowerCase() === "processing"
-      ? sponsorshipstatus_enum.processing
+  String(filter).toLowerCase() === "new"
+  ? sponsorshipstatus_enum.new
+  : String(filter).toLowerCase() === "processing"
+  ? sponsorshipstatus_enum.processing
       : String(filter).toLowerCase() === "active"
         ? sponsorshipstatus_enum.active
         : String(filter).toLowerCase() === "pending"

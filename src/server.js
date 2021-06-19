@@ -213,8 +213,21 @@ app.post(
 );
 
 app.post(
-  "/public/images/orphanThankyouLetter/",
-  upload.single("orphanThankyouLetter"),(req, res) => {
+  "/public/images/orphanOriginalThankyouLetter/",
+  upload.single("orphanOriginalThankyouLetter"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
+);
+
+app.post(
+  "/public/images/orphanTranslatedThankyouLetter/",
+  upload.single("orphanTranslatedThankyouLetter"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
       convertImage(req.file.path, req.file.destination).then((data) =>

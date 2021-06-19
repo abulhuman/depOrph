@@ -275,7 +275,8 @@ type Mutation {
     religion: orphanReligion
     idCardUrl: String
     passportUrl: String
-    thankyouLetterUrl: String
+    originalThankyouLetterUrl: String
+    translatedThankyouLetterUrl: String
     birthCertificateUrl: String!
     healthDescription: String!
     psychologicalStatus: orphanPsychologicalStatus
@@ -310,7 +311,8 @@ type Mutation {
     religion: orphanReligion
     idCardUrl: String
     passportUrl: String
-    thankyouLetterUrl: String
+    originalThankyouLetterUrl: String
+    translatedThankyouLetterUrl: String
     birthCertificateUrl: String
     healthDescription: String
     psychologicalStatus: orphanPsychologicalStatus
@@ -365,6 +367,12 @@ type Mutation {
   ): SocialWorker!
 
   createEducationalRecord(
+    enrollmentStatus: educationEnrollmentStatus!
+    schoolName: String
+    typeOfSchool: educationTypeOfSchool
+    year: String
+    level: educationLevel
+    reason: String
     yearDivision: ERYearDivision
     quarter: ERQuarter
     semester: ERSemester
@@ -380,6 +388,12 @@ type Mutation {
 
   updateEducationalRecord(
     id: ID!
+    enrollmentStatus: educationEnrollmentStatus
+    schoolName: String
+    typeOfSchool: educationTypeOfSchool
+    year: String
+    level: educationLevel
+    reason: String
     yearDivision: ERYearDivision
     quarter: ERQuarter
     semester: ERSemester
@@ -700,7 +714,8 @@ type Orphan {
   religion: orphanReligion
   idCardUrl: String
   passportUrl: String
-  thankyouLetterUrl: String
+  originalThankyouLetterUrl: String
+  translatedThankyouLetterUrl: String
   birthCertificateUrl: String!
   healthDescription: String!
   psychologicalStatus: orphanPsychologicalStatus
@@ -745,6 +760,12 @@ type EducationalRecord {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
+  enrollmentStatus: educationEnrollmentStatus!
+  schoolName: String
+  typeOfSchool: educationTypeOfSchool
+  year: String
+  level: educationLevel
+  reason: String
   yearDivision: ERYearDivision
   quarter: ERQuarter
   semester: ERSemester
@@ -883,6 +904,7 @@ enum orphanPsychologicalStatus {
 }
 
 enum sponsorshipStatus {
+  new
   processing
   pending
   active

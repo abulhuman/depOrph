@@ -265,53 +265,6 @@ async function updateGuardian(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-    /** TODO @implement delete file logic */
-
-    /** delete file logic for guardianIDCard */
-    // if (args.guardianIDCardUrl) {
-    //   console.log(`1. Inside first if()`);
-    //   const previousGuardian = await prisma.guardian.findUnique({
-    //     where: { id }
-    //   });
-    //   if (previousGuardian) {
-    //     console.log(`2. Inside second if()`);
-    //     // throw new ApolloError('Indside second if()', 'TEST_ERROR')
-    //     console.log(
-    //       `2.1 Did the IDCardUrl change? ${
-    //         previousGuardian.guardianIDCardUrl !== args.guardianIDCardUrl
-    //       }`
-    //     );
-    //     try {
-    //       if (fs.statSync(args.guardianIDCardUrl))
-    //         console.log(`new file exists`);
-    //     } catch (err) {
-    //       if (err.code === "ENOENT") {
-    //         throw new ApolloError(`file ${args.guardianIDCardUrl} not found`, `FILE_NOT_FOUND`);
-    //       }
-    //       console.log(err);
-    //     }
-    //     // else
-    //     // fs.stat(args.guardianIDCardUrl, (err, stat) => {
-    //     //   if (!err) {
-    //     //     console.log(`file exists`);
-    //     //   }
-    //     //   throw new ApolloError(
-    //     //     `${args.guardianIDCardUrl} not found, ${err}`,
-    //     //     `FILE_NOT_FOUND`
-    //     //   );
-    //     // });
-    //     // todo ==separator==
-    //     // if (previousGuardian.guardianIDCardUrl !== args.guardianIDCardUrl) {
-    //     //   console.log(`3. Inside third if()`);
-    //     //   fs.stat
-    //     // }
-    //   } else
-    //     throw new ApolloError(
-    //       `Guardian with id ${id} is not found`,
-    //       `RECORD_NOT_FOUND`
-    //     );
-    // }
-
     await updateImage(prisma, id, args.iDCardUrl, `iDCardUrl`, `guardian`);
 
     await updateImage(
@@ -875,8 +828,15 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
     await updateImage(
       prisma,
       id,
-      args.thankyouLetterUrl,
-      `thankyouLetterUrl`,
+      args.originalThankyouLetterUrl,
+      `originalThankyouLetterUrl`,
+      `orphan`
+    );
+    await updateImage(
+      prisma,
+      id,
+      args.translatedThankyouLetterUrl,
+      `translatedThankyouLetterUrl`,
       `orphan`
     );
     await updateImage(

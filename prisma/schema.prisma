@@ -170,49 +170,50 @@ model Village {
 }
 
 model Orphan {
-  id                     Int                              @id @default(autoincrement())
-  created_at             DateTime?                        @default(now())
-  updated_at             DateTime?
-  firstName              String                           @default("")
-  gender                 orphan_gender_enum               @default(M)
-  placeOfBirth           String                           @default("")
-  dateOfBirth            DateTime                         @default("1970-01-01T00:00:00.000Z")
-  spokenLanguages        String?
-  gradeAgeMismatchReason String?
-  hobbies                String?
-  religion               orphan_religion_enum?
-  idCardUrl              String?
-  passportUrl            String?
-  thankyouLetterUrl      String?
-  birthCertificateUrl    String                           @default("")
-  healthDescription      String                           @default("")
-  psychologicalStatus    orphan_psychologicalstatus_enum?
-  accountNumber          String?
-  currentBalance         Float?
-  motherId               Int?
-  fatherId               Int?
-  guardianId             Int?
-  educationId            Int?
-  donorId                Int?
-  supportPlanId          Int?
-  villageId              Int?
-  socialWorkerId         Int?
-  house_propertyId       Int?
-  donor                  Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
-  education              Education?                       @relation("educationToorphan", fields: [educationId], references: [id])
-  father                 Father?                          @relation("fatherToorphan", fields: [fatherId], references: [id])
-  guardian               Guardian?                        @relation("guardianToorphan", fields: [guardianId], references: [id])
-  house_property         House_property?                  @relation("house_propertyToorphan", fields: [house_propertyId], references: [id])
-  mother                 Mother?                          @relation("motherToorphan", fields: [motherId], references: [id])
-  village                Village?                         @relation("orphanTovillage", fields: [villageId], references: [id])
-  socialWorker           SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
-  supportPlan            SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
-  financialRecords       FinancialRecord[]                @relation("financialrecordToorphan")
-  healthRecords          HealthRecord[]                   @relation("healthrecordToorphan")
-  photos                 OrphanPhotos[]                   @relation("orphanToorphanphotos")
-  sponsorshipStatuses    SponsorshipStatus[]              @relation("orphanTosponsorshipstatus")
-  siblings               Orphan[]                         @relation("orphan_sibling")
-  siblingOf              Orphan[]                         @relation("orphan_sibling")
+  id                          Int                              @id @default(autoincrement())
+  created_at                  DateTime?                        @default(now())
+  updated_at                  DateTime?
+  firstName                   String                           @default("")
+  gender                      orphan_gender_enum               @default(M)
+  placeOfBirth                String                           @default("")
+  dateOfBirth                 DateTime                         @default("1970-01-01T00:00:00.000Z")
+  spokenLanguages             String?
+  gradeAgeMismatchReason      String?
+  hobbies                     String?
+  religion                    orphan_religion_enum?
+  idCardUrl                   String?
+  passportUrl                 String?
+  originalThankyouLetterUrl   String?
+  translatedThankyouLetterUrl String?
+  birthCertificateUrl         String                           @default("")
+  healthDescription           String                           @default("")
+  psychologicalStatus         orphan_psychologicalstatus_enum?
+  accountNumber               String?
+  currentBalance              Float?
+  motherId                    Int?
+  fatherId                    Int?
+  guardianId                  Int?
+  educationId                 Int?
+  donorId                     Int?
+  supportPlanId               Int?
+  villageId                   Int?
+  socialWorkerId              Int?
+  house_propertyId            Int?
+  donor                       Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
+  education                   Education?                       @relation("educationToorphan", fields: [educationId], references: [id])
+  father                      Father?                          @relation("fatherToorphan", fields: [fatherId], references: [id])
+  guardian                    Guardian?                        @relation("guardianToorphan", fields: [guardianId], references: [id])
+  house_property              House_property?                  @relation("house_propertyToorphan", fields: [house_propertyId], references: [id])
+  mother                      Mother?                          @relation("motherToorphan", fields: [motherId], references: [id])
+  village                     Village?                         @relation("orphanTovillage", fields: [villageId], references: [id])
+  socialWorker                SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
+  supportPlan                 SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
+  financialRecords            FinancialRecord[]                @relation("financialrecordToorphan")
+  healthRecords               HealthRecord[]                   @relation("healthrecordToorphan")
+  photos                      OrphanPhotos[]                   @relation("orphanToorphanphotos")
+  sponsorshipStatuses         SponsorshipStatus[]              @relation("orphanTosponsorshipstatus")
+  siblings                    Orphan[]                         @relation("orphan_sibling")
+  siblingOf                   Orphan[]                         @relation("orphan_sibling")
 
   @@map("orphan")
 }
@@ -242,6 +243,12 @@ model EducationalRecord {
   id               Int                                  @id @default(autoincrement())
   created_at       DateTime?                            @default(now())
   updated_at       DateTime?
+  enrollmentStatus education_enrollmentstatus_enum      @default(unenrolled)
+  schoolName       String?
+  typeOfSchool     education_typeofschool_enum?
+  year             String?
+  level            education_level_enum?
+  reason           String?
   yearDivision     educationalrecord_yeardivision_enum?
   quarter          educationalrecord_quarter_enum?
   semester         educationalrecord_semester_enum?
@@ -311,7 +318,7 @@ model SponsorshipStatus {
   id         Int                     @id @default(autoincrement())
   created_at DateTime?               @default(now())
   updated_at DateTime?
-  status     sponsorshipstatus_enum?
+  status     sponsorshipstatus_enum? @default(new)
   date       DateTime                @default("1970-01-01T00:00:00.000Z")
   orphanId   Int?
   orphan     Orphan?                 @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
@@ -342,7 +349,6 @@ model SupportPlan {
 }
 
 model Head {
-  // 🚀
   id         Int       @id @default(autoincrement())
   created_at DateTime? @default(now())
   updated_at DateTime?
@@ -504,6 +510,7 @@ enum socialworker_gender_enum {
 }
 
 enum sponsorshipstatus_enum {
+  new
   processing
   pending
   active
