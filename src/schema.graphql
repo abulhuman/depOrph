@@ -971,7 +971,9 @@ enum educationTypeOfSchool {
 enum educationLevel {
   religiousEducation
   preSchool
-  gradeSchool
+  primary_elementary
+  junior
+  highschool
   underGraduate
   postGraduate
   N_A

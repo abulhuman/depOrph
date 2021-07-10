@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const { ApolloServer, ApolloError } = require("apollo-server-express");
 const express = require("express");
 const session = require("express-session");
+const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
 const history = require("connect-history-api-fallback");
@@ -175,6 +176,7 @@ app.use(history());
 /** post end points for image/pdf upload */
 app.post(
   "/public/images/orphanBirthCertificate/",
+  cors(corsOptions),
   upload.single("orphanBirthCertificate"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -188,6 +190,7 @@ app.post(
 
 app.post(
   "/public/images/orphanIdCard/",
+  cors(corsOptions),
   upload.single("orphanIdCard"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -201,6 +204,7 @@ app.post(
 
 app.post(
   "/public/images/orphanPassport/",
+  cors(corsOptions),
   upload.single("orphanPassport"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -214,6 +218,7 @@ app.post(
 
 app.post(
   "/public/images/orphanOriginalThankyouLetter/",
+  cors(corsOptions),
   upload.single("orphanOriginalThankyouLetter"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -227,6 +232,7 @@ app.post(
 
 app.post(
   "/public/images/orphanTranslatedThankyouLetter/",
+  cors(corsOptions),
   upload.single("orphanTranslatedThankyouLetter"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -240,6 +246,7 @@ app.post(
 
 app.post(
   "/public/images/orphanPhotosPhotoPortrait/",
+  cors(corsOptions),
   upload.single("orphanPhotosPhotoPortrait"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -253,6 +260,7 @@ app.post(
 
 app.post(
   "/public/images/orphanPhotosPhotoLong/",
+  cors(corsOptions),
   upload.single("orphanPhotosPhotoLong"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -266,6 +274,7 @@ app.post(
 
 app.post(
   "/public/images/fatherDeathCertificate/",
+  cors(corsOptions),
   upload.single("fatherDeathCertificate"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -279,6 +288,7 @@ app.post(
 
 app.post(
   "/public/images/guardianConfirmationLetter/",
+  cors(corsOptions),
   upload.single("guardianConfirmationLetter"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -292,6 +302,7 @@ app.post(
 
 app.post(
   "/public/images/guardianLegalConfirmationLetter/",
+  cors(corsOptions),
   upload.single("guardianLegalConfirmationLetter"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -305,6 +316,7 @@ app.post(
 
 app.post(
   "/public/images/guardianIDCard/",
+  cors(corsOptions),
   upload.single("guardianIDCard"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
@@ -318,7 +330,22 @@ app.post(
 
 app.post(
   "/public/images/healthRecordMedicalCertificate/",
+  cors(corsOptions),
   upload.single("healthRecordMedicalCertificate"),(req, res) => {
+  if (req.file) {
+    if (req.file.mimetype === "application/pdf") {
+      convertImage(req.file.path, req.file.destination).then((data) =>
+        res.send(data)
+      );
+    } else res.send(req.file.path);
+  } else return res.send("Image not attached");
+}
+);
+
+app.post(
+  "/public/images/educationalRecordReportCard/",
+  cors(corsOptions),
+  upload.single("educationalRecordReportCard"),(req, res) => {
   if (req.file) {
     if (req.file.mimetype === "application/pdf") {
       convertImage(req.file.path, req.file.destination).then((data) =>

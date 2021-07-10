@@ -401,6 +401,9 @@ enum education_enrollmentstatus_enum {
 enum education_level_enum {
   religiousEducation
   preSchool
+  primary_elementary @map("primary/elementary")
+  junior
+  highschool
   gradeSchool
   underGraduate
   postGraduate
