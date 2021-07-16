@@ -1,5 +1,11 @@
 const bcrypt = require("bcryptjs");
-const { getUser, AuthenticationError, updateImage } = require("../utils");
+const {
+  getUser,
+  AuthenticationError,
+  updateImage,
+  AuthorizationError
+} = require("../utils");
+const { userRoles_enum } = require("@prisma/client");
 
 async function createDonor(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
@@ -1616,6 +1622,30 @@ function logout(_parent, _args, { req }, _info) {
   );
 }
 
+async function createAccountMaintainence(_parent, args, { prisma }, _info) {
+  return await prisma.accountMaintainence.create({ data: { ...args } });
+}
+
+async function updateAccountMaintainence(
+  _parent,
+  args,
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    if (getUser(req).userRole === userRoles_enum.Head) {
+      const id = parseInt(args.id);
+      delete args.id;
+      return await prisma.accountMaintainence.update({
+        where: { id },
+        data: { ...args, updated_at: new Date() }
+      });
+    }
+    throw new AuthorizationError();
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   createDonor,
   updateDonor,
@@ -1663,5 +1693,7 @@ module.exports = {
   updateUser,
   register,
   login,
-  logout
+  logout,
+  createAccountMaintainence,
+  updateAccountMaintainence
 };

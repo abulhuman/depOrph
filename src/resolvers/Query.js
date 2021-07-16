@@ -184,9 +184,9 @@ async function allDonors(
 ) {
   const where = filter
     ? {
-      companyName: { contains: filter, mode: "insensitive" },
-      nameInitials: { contains: filter, mode: "insensitive" }
-    }
+        companyName: { contains: filter, mode: "insensitive" },
+        nameInitials: { contains: filter, mode: "insensitive" }
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.donor.findMany({ take, where, orderBy });
@@ -202,12 +202,12 @@ async function allGuardians(
 ) {
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        { middleName: { contains: filter, mode: "insensitive" } },
-        { lastName: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.guardian.findMany({ take, where, orderBy });
@@ -223,12 +223,12 @@ async function allMothers(
 ) {
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        { middleName: { contains: filter, mode: "insensitive" } },
-        { lastName: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.mother.findMany({ take, where, orderBy });
@@ -248,35 +248,35 @@ async function allOrphans(
       : orphan_gender_enum.F;
 
   const sponsorshipstatusFilter =
-  String(filter).toLowerCase() === "new"
-  ? sponsorshipstatus_enum.new
-  : String(filter).toLowerCase() === "processing"
-  ? sponsorshipstatus_enum.processing
+    String(filter).toLowerCase() === "new"
+      ? sponsorshipstatus_enum.new
+      : String(filter).toLowerCase() === "processing"
+      ? sponsorshipstatus_enum.processing
       : String(filter).toLowerCase() === "active"
-        ? sponsorshipstatus_enum.active
-        : String(filter).toLowerCase() === "pending"
-          ? sponsorshipstatus_enum.pending
-          : sponsorshipstatus_enum.graduated;
+      ? sponsorshipstatus_enum.active
+      : String(filter).toLowerCase() === "pending"
+      ? sponsorshipstatus_enum.pending
+      : sponsorshipstatus_enum.graduated;
 
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        {
-          father: {
-            firstName: { contains: filter, mode: "insensitive" },
-            lastName: { contains: filter, mode: "insensitive" }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          {
+            father: {
+              firstName: { contains: filter, mode: "insensitive" },
+              lastName: { contains: filter, mode: "insensitive" }
+            }
+          },
+          { age: { equals: parseInt(filter) } },
+          { gender: { equals: genderFilter } },
+          {
+            sponsorshipStatus: {
+              status: { equals: sponsorshipstatusFilter }
+            }
           }
-        },
-        { age: { equals: parseInt(filter) } },
-        { gender: { equals: genderFilter } },
-        {
-          sponsorshipStatus: {
-            status: { equals: sponsorshipstatusFilter }
-          }
-        }
-      ]
-    }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.orphan.findMany({ take, where, orderBy });
@@ -294,12 +294,14 @@ async function someOrphansByIds(
 
   if (getUser(req).userId) {
     orphansIds.forEach(async (id) => {
-      const orphan = await prisma.orphan.findUnique({ where: { id: parseInt(id) } });
+      const orphan = await prisma.orphan.findUnique({
+        where: { id: parseInt(id) }
+      });
       orphans.push(orphan);
     });
     return orphans;
-  } throw new AuthenticationError();
-
+  }
+  throw new AuthenticationError();
 }
 
 async function someOrphansByDonorId(
@@ -309,13 +311,15 @@ async function someOrphansByDonorId(
   _info
 ) {
   if (getUser(req).userId) {
-    return prisma.orphan.findMany({ 
-      take, 
-      where: { 
-        donorId: parseInt(donorId) 
-         },
-      orderBy })
-  } throw new AuthenticationError();
+    return prisma.orphan.findMany({
+      take,
+      where: {
+        donorId: parseInt(donorId)
+      },
+      orderBy
+    });
+  }
+  throw new AuthenticationError();
 }
 
 async function allSocialWorkers(
@@ -326,15 +330,15 @@ async function allSocialWorkers(
 ) {
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        { middleName: { contains: filter, mode: "insensitive" } },
-        { lastName: { contains: filter, mode: "insensitive" } },
-        { gender: { contains: filter, mode: "insensitive" } },
-        { mobileNumber: { contains: filter, mode: "insensitive" } },
-        { email: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } },
+          { gender: { contains: filter, mode: "insensitive" } },
+          { mobileNumber: { contains: filter, mode: "insensitive" } },
+          { email: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.socialWorker.findMany({ take, where, orderBy });
@@ -350,8 +354,8 @@ async function allRegions(
 ) {
   const where = filter
     ? {
-      name: { contains: filter, mode: "insensitive" }
-    }
+        name: { contains: filter, mode: "insensitive" }
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.region.findMany({ take, where, orderBy });
@@ -367,8 +371,8 @@ async function allZones(
 ) {
   const where = filter
     ? {
-      name: { contains: filter, mode: "insensitive" }
-    }
+        name: { contains: filter, mode: "insensitive" }
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.zone.findMany({ take, where, orderBy });
@@ -384,8 +388,8 @@ async function allDistricts(
 ) {
   const where = filter
     ? {
-      name: { contains: filter, mode: "insensitive" }
-    }
+        name: { contains: filter, mode: "insensitive" }
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.district.findMany({ take, where, orderBy });
@@ -401,8 +405,8 @@ async function allVillages(
 ) {
   const where = filter
     ? {
-      name: { contains: filter, mode: "insensitive" }
-    }
+        name: { contains: filter, mode: "insensitive" }
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.village.findMany({ take, where, orderBy });
@@ -418,12 +422,12 @@ async function allSupportPlans(
 ) {
   const where = filter
     ? {
-      OR: [
-        { foreignCurrency: { contains: filter, mode: "insensitive" } },
-        { collectiveFund_fc: { equals: filter, mode: "insensitive" } },
-        { individualFund_fc: { equals: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { foreignCurrency: { contains: filter, mode: "insensitive" } },
+          { collectiveFund_fc: { equals: filter, mode: "insensitive" } },
+          { individualFund_fc: { equals: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.supportPlan.findMany({ take, where, orderBy });
@@ -439,12 +443,12 @@ async function allHeads(
 ) {
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        { middleName: { contains: filter, mode: "insensitive" } },
-        { lastName: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.head.findMany({ take, where, orderBy });
@@ -460,12 +464,12 @@ async function allCoordinators(
 ) {
   const where = filter
     ? {
-      OR: [
-        { firstName: { contains: filter, mode: "insensitive" } },
-        { middleName: { contains: filter, mode: "insensitive" } },
-        { lastName: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { firstName: { contains: filter, mode: "insensitive" } },
+          { middleName: { contains: filter, mode: "insensitive" } },
+          { lastName: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
   if (getUser(req).userId) {
     return await prisma.coordinator.findMany({ take, where, orderBy });
@@ -483,20 +487,20 @@ async function allUsers(
     filter == "Admin"
       ? userRoles_enum.Admin
       : filter == "SocialWorker"
-        ? userRoles_enum.SocialWorker
-        : filter == "Head"
-          ? userRoles_enum.Head
-          : filter == "Donor"
-            ? userRoles_enum.Donor
-            : userRoles_enum.Guest;
+      ? userRoles_enum.SocialWorker
+      : filter == "Head"
+      ? userRoles_enum.Head
+      : filter == "Donor"
+      ? userRoles_enum.Donor
+      : userRoles_enum.Guest;
 
   const where = filter
     ? {
-      OR: [
-        { role: { equals: roleFilter } },
-        { email: { contains: filter, mode: "insensitive" } }
-      ]
-    }
+        OR: [
+          { role: { equals: roleFilter } },
+          { email: { contains: filter, mode: "insensitive" } }
+        ]
+      }
     : {};
 
   if (getUser(req).userId) {
@@ -504,6 +508,16 @@ async function allUsers(
     // }
     // throw new AuthorizationError();
     return await prisma.user.findMany({ take, where, orderBy });
+  }
+  throw new AuthenticationError();
+}
+
+async function allAccountMaintainences(_parent, _args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    if (getUser(req).userRole === userRoles_enum.Head) {
+      return await prisma.accountMaintainence.findMany();
+    }
+    throw new AuthorizationError();
   }
   throw new AuthenticationError();
 }
@@ -547,5 +561,6 @@ module.exports = {
   allSupportPlans,
   allHeads,
   allCoordinators,
-  allUsers
+  allUsers,
+  allAccountMaintainences
 };

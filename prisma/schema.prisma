@@ -320,6 +320,7 @@ model SponsorshipStatus {
   updated_at DateTime?
   status     sponsorshipstatus_enum? @default(new)
   date       DateTime                @default("1970-01-01T00:00:00.000Z")
+  reason String?
   orphanId   Int?
   orphan     Orphan?                 @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
 
@@ -392,6 +393,31 @@ model User {
   @@map("user")
 }
 
+model AccountMaintainence {
+  id         Int        @id @default(autoincrement())
+  created_at DateTime?  @default(now())
+  updated_at DateTime?
+  type accountMaintainenceType_enum @default(createAccount)
+  status accountMaintainenceStatus_enum @default(pending)
+  firstName  String    @default("")
+  middleName String    @default("")
+  lastName   String    @default("")
+  email String @default("")
+  mobileNumber String @default("")
+
+  @@map("accountMaintainence")
+}
+
+enum accountMaintainenceStatus_enum {
+  pending
+  approved
+}
+
+enum accountMaintainenceType_enum {
+  createAccount
+  passwordRecovery
+}
+
 enum education_enrollmentstatus_enum {
   enrolled
   unenrolled
@@ -404,7 +430,6 @@ enum education_level_enum {
   primary_elementary @map("primary/elementary")
   junior
   highschool
-  gradeSchool
   underGraduate
   postGraduate
   N_A                 @map("N/A")
@@ -462,6 +487,7 @@ enum guardian_relationtoorphan_enum {
   niece
   nephew
   legalGuardian
+  other
 }
 
 enum guardian_nationality_enum {

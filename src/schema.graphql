@@ -63,6 +63,7 @@ type Query {
     orderBy: CoordinatorOrderByInput
   ): [Coordinator]!
   allUsers(take: Int, filter: String, orderBy: UserOrderByInput): [User]!
+  allAccountMaintainences: [AccountMaintainence]!
 }
 
 type Mutation {
@@ -463,6 +464,7 @@ type Mutation {
   createSponsorshipStatus(
     status: sponsorshipStatus
     date: DateTime!
+    reason: String
     orphanId: ID
   ): SponsorshipStatus!
 
@@ -470,6 +472,7 @@ type Mutation {
     id: ID!
     status: sponsorshipStatus
     date: DateTime
+    reason: String
     orphanId: ID
   ): SponsorshipStatus!
 
@@ -562,6 +565,22 @@ type Mutation {
   register(role: userRoles, email: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   logout: Boolean!
+
+  createAccountMaintainence(
+    type: accountMaintainenceType!
+    status: accountMaintainenceStatus!
+    firstName: String!
+    middleName: String!
+    lastName: String!
+    email: String!
+    mobileNumber: String!
+    ): AccountMaintainence!
+
+
+   updateAccountMaintainence(
+     id: ID!
+     status: accountMaintainenceStatus
+   ): AccountMaintainence!
 }
 
 type AuthPayload {
@@ -823,6 +842,7 @@ type SponsorshipStatus {
   updated_at: DateTime
   status: sponsorshipStatus
   date: DateTime!
+  reason: String
   orphan: Orphan
 }
 
@@ -881,6 +901,29 @@ type User {
   donors: [Donor]
 }
 
+type AccountMaintainence {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  type: accountMaintainenceType!
+  status: accountMaintainenceStatus!
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  email: String!
+  mobileNumber: String!
+}
+
+enum accountMaintainenceStatus {
+  pending
+  approved
+}
+
+enum accountMaintainenceType {
+  createAccount
+  passwordRecovery
+}
+
 enum orphanGender {
   M
   F
@@ -933,6 +976,7 @@ enum guardianRelationToOrphan {
   niece
   nephew
   legalGuardian
+  other
 }
 
 enum guardianNationality {
