@@ -1,8 +1,8 @@
 const { ApolloError } = require("apollo-server-express");
 const fs = require("fs");
-const path = require('path');
+const path = require("path");
 // const pdf = require('pdf-poppler');
-// ! // TODO implement pdf conversion on a linux supported pdf-library 
+// ! // TODO implement pdf conversion on a linux supported pdf-library
 
 function convertImage(pdfPath, outDir) {
   let conversionOptions = {
@@ -26,7 +26,7 @@ function convertImage(pdfPath, outDir) {
         conversionOptions.out_dir,
         conversionOptions.out_prefix
       );
-      
+
       // set path of the destination file
       const oldPngPath = path.join(
         conversionOptions.out_dir,
@@ -88,15 +88,18 @@ async function updateImage(
     const previousEntity = await prisma[entity].findUnique({ where: { id } });
     // check if previous entity exists
     if (previousEntity) {
+      const previousImageUrl = previousEntity[imageName] || "";
+      // return if the previous Image Url doesn't exist
+      if (!previousImageUrl) return;
       // check if the new Image exists sync
       try {
         if (fs.statSync(newImageUrl)) {
           // new file exists
           // check if the file url has changed
-          if (previousEntity[imageName] !== newImageUrl) {
+          if (previousImageUrl !== newImageUrl) {
             try {
               // check if previous image exists
-              if (fs.statSync(previousEntity[imageName])) {
+              if (fs.statSync(previousImageUrl)) {
                 // previous file exist delete it!
                 try {
                   // delete the previous file
@@ -127,7 +130,11 @@ async function updateImage(
           );
         } else throw new ApolloError(error);
       }
-    } else throw new ApolloError(`${entity} with id ${id} doesn't exist`,`ENTITY_DOSEN'T_EXIST`)
+    } else
+      throw new ApolloError(
+        `${entity} with id ${id} doesn't exist`,
+        `ENTITY_DOSEN'T_EXIST`
+      );
   }
 }
 

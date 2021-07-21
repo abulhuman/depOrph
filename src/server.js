@@ -1,12 +1,16 @@
 const { PrismaClient } = require("@prisma/client");
 const { ApolloServer, ApolloError } = require("apollo-server-express");
+const {
+  ApolloServerPluginLandingPageGraphQLPlayground
+} = require("apollo-server-core");
 const express = require("express");
 const session = require("express-session");
-const cors = require('cors');
+const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 const multer = require("multer");
+const moment = require("moment");
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
 const Donor = require("./resolvers/Donor");
@@ -32,10 +36,8 @@ const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
 const User = require("./resolvers/User");
 
-const { getUser, convertImage } = require("./utils");
+const { getUser, convertImage, automateSupportPlanExpiration } = require("./utils");
 const { GraphQLError } = require("graphql");
-
-const app = express();
 
 const prisma = new PrismaClient({
   errorFormat: "minimal"
@@ -68,93 +70,7 @@ const resolvers = {
   User
 };
 
-/** create an ApolloServer instance to handle the graphql server */
-const server = new ApolloServer({
-  typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8"),
-  resolvers,
-  context: ({ req, res }) => {
-    return {
-      req,
-      res,
-      prisma
-    };
-  },
-  formatError: (error) => {
-    if (error.originalError instanceof ApolloError) return error;
-    return new GraphQLError(error);
-  }
-});
-
-const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
-
-/** use a session with a rondom string as a session
- *  secret for authentication with a cookie that
- * expires after 12 hours of being set (login),
- * then the user is required to login again
- */
-app.use(
-  session({
-    name: "sessionId",
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 4.32e7 // 12 hours
-    }
-  })
-);
-
-// create file storage multer options
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, `./public/images/${file.fieldname}/`);
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${new Date().getTime()}-${file.originalname}`);
-  }
-});
-
-// create file filter function to filter files
-function fileFilter(req, file, cb) {
-  /** The function should call `cb` with a boolean
-   * to indicate if the file should be accepted
-   *
-   * To accept the file pass `true`
-   * To reject this file pass `false`
-   */
-
-  try {
-    /** allow uploads only for authenticated users */
-    if (getUser(req).userId) {
-      /** Filter files to accept only images and pdf
-       *  allow uploads for files that have
-       *  the extension in ["jpg", "jpeg", "bmp", "png"]
-       *  all case insensetive */
-      if (String(file.originalname).match(/.*\.(gif|jpe?g|bmp|png|pdf)$/gim)) {
-        cb(null, true);
-      } else {
-        throw new ApolloError("Unsupported image type");
-      }
-    } else cb(null, false);
-  } catch (error) {
-    /** You can always pass an error if something goes wrong */
-    cb(error);
-  }
-}
-
-/** create a multer instance to handle image uploads, and
- * pass it the storage options and the file filter function created above */
-const upload = multer({
-  storage,
-  fileFilter
-});
-
-app.use(express.static("public"));
-
-/** set corsOptions to enable cors in the server.applyMiddleware() */
-
+/** set corsOptions to enable cors in all the endpoints and the server.applyMiddleware() */
 const corsOptions = {
   credentials: true,
   origin: [
@@ -165,211 +81,332 @@ const corsOptions = {
   ]
 };
 
-/** cors: crosOptions -- enables the apollo-server-express cors with the corsOptions */
-server.applyMiddleware({ app, cors: corsOptions });
+async function startApolloServer() {
+  const app = express();
 
-/** handle all routing by the front-end
- * Single Page Application (SPA, vue.js in our case)
- */
-app.use(history());
+  const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
 
-/** post end points for image/pdf upload */
-app.post(
-  "/public/images/orphanBirthCertificate/",
-  cors(corsOptions),
-  upload.single("orphanBirthCertificate"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
+  /** use a session with a rondom string as a session
+   *  secret for authentication with a cookie that
+   * expires after 12 hours of being set (login),
+   * then the user is required to login again
+   */
+  app.use(
+    session({
+      name: "sessionId",
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 4.32e7 // 12 hours
+      }
+    })
+  );
+
+  /** create an ApolloServer instance to handle the graphql server */
+  const server = new ApolloServer({
+    typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8"),
+    resolvers,
+    context: ({ req, res }) => {
+      return {
+        req,
+        res,
+        prisma
+      };
+    },
+    formatError: (error) => {
+      if (error.originalError instanceof ApolloError) return error;
+      return new GraphQLError(error);
+    },
+    plugins: [
+      process.env.NODE_ENV === "production"
+        ? ApolloServerPluginLandingPageDisabled()
+        : ApolloServerPluginLandingPageGraphQLPlayground()
+    ]
+  });
+
+  await server.start();
+
+  /** cors: crosOptions -- enables the apollo-server-express cors with the corsOptions */
+  server.applyMiddleware({ app, cors: corsOptions });
+
+  /** start server and listen for connections using the express application */
+  await new Promise((resolve) => app.listen({ port: 3000 }, resolve));
+
+  console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
+
+  return { server, app };
+
+  // console.log(
+  //   `💻 Server ready at http://${process.env.HOSTNAME || "localhost"}:${
+  //     process.env.PORT || 3000
+  //   }`,
+  //   `\n⌛ Playground ready at http://${process.env.HOSTNAME || "localhost"}:${
+  //     process.env.PORT || 3000
+  //   }${server.graphqlPath} `
+  // );
 }
-);
 
-app.post(
-  "/public/images/orphanIdCard/",
-  cors(corsOptions),
-  upload.single("orphanIdCard"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+try {
+  const ApolloServerExpress = startApolloServer();
 
-app.post(
-  "/public/images/orphanPassport/",
-  cors(corsOptions),
-  upload.single("orphanPassport"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+  ApolloServerExpress.then((res) => {
+    const { app } = res;
 
-app.post(
-  "/public/images/orphanOriginalThankyouLetter/",
-  cors(corsOptions),
-  upload.single("orphanOriginalThankyouLetter"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+    // create file storage multer options
+    const storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, `./public/images/${file.fieldname}/`);
+      },
+      filename: function (req, file, cb) {
+        cb(null, `${new Date().getTime()}-${file.originalname}`);
+      }
+    });
 
-app.post(
-  "/public/images/orphanTranslatedThankyouLetter/",
-  cors(corsOptions),
-  upload.single("orphanTranslatedThankyouLetter"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+    // create file filter function to filter files
+    function fileFilter(req, file, cb) {
+      /** The function should call `cb` with a boolean
+       * to indicate if the file should be accepted
+       *
+       * To accept the file pass `true`
+       * To reject this file pass `false`
+       */
 
-app.post(
-  "/public/images/orphanPhotosPhotoPortrait/",
-  cors(corsOptions),
-  upload.single("orphanPhotosPhotoPortrait"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+      try {
+        /** allow uploads only for authenticated users */
+        if (getUser(req).userId) {
+          /** Filter files to accept only images and pdf
+           *  allow uploads for files that have
+           *  the extension in ["jpg", "jpeg", "bmp", "png"]
+           *  all case insensetive */
+          if (
+            String(file.originalname).match(/.*\.(gif|jpe?g|bmp|png|pdf)$/gim)
+          ) {
+            cb(null, true);
+          } else {
+            throw new ApolloError("Unsupported image type");
+          }
+        } else cb(null, false);
+      } catch (error) {
+        /** You can always pass an error if something goes wrong */
+        cb(error);
+      }
+    }
 
-app.post(
-  "/public/images/orphanPhotosPhotoLong/",
-  cors(corsOptions),
-  upload.single("orphanPhotosPhotoLong"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+    /** create a multer instance to handle image uploads, and
+     * pass it the storage options and the file filter function created above */
+    const upload = multer({
+      storage,
+      fileFilter
+    });
 
-app.post(
-  "/public/images/fatherDeathCertificate/",
-  cors(corsOptions),
-  upload.single("fatherDeathCertificate"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+    app.use(express.static("public"));
 
-app.post(
-  "/public/images/guardianConfirmationLetter/",
-  cors(corsOptions),
-  upload.single("guardianConfirmationLetter"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
+    /** handle all routing by the front-end
+     * Single Page Application (SPA, vue.js in our case)
+     */
+    app.use(history());
 
-app.post(
-  "/public/images/guardianLegalConfirmationLetter/",
-  cors(corsOptions),
-  upload.single("guardianLegalConfirmationLetter"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
-
-app.post(
-  "/public/images/guardianIDCard/",
-  cors(corsOptions),
-  upload.single("guardianIDCard"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
-
-app.post(
-  "/public/images/healthRecordMedicalCertificate/",
-  cors(corsOptions),
-  upload.single("healthRecordMedicalCertificate"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
-
-app.post(
-  "/public/images/educationalRecordReportCard/",
-  cors(corsOptions),
-  upload.single("educationalRecordReportCard"),(req, res) => {
-  if (req.file) {
-    if (req.file.mimetype === "application/pdf") {
-      convertImage(req.file.path, req.file.destination).then((data) =>
-        res.send(data)
-      );
-    } else res.send(req.file.path);
-  } else return res.send("Image not attached");
-}
-);
-
-/** start server and listen for connections using the express application */
-app.listen(
-  {
-    port: process.env.PORT || 3000,
-    hostname: process.env.HOSTNAME || "localhost"
-  },
-  () => {
-    console.log(
-      `💻 Server ready at http://${process.env.HOSTNAME || "localhost" }:${
-        process.env.PORT || 3000
-      }`,
-      `\n⌛ Playground ready at http://${process.env.HOSTNAME || "localhost" }:${
-        process.env.PORT || 3000
-      }${server.graphqlPath} `
+    /** post end points for image/pdf upload */
+    app.post(
+      "/public/images/orphanBirthCertificate/",
+      cors(corsOptions),
+      upload.single("orphanBirthCertificate"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
     );
-  }
-);
+
+    app.post(
+      "/public/images/orphanIdCard/",
+      cors(corsOptions),
+      upload.single("orphanIdCard"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/orphanPassport/",
+      cors(corsOptions),
+      upload.single("orphanPassport"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/orphanOriginalThankyouLetter/",
+      cors(corsOptions),
+      upload.single("orphanOriginalThankyouLetter"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/orphanTranslatedThankyouLetter/",
+      cors(corsOptions),
+      upload.single("orphanTranslatedThankyouLetter"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/orphanPhotosPhotoPortrait/",
+      cors(corsOptions),
+      upload.single("orphanPhotosPhotoPortrait"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/orphanPhotosPhotoLong/",
+      cors(corsOptions),
+      upload.single("orphanPhotosPhotoLong"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/fatherDeathCertificate/",
+      cors(corsOptions),
+      upload.single("fatherDeathCertificate"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/guardianConfirmationLetter/",
+      cors(corsOptions),
+      upload.single("guardianConfirmationLetter"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/guardianLegalConfirmationLetter/",
+      cors(corsOptions),
+      upload.single("guardianLegalConfirmationLetter"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/guardianIDCard/",
+      cors(corsOptions),
+      upload.single("guardianIDCard"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/healthRecordMedicalCertificate/",
+      cors(corsOptions),
+      upload.single("healthRecordMedicalCertificate"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/educationalRecordReportCard/",
+      cors(corsOptions),
+      upload.single("educationalRecordReportCard"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+  }).catch((err) => {
+    throw err;
+  });
+} catch (error) {
+  console.error(error);
+}

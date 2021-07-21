@@ -427,11 +427,11 @@ type Mutation {
     orphanId: ID
   ): FinancialRecord!
 
-  createHealthRecord(medicalCerificateUrl: String, orphanId: ID): HealthRecord!
+  createHealthRecord(medicalCertificateUrl: String, orphanId: ID): HealthRecord!
 
   updateHealthRecord(
     id: ID!
-    medicalCerificateUrl: String
+    medicalCertificateUrl: String
     orphanId: ID
   ): HealthRecord!
 
@@ -451,14 +451,14 @@ type Mutation {
   createOrphanPhotos(
     photoPortraitUrl: String!
     photoLongUrl: String
-    orphanId: ID
+    orphanId: ID!
   ): OrphanPhotos!
 
   updateOrphanPhotos(
     id: ID!
     photoPortraitUrl: String
     photoLongUrl: String
-    orphanId: ID
+    orphanId: ID!
   ): OrphanPhotos!
 
   createSponsorshipStatus(
@@ -473,7 +473,7 @@ type Mutation {
     status: sponsorshipStatus
     date: DateTime
     reason: String
-    orphanId: ID
+    orphanId: ID!
   ): SponsorshipStatus!
 
   createSupportPlan(
@@ -814,7 +814,7 @@ type HealthRecord {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  medicalCerificateUrl: String
+  medicalCertificateUrl: String
   orphan: Orphan
 }
 

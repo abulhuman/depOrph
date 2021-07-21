@@ -281,12 +281,12 @@ model FinancialRecord {
 }
 
 model HealthRecord {
-  id                   Int       @id @default(autoincrement())
-  created_at           DateTime? @default(now())
-  updated_at           DateTime?
-  medicalCerificateUrl String?
-  orphanId             Int?
-  orphan               Orphan?   @relation("healthrecordToorphan", fields: [orphanId], references: [id])
+  id                    Int       @id @default(autoincrement())
+  created_at            DateTime? @default(now())
+  updated_at            DateTime?
+  medicalCertificateUrl String?
+  orphanId              Int?
+  orphan                Orphan?   @relation("healthrecordToorphan", fields: [orphanId], references: [id])
 
   @@map("healthrecord")
 }
