@@ -84,7 +84,7 @@ async function updateImage(
   entity
 ) {
   if (newImageUrl !== undefined) {
-    // get the preiuos entity's details
+    // get the previous entity's details
     const previousEntity = await prisma[entity].findUnique({ where: { id } });
     // check if previous entity exists
     if (previousEntity) {
@@ -114,7 +114,7 @@ async function updateImage(
               // previous file doesn't exist, throw error
               if (error.code === "ENOENT") {
                 throw new ApolloError(
-                  `file ${previousEntity[imageName]}} not found`,
+                  `file ${previousImageUrl} not found`,
                   `FILE_NOT_FOUND`
                 );
               } else throw new ApolloError(error);

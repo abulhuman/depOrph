@@ -549,10 +549,10 @@ type Mutation {
     role: userRoles!
     email: String!
     password: String
-    coordinators: [ID]
-    heads: [ID]
-    socialWorkers: [ID]
-    donors: [ID]
+    coordinator: ID
+    head: ID
+    socialWorker: ID
+    donor: ID
   ): User!
 
   updateUser(
@@ -569,6 +569,7 @@ type Mutation {
   createAccountMaintainence(
     type: accountMaintainenceType!
     status: accountMaintainenceStatus!
+    role: userRoles!
     firstName: String!
     middleName: String!
     lastName: String!
@@ -895,10 +896,10 @@ type User {
   role: userRoles!
   email: String!
   password: String
-  coordinators: [Coordinator]
-  heads: [Head]
-  socialWorkers: [SocialWorker]
-  donors: [Donor]
+  coordinator: Coordinator
+  head: Head
+  socialWorker: SocialWorker
+  donor: Donor
 }
 
 type AccountMaintainence {
@@ -907,6 +908,7 @@ type AccountMaintainence {
   updated_at: DateTime
   type: accountMaintainenceType!
   status: accountMaintainenceStatus!
+  role: userRoles!
   firstName: String!
   middleName: String!
   lastName: String!
@@ -917,10 +919,11 @@ type AccountMaintainence {
 enum accountMaintainenceStatus {
   pending
   approved
+  rejected
 }
 
 enum accountMaintainenceType {
-  createAccount
+  register
   passwordRecovery
 }
 

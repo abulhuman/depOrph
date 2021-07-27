@@ -1,22 +1,22 @@
-function coordinators({ id }, _args, { prisma }) {
-  return prisma.user.findUnique({ where: { id } }).coordinators();
+function coordinator({ id }, _args, { prisma }) {
+  return prisma.user.findUnique({ where: { id } }).coordinator();
 }
 
-function heads({ id }, _args, { prisma }) {
-  return prisma.user.findUnique({ where: { id } }).heads();
+function head({ id }, _args, { prisma }) {
+  return prisma.user.findUnique({ where: { id } }).head();
 }
 
-function socialWorkers({ id }, _args, { prisma }) {
-  return prisma.user.findUnique({ where: { id } }).socialWorkers();
+function socialWorker({ id }, _args, { prisma }) {
+  return prisma.user.findUnique({ where: { id } }).socialWorker();
 }
 
-function donors({ id }, _args, { prisma }) {
-  return prisma.user.findUnique({ where: { id } }).donors();
+function donor({ id }, _args, { prisma }) {
+  return prisma.user.findUnique({ where: { id } }).donor();
 }
 
 module.exports = {
-  coordinators,
-  heads,
-  socialWorkers,
-  donors
+  coordinator,
+  head,
+  socialWorker,
+  donor
 };

@@ -13,10 +13,10 @@ model Donor {
   updated_at    DateTime?
   companyName   String        @default("")
   nameInitials  String        @default("")
-  userId        Int?
+  userId        Int
   coordinatorId Int?
   coordinator   Coordinator?  @relation(fields: [coordinatorId], references: [id])
-  user          User?         @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
   orphans       Orphan[]      @relation("donorToorphan")
   districts     District[]    @relation("districtsDonors")
   villages      Village[]     @relation("donorTovillage")
@@ -230,8 +230,8 @@ model SocialWorker {
   mobileNumber String                    @default("")
   initDate     DateTime?
   termDate     DateTime?
-  userId       Int?
-  user         User?                     @relation(fields: [userId], references: [id])
+  userId       Int
+  user         User                      @relation(fields: [userId], references: [id])
   districts    District[]                @relation("districtsSocialWorkers")
   villages     Village[]                 @relation("villageTosocialworker")
   orphans      Orphan[]                  @relation("orphanTosocialworker")
@@ -320,7 +320,7 @@ model SponsorshipStatus {
   updated_at DateTime?
   status     sponsorshipstatus_enum? @default(new)
   date       DateTime                @default("1970-01-01T00:00:00.000Z")
-  reason String?
+  reason     String?
   orphanId   Int?
   orphan     Orphan?                 @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
 
@@ -356,8 +356,8 @@ model Head {
   firstName  String    @default("")
   middleName String    @default("")
   lastName   String    @default("")
-  userId     Int?
-  user       User?     @relation(fields: [userId], references: [id])
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
 
   @@map("head")
 }
@@ -369,8 +369,8 @@ model Coordinator {
   firstName  String     @default("")
   middleName String     @default("")
   lastName   String     @default("")
-  userId     Int?
-  user       User?      @relation(fields: [userId], references: [id])
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id])
   villages   Village[]
   districts  District[]
   donors     Donor[]
@@ -379,31 +379,32 @@ model Coordinator {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  created_at    DateTime?      @default(now())
-  updated_at    DateTime?
-  role          userRoles_enum @default(Guest)
-  email         String         @unique @default("")
-  password      String?
-  coordinators  Coordinator[]
-  heads         Head[]
-  socialWorkers SocialWorker[]
-  donors        Donor[]
+  id           Int            @id @default(autoincrement())
+  created_at   DateTime?      @default(now())
+  updated_at   DateTime?
+  role         userRoles_enum @default(Guest)
+  email        String         @unique @default("")
+  password     String?
+  coordinator  Coordinator?
+  head         Head?
+  socialWorker SocialWorker?
+  donor        Donor?
 
   @@map("user")
 }
 
 model AccountMaintainence {
-  id         Int        @id @default(autoincrement())
-  created_at DateTime?  @default(now())
-  updated_at DateTime?
-  type accountMaintainenceType_enum @default(createAccount)
-  status accountMaintainenceStatus_enum @default(pending)
-  firstName  String    @default("")
-  middleName String    @default("")
-  lastName   String    @default("")
-  email String @default("")
-  mobileNumber String @default("")
+  id           Int                            @id @default(autoincrement())
+  created_at   DateTime?                      @default(now())
+  updated_at   DateTime?
+  type         accountMaintainenceType_enum   @default(register)
+  status       accountMaintainenceStatus_enum @default(pending)
+  role         userRoles_enum                 @default(SocialWorker)
+  firstName    String                         @default("")
+  middleName   String                         @default("")
+  lastName     String                         @default("")
+  email        String                         @default("")
+  mobileNumber String                         @default("")
 
   @@map("accountMaintainence")
 }
@@ -411,10 +412,11 @@ model AccountMaintainence {
 enum accountMaintainenceStatus_enum {
   pending
   approved
+  rejected
 }
 
 enum accountMaintainenceType_enum {
-  createAccount
+  register
   passwordRecovery
 }
 
@@ -427,7 +429,7 @@ enum education_enrollmentstatus_enum {
 enum education_level_enum {
   religiousEducation
   preSchool
-  primary_elementary @map("primary/elementary")
+  primary_elementary  @map("primary/elementary")
   junior
   highschool
   underGraduate
