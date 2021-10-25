@@ -25,20 +25,30 @@ model Donor {
   @@map("donor")
 }
 
-model Education {
-  id                 Int                             @id @default(autoincrement())
-  created_at         DateTime?                       @default(now())
-  updated_at         DateTime?
-  enrollmentStatus   education_enrollmentstatus_enum @default(unenrolled)
-  schoolName         String?
-  typeOfSchool       education_typeofschool_enum?
-  year               String?
-  level              education_level_enum?
-  reason             String?
-  educationalRecords EducationalRecord[]             @relation("educationToeducationalrecord")
-  orphan             Orphan[]                        @relation("educationToorphan")
+model EducationalRecord {
+  id               Int                                  @id @default(autoincrement())
+  created_at       DateTime?                            @default(now())
+  updated_at       DateTime?
+  enrollmentStatus String //education_enrollmentstatus_enum      @default(unenrolled)
+  schoolName       String?
+  typeOfSchool     String? // education_typeofschool_enum?
+  year             String?
+  level            String? // education_level_enum?
+  reason           String?
+  yearDivision     String? // educationalrecord_yeardivision_enum?
+  quarter          String? // educationalrecord_quarter_enum?
+  semester         String? // educationalrecord_semester_enum?
+  totalMark        Float?
+  numberOfSubjects Int?
+  average          Float?
+  rank             Int?
+  reportCardUrl    String?
+  semesterGPA      Float?
+  cumulativeGPA    Float?
+  orphanId         Int?
+  orphan           Orphan?                              @relation("educationToorphan", fields: [orphanId], references: [id])
 
-  @@map("education")
+  @@map("educationalrecord")
 }
 
 model Father {
@@ -63,13 +73,13 @@ model Guardian {
   firstName                  String                         @default("")
   middleName                 String                         @default("")
   lastName                   String                         @default("")
-  gender                     guardian_gender_enum           @default(M)
+  gender                     String // guardian_gender_enum           @default(M)
   dateOfBirth                DateTime                       @default("1970-01-01T00:00:00.000Z")
-  relationToOrphan           guardian_relationtoorphan_enum @default(mother)
+  relationToOrphan           String // guardian_relationtoorphan_enum @default(mother)
   email                      String                         @default("")
   mobileNumber               String                         @default("")
   telephoneNumber            String?
-  nationality                guardian_nationality_enum      @default(Ethiopian)
+  nationality                String // guardian_nationality_enum      @default(Ethiopian)
   iDCardUrl                  String                         @default("")
   confirmationLetterUrl      String                         @default("")
   legalConfirmationLetterUrl String?                        @default("")
@@ -85,12 +95,12 @@ model Mother {
   firstName      String                @default("")
   middleName     String                @default("")
   lastName       String                @default("")
-  vitalStatus    mother_vitalStatus    @default(alive)
+  vitalStatus    String // mother_vitalStatus    @default(alive)
   dateOfBirth    DateTime              @default("1970-01-01T00:00:00.000Z")
   dateOfDeath    DateTime?
   causeOfDeath   String?
   mobileNumber   String                @default("")
-  maritalStatus  mother_maritalStatus?
+  maritalStatus  String? // mother_maritalStatus?
   monthlyExpense Float                 @default(0)
   jobs           MotherJob[]           @relation("motherTomotherjob")
   orphans        Orphan[]              @relation("motherToorphan")
@@ -174,20 +184,20 @@ model Orphan {
   created_at                  DateTime?                        @default(now())
   updated_at                  DateTime?
   firstName                   String                           @default("")
-  gender                      orphan_gender_enum               @default(M)
+  gender                      String // orphan_gender_enum               @default(M)
   placeOfBirth                String                           @default("")
   dateOfBirth                 DateTime                         @default("1970-01-01T00:00:00.000Z")
   spokenLanguages             String?
   gradeAgeMismatchReason      String?
   hobbies                     String?
-  religion                    orphan_religion_enum?
+  religion                    String? // orphan_religion_enum?
   idCardUrl                   String?
   passportUrl                 String?
   originalThankyouLetterUrl   String?
   translatedThankyouLetterUrl String?
   birthCertificateUrl         String                           @default("")
   healthDescription           String                           @default("")
-  psychologicalStatus         orphan_psychologicalstatus_enum?
+  psychologicalStatus         String? // orphan_psychologicalstatus_enum?
   accountNumber               String?
   currentBalance              Float?
   motherId                    Int?
@@ -200,7 +210,6 @@ model Orphan {
   socialWorkerId              Int?
   house_propertyId            Int?
   donor                       Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
-  education                   Education?                       @relation("educationToorphan", fields: [educationId], references: [id])
   father                      Father?                          @relation("fatherToorphan", fields: [fatherId], references: [id])
   guardian                    Guardian?                        @relation("guardianToorphan", fields: [guardianId], references: [id])
   house_property              House_property?                  @relation("house_propertyToorphan", fields: [house_propertyId], references: [id])
@@ -208,6 +217,7 @@ model Orphan {
   village                     Village?                         @relation("orphanTovillage", fields: [villageId], references: [id])
   socialWorker                SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
   supportPlan                 SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
+  educationalRecords          EducationalRecord[]              @relation("educationToorphan")
   financialRecords            FinancialRecord[]                @relation("financialrecordToorphan")
   healthRecords               HealthRecord[]                   @relation("healthrecordToorphan")
   photos                      OrphanPhotos[]                   @relation("orphanToorphanphotos")
@@ -225,7 +235,7 @@ model SocialWorker {
   firstName    String                    @default("")
   middleName   String                    @default("")
   lastName     String                    @default("")
-  gender       socialworker_gender_enum?
+  gender       String? // socialworker_gender_enum?
   dateOfBirth  DateTime?
   mobileNumber String                    @default("")
   initDate     DateTime?
@@ -239,40 +249,14 @@ model SocialWorker {
   @@map("socialworker")
 }
 
-model EducationalRecord {
-  id               Int                                  @id @default(autoincrement())
-  created_at       DateTime?                            @default(now())
-  updated_at       DateTime?
-  enrollmentStatus education_enrollmentstatus_enum      @default(unenrolled)
-  schoolName       String?
-  typeOfSchool     education_typeofschool_enum?
-  year             String?
-  level            education_level_enum?
-  reason           String?
-  yearDivision     educationalrecord_yeardivision_enum?
-  quarter          educationalrecord_quarter_enum?
-  semester         educationalrecord_semester_enum?
-  totalMark        Float?
-  numberOfSubjects Int?
-  average          Float?
-  rank             Int?
-  reportCardUrl    String?
-  semesterGPA      Float?
-  cumulativeGPA    Float?
-  educationId      Int?
-  education        Education?                           @relation("educationToeducationalrecord", fields: [educationId], references: [id])
-
-  @@map("educationalrecord")
-}
-
 model FinancialRecord {
   id                Int                          @id @default(autoincrement())
   created_at        DateTime?                    @default(now())
   updated_at        DateTime?
   transactionDate   DateTime?
-  transactionType   transaction_type_enum?
+  transactionType   String? // transaction_type_enum?
   amount            Float?
-  reason            financialrecord_reason_enum?
+  reason            String? // financialrecord_reason_enum?
   specialCaseReason String?
   orphanId          Int?
   orphan            Orphan?                      @relation("financialrecordToorphan", fields: [orphanId], references: [id])
@@ -318,7 +302,7 @@ model SponsorshipStatus {
   id         Int                     @id @default(autoincrement())
   created_at DateTime?               @default(now())
   updated_at DateTime?
-  status     sponsorshipstatus_enum? @default(new)
+  status     String? // sponsorshipstatus_enum? @default(new)
   date       DateTime                @default("1970-01-01T00:00:00.000Z")
   reason     String?
   orphanId   Int?
@@ -382,7 +366,7 @@ model User {
   id           Int            @id @default(autoincrement())
   created_at   DateTime?      @default(now())
   updated_at   DateTime?
-  role         userRoles_enum @default(Guest)
+  role         String // userRoles_enum @default(Guest)
   email        String         @unique @default("")
   password     String?
   coordinator  Coordinator?
@@ -397,9 +381,9 @@ model AccountMaintainence {
   id           Int                            @id @default(autoincrement())
   created_at   DateTime?                      @default(now())
   updated_at   DateTime?
-  type         accountMaintainenceType_enum   @default(register)
-  status       accountMaintainenceStatus_enum @default(pending)
-  role         userRoles_enum                 @default(SocialWorker)
+  type         String // accountMaintainenceType_enum   @default(register)
+  status       String // accountMaintainenceStatus_enum @default(pending)
+  role         String // userRoles_enum                 @default(SocialWorker)
   firstName    String                         @default("")
   middleName   String                         @default("")
   lastName     String                         @default("")
