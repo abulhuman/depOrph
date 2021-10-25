@@ -261,18 +261,22 @@ async function allOrphans(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
+          { firstName: { equals: filter, mode: "insensitive" } },
           {
             father: {
-              firstName: { contains: filter, mode: "insensitive" },
-              lastName: { contains: filter, mode: "insensitive" }
+              OR: [
+                { firstName: { equals: filter, mode: "insensitive" } },
+                { lastName: { equals: filter, mode: "insensitive" } }
+              ]
             }
           },
-          { age: { equals: parseInt(filter) } },
+          // { age: { equals: parseInt(filter) } },
           { gender: { equals: genderFilter } },
           {
-            sponsorshipStatus: {
-              status: { equals: sponsorshipstatusFilter }
+            sponsorshipStatuses: {
+              some: {
+                status: { equals: sponsorshipstatusFilter }
+              }
             }
           }
         ]
