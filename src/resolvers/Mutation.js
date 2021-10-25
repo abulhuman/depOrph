@@ -117,11 +117,11 @@ async function updateDonor(_parent, args, { prisma, req }, _info) {
         : previousCoordinatorId
         ? { connect: { id: previousCoordinatorId } }
         : undefined,
-      user: args.userId
-        ? { connect: { id: parseInt(args.userId) } }
-        : previousUserId
-        ? { connect: { id: previousUserId } }
-        : undefined,
+      // user: args.userId
+      //   ? { connect: { id: parseInt(args.userId) } }
+      //   : previousUserId
+      //   ? { connect: { id: previousUserId } }
+      //   : undefined,
 
       orphans: {
         connect: orphansIds
@@ -139,6 +139,8 @@ async function updateDonor(_parent, args, { prisma, req }, _info) {
 
     delete DonorUpdateInput.coordinatorId;
     delete DonorUpdateInput.userId;
+
+    console.log(DonorUpdateInput);
 
     return await prisma.donor.update({
       where: { id },
@@ -1564,11 +1566,14 @@ async function updateUser(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
+    const hashedPassword = await bcrypt.hash(args.password, 10);
 
     return await prisma.user.update({
       where: { id },
       data: {
-        ...args,
+        role: args.role,
+        email: args.email ? String(args.email).toLowerCase() : undefined,
+        password: hashedPassword,
         updated_at: new Date()
       }
     });
@@ -1584,7 +1589,7 @@ async function register(
 ) {
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { role, email, password: hashedPassword }
+    data: { role, email: String(email).toLowerCase(), password: hashedPassword }
   });
   req.session.userId = user.id;
   req.session.userRole = user.role;
@@ -1595,7 +1600,7 @@ async function register(
 
 async function login(_parent, { email, password }, { req, prisma }, _info) {
   const user = await prisma.user.findUnique({
-    where: { email }
+    where: { email: String(email).toLowerCase() }
   });
   if (!user) {
     throw new Error(`No such user found for email: ${email}`);
