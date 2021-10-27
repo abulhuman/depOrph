@@ -17,7 +17,6 @@ model Donor {
   coordinatorId Int?
   coordinator   Coordinator?  @relation(fields: [coordinatorId], references: [id])
   user          User          @relation(fields: [userId], references: [id])
-  orphans       Orphan[]      @relation("donorToorphan")
   districts     District[]    @relation("districtsDonors")
   villages      Village[]     @relation("donorTovillage")
   supportPlans  SupportPlan[] @relation("donorTosupportplan")
@@ -26,8 +25,8 @@ model Donor {
 }
 
 model EducationalRecord {
-  id               Int                                  @id @default(autoincrement())
-  created_at       DateTime?                            @default(now())
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime? @default(now())
   updated_at       DateTime?
   enrollmentStatus String //education_enrollmentstatus_enum      @default(unenrolled)
   schoolName       String?
@@ -46,9 +45,9 @@ model EducationalRecord {
   semesterGPA      Float?
   cumulativeGPA    Float?
   orphanId         Int?
-  orphan           Orphan?                              @relation("educationToorphan", fields: [orphanId], references: [id])
+  orphan           Orphan?   @relation("educationToorphan", fields: [orphanId], references: [id])
 
-  @@map("educationalrecord")
+  @@map("educationalRecord")
 }
 
 model Father {
@@ -67,43 +66,43 @@ model Father {
 }
 
 model Guardian {
-  id                         Int                            @id @default(autoincrement())
-  created_at                 DateTime?                      @default(now())
+  id                         Int       @id @default(autoincrement())
+  created_at                 DateTime? @default(now())
   updated_at                 DateTime?
-  firstName                  String                         @default("")
-  middleName                 String                         @default("")
-  lastName                   String                         @default("")
+  firstName                  String    @default("")
+  middleName                 String    @default("")
+  lastName                   String    @default("")
   gender                     String // guardian_gender_enum           @default(M)
-  dateOfBirth                DateTime                       @default("1970-01-01T00:00:00.000Z")
+  dateOfBirth                DateTime  @default("1970-01-01T00:00:00.000Z")
   relationToOrphan           String // guardian_relationtoorphan_enum @default(mother)
-  email                      String                         @default("")
-  mobileNumber               String                         @default("")
+  email                      String    @default("")
+  mobileNumber               String    @default("")
   telephoneNumber            String?
   nationality                String // guardian_nationality_enum      @default(Ethiopian)
-  iDCardUrl                  String                         @default("")
-  confirmationLetterUrl      String                         @default("")
-  legalConfirmationLetterUrl String?                        @default("")
-  orphans                    Orphan[]                       @relation("guardianToorphan")
+  idCardUrl                  String    @default("")
+  confirmationLetterUrl      String    @default("")
+  legalConfirmationLetterUrl String?   @default("")
+  orphans                    Orphan[]  @relation("guardianToorphan")
 
   @@map("guardian")
 }
 
 model Mother {
-  id             Int                   @id @default(autoincrement())
-  created_at     DateTime?             @default(now())
+  id             Int         @id @default(autoincrement())
+  created_at     DateTime?   @default(now())
   updated_at     DateTime?
-  firstName      String                @default("")
-  middleName     String                @default("")
-  lastName       String                @default("")
+  firstName      String      @default("")
+  middleName     String      @default("")
+  lastName       String      @default("")
   vitalStatus    String // mother_vitalStatus    @default(alive)
-  dateOfBirth    DateTime              @default("1970-01-01T00:00:00.000Z")
+  dateOfBirth    DateTime    @default("1970-01-01T00:00:00.000Z")
   dateOfDeath    DateTime?
   causeOfDeath   String?
-  mobileNumber   String                @default("")
+  mobileNumber   String      @default("")
   maritalStatus  String? // mother_maritalStatus?
-  monthlyExpense Float                 @default(0)
-  jobs           MotherJob[]           @relation("motherTomotherjob")
-  orphans        Orphan[]              @relation("motherToorphan")
+  monthlyExpense Float       @default(0)
+  jobs           MotherJob[] @relation("motherTomotherjob")
+  orphans        Orphan[]    @relation("motherToorphan")
 
   @@map("mother")
 }
@@ -150,13 +149,14 @@ model District {
   updated_at    DateTime?
   name          String         @default("")
   zoneId        Int?
-  coordinatorId Int?
-  coordinator   Coordinator?   @relation(fields: [coordinatorId], references: [id])
   zone          Zone?          @relation(fields: [zoneId], references: [id])
   villages      Village[]
   socialWorkers SocialWorker[] @relation("districtsSocialWorkers")
-  donors        Donor[]        @relation("districtsDonors")
 
+  Donor         Donor?       @relation("districtsDonors", fields: [donorId], references: [id])
+  donorId       Int?
+  Coordinator   Coordinator? @relation(fields: [coordinatorId], references: [id])
+  coordinatorId Int?
   @@map("district")
 }
 
@@ -167,91 +167,111 @@ model Village {
   registrationDate DateTime      @default("1970-01-01T00:00:00.000Z")
   name             String?
   districtId       Int?
-  donorId          Int?
-  coordinatorId    Int?
   socialWorkerId   Int?
-  coordinator      Coordinator?  @relation(fields: [coordinatorId], references: [id])
   socialWorker     SocialWorker? @relation("villageTosocialworker", fields: [socialWorkerId], references: [id])
   district         District?     @relation(fields: [districtId], references: [id])
-  donor            Donor?        @relation("donorTovillage", fields: [donorId], references: [id])
   orphans          Orphan[]      @relation("orphanTovillage")
 
+  Donor         Donor?       @relation("donorTovillage", fields: [donorId], references: [id])
+  donorId       Int?
+  Coordinator   Coordinator? @relation(fields: [coordinatorId], references: [id])
+  coordinatorId Int?
   @@map("village")
 }
 
 model Orphan {
-  id                          Int                              @id @default(autoincrement())
-  created_at                  DateTime?                        @default(now())
-  updated_at                  DateTime?
-  firstName                   String                           @default("")
-  gender                      String // orphan_gender_enum               @default(M)
-  placeOfBirth                String                           @default("")
-  dateOfBirth                 DateTime                         @default("1970-01-01T00:00:00.000Z")
-  spokenLanguages             String?
-  gradeAgeMismatchReason      String?
-  hobbies                     String?
-  religion                    String? // orphan_religion_enum?
-  idCardUrl                   String?
-  passportUrl                 String?
-  originalThankyouLetterUrl   String?
-  translatedThankyouLetterUrl String?
-  birthCertificateUrl         String                           @default("")
-  healthDescription           String                           @default("")
-  psychologicalStatus         String? // orphan_psychologicalstatus_enum?
-  accountNumber               String?
-  currentBalance              Float?
-  motherId                    Int?
-  fatherId                    Int?
-  guardianId                  Int?
-  educationId                 Int?
-  donorId                     Int?
-  supportPlanId               Int?
-  villageId                   Int?
-  socialWorkerId              Int?
-  house_propertyId            Int?
-  donor                       Donor?                           @relation("donorToorphan", fields: [donorId], references: [id])
-  father                      Father?                          @relation("fatherToorphan", fields: [fatherId], references: [id])
-  guardian                    Guardian?                        @relation("guardianToorphan", fields: [guardianId], references: [id])
-  house_property              House_property?                  @relation("house_propertyToorphan", fields: [house_propertyId], references: [id])
-  mother                      Mother?                          @relation("motherToorphan", fields: [motherId], references: [id])
-  village                     Village?                         @relation("orphanTovillage", fields: [villageId], references: [id])
-  socialWorker                SocialWorker?                    @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
-  supportPlan                 SupportPlan?                     @relation("orphanTosupportplan", fields: [supportPlanId], references: [id])
-  educationalRecords          EducationalRecord[]              @relation("educationToorphan")
-  financialRecords            FinancialRecord[]                @relation("financialrecordToorphan")
-  healthRecords               HealthRecord[]                   @relation("healthrecordToorphan")
-  photos                      OrphanPhotos[]                   @relation("orphanToorphanphotos")
-  sponsorshipStatuses         SponsorshipStatus[]              @relation("orphanTosponsorshipstatus")
-  siblings                    Orphan[]                         @relation("orphan_sibling")
-  siblingOf                   Orphan[]                         @relation("orphan_sibling")
+  id                     Int                 @id @default(autoincrement())
+  created_at             DateTime?           @default(now())
+  updated_at             DateTime?
+  firstName              String              @default("")
+  gender                 String // orphan_gender_enum               @default(M)
+  placeOfBirth           String              @default("")
+  dateOfBirth            DateTime            @default("1970-01-01T00:00:00.000Z")
+  spokenLanguages        String?
+  gradeAgeMismatchReason String?
+  hobbies                String?
+  religion               String? // orphan_religion_enum?
+  idCardUrl              String?
+  passportUrl            String?
+  birthCertificateUrl    String              @default("")
+  accountNumber          String?
+  currentBalance         Float?
+  motherId               Int?
+  fatherId               Int?
+  guardianId             Int?
+  educationId            Int?
+  villageId              Int?
+  socialWorkerId         Int?
+  house_propertyId       Int?
+  father                 Father?             @relation("fatherToorphan", fields: [fatherId], references: [id])
+  guardian               Guardian?           @relation("guardianToorphan", fields: [guardianId], references: [id])
+  house_property         House_property?     @relation("house_propertyToorphan", fields: [house_propertyId], references: [id])
+  mother                 Mother?             @relation("motherToorphan", fields: [motherId], references: [id])
+  village                Village?            @relation("orphanTovillage", fields: [villageId], references: [id])
+  socialWorker           SocialWorker?       @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
+  supportPlans           SupportPlan[]       @relation("orphanTosupportplan")
+  sponsorshipStatuses    SponsorshipStatus[] @relation("orphanTosponsorshipstatus")
+  financialRecords       FinancialRecord[]   @relation("financialrecordToorphan")
+  educationalRecords     EducationalRecord[] @relation("educationToorphan")
+  healthRecords          HealthRecord[]      @relation("healthrecordToorphan")
+  healthStatuses         HealthStatus[]      @relation("healthstatusToorphan")
+  photos                 OrphanPhotos[]      @relation("orphanToorphanphotos")
+  letters                OrphanLetter[]      @relation("orphanLetterToorphan")
+  siblings               Orphan[]            @relation("orphan_sibling")
+  siblingOf              Orphan[]            @relation("orphan_sibling")
 
   @@map("orphan")
 }
 
+model HealthStatus {
+  id                  Int       @id @default(autoincrement())
+  created_at          DateTime? @default(now())
+  updated_at          DateTime?
+  healthDescription   String    @default("")
+  psychologicalStatus String? // orphan_psychologicalstatus_enum?
+  orphanId            Int?
+  orphan              Orphan?   @relation("healthstatusToorphan", fields: [orphanId], references: [id])
+
+  @@map("healthStatus")
+}
+
+model OrphanLetter {
+  id                          Int       @id @default(autoincrement())
+  created_at                  DateTime? @default(now())
+  updated_at                  DateTime?
+  originalThankyouLetterUrl   String?
+  translatedThankyouLetterUrl String?
+  orphanId                    Int?
+  orphan                      Orphan?   @relation("orphanLetterToorphan", fields: [orphanId], references: [id])
+
+
+  @@map("orphanLetter")
+}
+
 model SocialWorker {
-  id           Int                       @id @default(autoincrement())
-  created_at   DateTime?                 @default(now())
+  id           Int        @id @default(autoincrement())
+  created_at   DateTime?  @default(now())
   updated_at   DateTime?
-  firstName    String                    @default("")
-  middleName   String                    @default("")
-  lastName     String                    @default("")
+  firstName    String     @default("")
+  middleName   String     @default("")
+  lastName     String     @default("")
   gender       String? // socialworker_gender_enum?
   dateOfBirth  DateTime?
-  mobileNumber String                    @default("")
+  mobileNumber String     @default("")
   initDate     DateTime?
   termDate     DateTime?
   userId       Int
-  user         User                      @relation(fields: [userId], references: [id])
-  districts    District[]                @relation("districtsSocialWorkers")
-  villages     Village[]                 @relation("villageTosocialworker")
-  orphans      Orphan[]                  @relation("orphanTosocialworker")
+  user         User       @relation(fields: [userId], references: [id])
+  districts    District[] @relation("districtsSocialWorkers")
+  villages     Village[]  @relation("villageTosocialworker")
+  orphans      Orphan[]   @relation("orphanTosocialworker")
 
   @@map("socialworker")
 }
 
 model FinancialRecord {
-  id                Int                          @id @default(autoincrement())
-  created_at        DateTime?                    @default(now())
+  id                Int       @id @default(autoincrement())
+  created_at        DateTime? @default(now())
   updated_at        DateTime?
   transactionDate   DateTime?
   transactionType   String? // transaction_type_enum?
@@ -259,7 +279,7 @@ model FinancialRecord {
   reason            String? // financialrecord_reason_enum?
   specialCaseReason String?
   orphanId          Int?
-  orphan            Orphan?                      @relation("financialrecordToorphan", fields: [orphanId], references: [id])
+  orphan            Orphan?   @relation("financialrecordToorphan", fields: [orphanId], references: [id])
 
   @@map("financialrecord")
 }
@@ -299,38 +319,123 @@ model OrphanPhotos {
 }
 
 model SponsorshipStatus {
-  id         Int                     @id @default(autoincrement())
-  created_at DateTime?               @default(now())
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
   updated_at DateTime?
   status     String? // sponsorshipstatus_enum? @default(new)
-  date       DateTime                @default("1970-01-01T00:00:00.000Z")
+  date       DateTime  @default("1970-01-01T00:00:00.000Z")
   reason     String?
   orphanId   Int?
-  orphan     Orphan?                 @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
+  orphan     Orphan?   @relation("orphanTosponsorshipstatus", fields: [orphanId], references: [id])
 
   @@map("sponsorshipstatus")
+}
+
+model Project {
+  id                           Int                        @id @default(autoincrement())
+  created_at                   DateTime?                  @default(now())
+  updated_at                   DateTime?
+  number                       String
+  startDate                    DateTime?
+  endDate                      DateTime?
+  maximumNumberOfBeneficiaries Int
+  durationInYears              Int
+  location                     String
+  totalBudget                  Float
+  administrativeCost           Float
+  supportPlans                 SupportPlan[]              @relation("projectTosupportplan")
+  coordinators                 Coordinator[]
+  projectDocuments             ProjectDocument[]
+  incomeGeneratingActivities   IncomeGeneratingActivity[]
+
+  @@map("project")
+}
+
+model ProjectDocument {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime? @default(now())
+  updated_at   DateTime?
+  documentUrl  String
+  documentType String
+  projectId    Int?
+  project      Project?  @relation(fields: [projectId], references: [id])
+
+  @@map("projectDocument")
+}
+
+model IncomeGeneratingActivity {
+  id              Int                             @id @default(autoincrement())
+  created_at      DateTime?                       @default(now())
+  updated_at      DateTime?
+  beneficiaryType String
+  activityType    String
+  firstName       String                          @default("")
+  middleName      String                          @default("")
+  lastName        String                          @default("")
+  budget          Float
+  title           String
+  description     String
+  startDate       DateTime?
+  endDate         DateTime?
+  status          String
+  projectId       Int?
+  project         Project?                        @relation(fields: [projectId], references: [id])
+  photos          IncomeGeneratingActivityPhoto[]
+
+  @@map("incomeGeneratingActivity")
+}
+
+model IncomeGeneratingActivityPhoto {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @default(now())
+  updated_at DateTime?
+  photoUrl   String
+  incomeGeneratingActivityId Int?
+  incomeGeneratingActivity   IncomeGeneratingActivity? @relation(fields: [incomeGeneratingActivityId], references: [id])
+
+
+  @@map("incomeGeneratingActivityPhoto")
 }
 
 model SupportPlan {
   id                 Int       @id @default(autoincrement())
   created_at         DateTime? @default(now())
   updated_at         DateTime?
-  collectiveFund_fc  Float?
-  individualFund_fc  Float?
-  foreignCurrency    String?
-  supportPeriod      Int?
-  adminFeePercentage Float?
-  exchangeRate       Float?
-  individualFund_brr Float?
-  adminFee_brr       Float?
-  netPayment_brr     Float?
-  initDate           DateTime?
-  termDate           DateTime?
+  name               String
+  adminFeePercentage Float
+  paymentInterval    String
+  startDate          DateTime?
+  endDate            DateTime?
   donorId            Int?
+  projectId          Int?
   donor              Donor?    @relation("donorTosupportplan", fields: [donorId], references: [id])
+  project            Project?  @relation("projectTosupportplan", fields: [projectId], references: [id])
+  payments           Payment[] @relation("supportplanTopayment")
   orphans            Orphan[]  @relation("orphanTosupportplan")
 
   @@map("supportplan")
+}
+
+model Payment {
+  id                                Int          @id @default(autoincrement())
+  created_at                        DateTime?    @default(now())
+  updated_at                        DateTime?
+  startDate                         DateTime?
+  endDate                           DateTime?
+  paymentInPrimaryForeignCurrency   Float
+  primaryForeignCurrency            String
+  primaryExchangeRate               Float
+  paymentInSecondaryForeignCurrency Float
+  secondaryForeignCurrency          String
+  secondaryExchangeRate             Float
+  grossPaymentInDomesticCurrency    Float
+  adminFeeInDomesticCurrency        Float
+  netPaymentInDomesticCurrency      Float
+  paymentPeriodInMonths             Int
+  supportPlanId                     Int?
+  supportPlan                       SupportPlan? @relation("supportplanTopayment", fields: [supportPlanId], references: [id])
+
+  @@map("payment")
 }
 
 model Head {
@@ -358,16 +463,17 @@ model Coordinator {
   villages   Village[]
   districts  District[]
   donors     Donor[]
+  projects   Project[]
 
   @@map("coordinator")
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  created_at   DateTime?      @default(now())
+  id           Int           @id @default(autoincrement())
+  created_at   DateTime?     @default(now())
   updated_at   DateTime?
   role         String // userRoles_enum @default(Guest)
-  email        String         @unique @default("")
+  email        String        @unique @default("")
   password     String?
   coordinator  Coordinator?
   head         Head?
@@ -378,17 +484,17 @@ model User {
 }
 
 model AccountMaintainence {
-  id           Int                            @id @default(autoincrement())
-  created_at   DateTime?                      @default(now())
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime? @default(now())
   updated_at   DateTime?
   type         String // accountMaintainenceType_enum   @default(register)
   status       String // accountMaintainenceStatus_enum @default(pending)
   role         String // userRoles_enum                 @default(SocialWorker)
-  firstName    String                         @default("")
-  middleName   String                         @default("")
-  lastName     String                         @default("")
-  email        String                         @default("")
-  mobileNumber String                         @default("")
+  firstName    String    @default("")
+  middleName   String    @default("")
+  lastName     String    @default("")
+  email        String    @default("")
+  mobileNumber String    @default("")
 
   @@map("accountMaintainence")
 }
