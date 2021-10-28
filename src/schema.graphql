@@ -597,12 +597,10 @@ type Donor {
   coordinator: Coordinator
   user: User!
   orphans: [Orphan]
-  districts: [District]
-  villages: [Village]
   supportPlans: [SupportPlan]
 }
 
-type Education {
+type EducationalRecord {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
@@ -612,8 +610,17 @@ type Education {
   year: String
   level: educationLevel
   reason: String
-  educationalRecords: [EducationalRecord]
-  orphan: [Orphan]
+  yearDivision: ERYearDivision
+  quarter: ERQuarter
+  semester: ERSemester
+  totalMark: Float
+  numberOfSubjects: Int
+  average: Float
+  rank: Int
+  reportCardUrl: String
+  semesterGPA: Float
+  cumulativeGPA: Float
+  orphan: Orphan
 }
 
 type Father {
@@ -643,7 +650,7 @@ type Guardian {
   mobileNumber: String!
   telephoneNumber: String
   nationality: guardianNationality!
-  iDCardUrl: String!
+  idCardUrl: String!
   confirmationLetterUrl: String!
   legalConfirmationLetterUrl: String!
   orphans: [Orphan]
@@ -673,8 +680,8 @@ type MotherJob {
   updated_at: DateTime
   jobTitle: String
   monthlyIncome: String
-  initDate: DateTime
-  termDate: DateTime
+  startDate: DateTime
+  endDate: DateTime
   mother: Mother
 }
 
@@ -700,23 +707,18 @@ type District {
   created_at: DateTime
   updated_at: DateTime
   name: String!
-  coordinator: Coordinator
   zone: Zone
   villages: [Village]
   socialWorkers: [SocialWorker]
-  donors: [Donor]
 }
 
 type Village {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  registrationDate: DateTime!
   name: String
-  coordinator: Coordinator
   socialWorker: SocialWorker
   district: District
-  donor: Donor
   orphans: [Orphan]
 }
 
@@ -734,26 +736,23 @@ type Orphan {
   religion: orphanReligion
   idCardUrl: String
   passportUrl: String
-  originalThankyouLetterUrl: String
-  translatedThankyouLetterUrl: String
   birthCertificateUrl: String!
-  healthDescription: String!
-  psychologicalStatus: orphanPsychologicalStatus
   accountNumber: String
   currentBalance: Float
-  donor: Donor
-  education: Education
   father: Father
   guardian: Guardian
   house_property: House_property
   mother: Mother
   village: Village
   socialWorker: SocialWorker
-  supportPlan: SupportPlan
-  financialRecords: [FinancialRecord]
-  healthRecords: [HealthRecord]
-  photos: [OrphanPhotos]
+  supportPlans: [SupportPlan]
   sponsorshipStatuses: [SponsorshipStatus]
+  financialRecords: [FinancialRecord]
+  educationalRecords: [EducationalRecord]
+  healthRecords: [HealthRecord]
+  healthStatuses: [HealthStatus]
+  photos: [OrphanPhoto]
+  letters: [OrphanLetter] 
   siblings: [Orphan]
   siblingOf: [Orphan]
 }
@@ -774,29 +773,6 @@ type SocialWorker {
   districts: [District]
   villages: [Village]
   orphans: [Orphan]
-}
-
-type EducationalRecord {
-  id: ID!
-  created_at: DateTime
-  updated_at: DateTime
-  enrollmentStatus: educationEnrollmentStatus!
-  schoolName: String
-  typeOfSchool: educationTypeOfSchool
-  year: String
-  level: educationLevel
-  reason: String
-  yearDivision: ERYearDivision
-  quarter: ERQuarter
-  semester: ERSemester
-  totalMark: Float
-  numberOfSubjects: Int
-  average: Float
-  rank: Int
-  reportCardUrl: String
-  semesterGPA: Float
-  cumulativeGPA: Float
-  education: Education
 }
 
 type FinancialRecord {
@@ -828,12 +804,30 @@ type House_property {
   orphans: [Orphan]
 }
 
-type OrphanPhotos {
+type OrphanPhoto {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
   photoPortraitUrl: String!
   photoLongUrl: String
+  orphan: Orphan
+}
+
+type HealthStatus {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  healthDescription: String!
+  psychologicalStatus: orphanPsychologicalStatus
+  orphan: Orphan
+}
+
+type OrphanLetter {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  originalThankyouLetterUrl: String
+  translatedThankyouLetterUrl: String
   orphan: Orphan
 }
 
@@ -847,22 +841,92 @@ type SponsorshipStatus {
   orphan: Orphan
 }
 
+type Project {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  number: String!
+  startDate: DateTime
+  endDate: DateTime
+  maximumNumberOfBenficiaries: Int!
+  durationInYears: Int!
+  location: String!
+  totalBudget: String!
+  administrativeCost: Float!
+  supportPlans: [SupportPlan]
+  coordinators: [Coordinator]
+  projectDocuments: [ProjectDocument]
+  incomeGeneratingActivities: [IncomeGeneratingActivity]
+
+}
+
+type ProjectDocument {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  documentUrl: String!
+  documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+  project: Project
+}
+
+type IncomeGeneratingActivity {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  beneficiaryType: String! # guardian or orphan
+  activityType: String!
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  budget: Float!
+  title: String!
+  description: String!
+  startDate: DateTime
+  endDate: DateTime
+  status: String! # active/ongoning, awaitngFunding ...
+  project: Project
+  photos: [IncomeGeneratingActivityPhoto]
+}
+
+type IncomeGeneratingActivityPhoto {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  photoUrl: String
+  incomeGeneratingActivity: IncomeGeneratingActivity
+}
+
+type Payment {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  endDate: DateTime
+  startDate: DateTime
+  paymentInPrimaryForeignCurrency: Float
+  primaryForeignCurrency: String
+  primaryExchangeRate: Float
+  paymentInSecondaryForeignCurrency: Float
+  secondaryForeignCurrency: String
+  secondaryExchangeRate: Float
+  grossPaymentInDomesticCurrency: Float
+  adminFeeInDomesticCurrency: Float
+  netPaymentInDomesticCurrency: Float
+  paymentPeriodInMonths: Int
+  supportPlan: SupportPlan
+}
+
 type SupportPlan {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  collectiveFund_fc: Float
-  individualFund_fc: Float
-  foreignCurrency: String
-  supportPeriod: Int
-  adminFeePercentage: Float
-  exchangeRate: Float
-  individualFund_brr: Float
-  adminFee_brr: Float
-  netPayment_brr: Float
-  initDate: DateTime
-  termDate: DateTime
+  name: String!
+  adminFeePercentage: Float!
+  paymentInterval: String! # monlthly, quarterly, semi-annually, annually
+  startDate: DateTime
+  endDate: DateTime
   donor: Donor
+  project: Project
+  payments: [Payment]
   orphans: [Orphan]
 }
 

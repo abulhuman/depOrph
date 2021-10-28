@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Donor {
+model Donor { 
   id            Int           @id @default(autoincrement())
   created_at    DateTime?     @default(now())
   updated_at    DateTime?
@@ -17,8 +17,6 @@ model Donor {
   coordinatorId Int?
   coordinator   Coordinator?  @relation(fields: [coordinatorId], references: [id])
   user          User          @relation(fields: [userId], references: [id])
-  districts     District[]    @relation("districtsDonors")
-  villages      Village[]     @relation("donorTovillage")
   supportPlans  SupportPlan[] @relation("donorTosupportplan")
 
   @@map("donor")
@@ -113,8 +111,8 @@ model MotherJob {
   updated_at    DateTime?
   jobTitle      String?
   monthlyIncome Float?
-  initDate      DateTime?
-  termDate      DateTime?
+  startDate      DateTime?
+  endDate      DateTime?
   motherId      Int?
   mother        Mother?   @relation("motherTomotherjob", fields: [motherId], references: [id])
 
@@ -152,11 +150,6 @@ model District {
   zone          Zone?          @relation(fields: [zoneId], references: [id])
   villages      Village[]
   socialWorkers SocialWorker[] @relation("districtsSocialWorkers")
-
-  Donor         Donor?       @relation("districtsDonors", fields: [donorId], references: [id])
-  donorId       Int?
-  Coordinator   Coordinator? @relation(fields: [coordinatorId], references: [id])
-  coordinatorId Int?
   @@map("district")
 }
 
@@ -164,7 +157,6 @@ model Village {
   id               Int           @id @default(autoincrement())
   created_at       DateTime?     @default(now())
   updated_at       DateTime?
-  registrationDate DateTime      @default("1970-01-01T00:00:00.000Z")
   name             String?
   districtId       Int?
   socialWorkerId   Int?
@@ -172,10 +164,6 @@ model Village {
   district         District?     @relation(fields: [districtId], references: [id])
   orphans          Orphan[]      @relation("orphanTovillage")
 
-  Donor         Donor?       @relation("donorTovillage", fields: [donorId], references: [id])
-  donorId       Int?
-  Coordinator   Coordinator? @relation(fields: [coordinatorId], references: [id])
-  coordinatorId Int?
   @@map("village")
 }
 
@@ -215,7 +203,7 @@ model Orphan {
   educationalRecords     EducationalRecord[] @relation("educationToorphan")
   healthRecords          HealthRecord[]      @relation("healthrecordToorphan")
   healthStatuses         HealthStatus[]      @relation("healthstatusToorphan")
-  photos                 OrphanPhotos[]      @relation("orphanToorphanphotos")
+  photos                 OrphanPhoto[]      @relation("orphanToorphanphoto")
   letters                OrphanLetter[]      @relation("orphanLetterToorphan")
   siblings               Orphan[]            @relation("orphan_sibling")
   siblingOf              Orphan[]            @relation("orphan_sibling")
@@ -306,16 +294,16 @@ model House_property {
   @@map("house_property")
 }
 
-model OrphanPhotos {
+model OrphanPhoto {
   id               Int       @id @default(autoincrement())
   created_at       DateTime? @default(now())
   updated_at       DateTime?
   photoPortraitUrl String    @default("")
   photoLongUrl     String?
   orphanId         Int?
-  orphan           Orphan?   @relation("orphanToorphanphotos", fields: [orphanId], references: [id])
+  orphan           Orphan?   @relation("orphanToorphanphoto", fields: [orphanId], references: [id])
 
-  @@map("orphanphotos")
+  @@map("orphanphoto")
 }
 
 model SponsorshipStatus {
@@ -460,8 +448,6 @@ model Coordinator {
   lastName   String     @default("")
   userId     Int
   user       User       @relation(fields: [userId], references: [id])
-  villages   Village[]
-  districts  District[]
   donors     Donor[]
   projects   Project[]
 
