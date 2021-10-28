@@ -246,8 +246,8 @@ model SocialWorker {
   gender       String? // socialworker_gender_enum?
   dateOfBirth  DateTime?
   mobileNumber String     @default("")
-  initDate     DateTime?
-  termDate     DateTime?
+  startDate     DateTime?
+  endDate     DateTime?
   userId       Int
   user         User       @relation(fields: [userId], references: [id])
   districts    District[] @relation("districtsSocialWorkers")
