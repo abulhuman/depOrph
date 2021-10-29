@@ -16,7 +16,7 @@ type Query {
   financialRecord(id: ID!): FinancialRecord!
   healthRecord(id: ID!): HealthRecord!
   house_property(id: ID!): House_property!
-  orphanPhotos(id: ID!): OrphanPhotos!
+  orphanPhoto(id: ID!): OrphanPhoto!
   sponsorshipStatus(id: ID!): SponsorshipStatus!
   supportPlan(id: ID!): SupportPlan!
   head(id: ID!): Head!
@@ -462,10 +462,10 @@ type Mutation {
     number: String!
     startDate: DateTime
     endDate: DateTime
-    maximumNumberOfBenficiaries: Int!
+    maximumNumberOfBeneficiaries: Int!
     durationInYears: Int!
     location: String!
-    totalBudget: String!
+    totalBudget: Float!
     administrativeCost: Float!
     supportPlans: [ID]
     coordinators: [ID]
@@ -476,31 +476,22 @@ type Mutation {
   updateProject(
     id: ID!
     number: String
-    startDate: DateTime
-    endDate: DateTime
     maximumNumberOfBenficiaries: Int
-    durationInYears: Int
-    location: String
-    totalBudget: String
-    administrativeCost: Float
-    supportPlans: [ID]
-    coordinators: [ID]
-    projectDocuments: [ID]
-    incomeGeneratingActivities: [ID]
+    status: String
   ): Project!
 
   createProjectDocument(
     documentUrl: String!
     documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
-    projectId: ID
+    projectId: ID!
   ): ProjectDocument!
 
-  updateProjectDocument(
-    id: ID!
-    documentUrl: String
-    documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
-    projectId: ID
-  ): ProjectDocument!
+ # updateProjectDocument(
+#     id: ID!
+#     documentUrl: String
+#     documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+#     projectId: ID
+#   ): ProjectDocument!
 
   createIncomeGeneratingActivity(
     beneficiaryType: String! # guardian or orphan
@@ -937,11 +928,12 @@ type Project {
   number: String!
   startDate: DateTime
   endDate: DateTime
-  maximumNumberOfBenficiaries: Int!
+  maximumNumberOfBeneficiaries: Int!
   durationInYears: Int!
   location: String!
-  totalBudget: String!
+  totalBudget: Float!
   administrativeCost: Float!
+  status: String
   supportPlans: [SupportPlan]
   coordinators: [Coordinator]
   projectDocuments: [ProjectDocument]

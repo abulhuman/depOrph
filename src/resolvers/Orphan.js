@@ -1,10 +1,3 @@
-function donor({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).donor();
-}
-
-function education({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).education();
-}
 
 function father({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).father();
@@ -30,8 +23,8 @@ function socialWorker({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).socialWorker();
 }
 
-function supportPlan({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).supportPlan();
+function supportPlans({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).supportPlans();
 }
 
 function financialRecords({ id }, _args, { prisma }) {
@@ -61,14 +54,12 @@ function siblingOf({ id }, _args, { prisma }) {
 module.exports = {
   house_property,
   photos,
-  education,
   father,
   guardian,
   mother,
   village,
-  donor,
   socialWorker,
-  supportPlan,
+  supportPlans,
   financialRecords,
   healthRecords,
   sponsorshipStatuses,

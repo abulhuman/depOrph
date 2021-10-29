@@ -150,60 +150,6 @@ async function updateDonor(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function createEducation(_parent, args, { prisma, req }, _info) {
-  if (getUser(req).userId) {
-    const eddRecs = args.educationalRecords
-      ? [...args.educationalRecords].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-    const orphansIds = args.orphan
-      ? [...args.orphan].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-    return await prisma.education.create({
-      data: {
-        ...args,
-        orphan: { connect: orphansIds[0] },
-        educationalRecords: {
-          connect: eddRecs
-        }
-      }
-    });
-  }
-  throw new AuthenticationError();
-}
-
-async function updateEducation(_parent, args, { prisma, req }, _info) {
-  if (getUser(req).userId) {
-    const id = parseInt(args.id);
-    delete args.id;
-    const educationalRecordsIds = args.educationalRecords
-      ? [...args.educationalRecords].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-    const orphansIds = args.orphan
-      ? [...args.orphan].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-    return await prisma.education.update({
-      where: { id },
-      data: {
-        ...args,
-        updated_at: new Date(),
-        orphan: { connect: orphansIds[0] },
-        educationalRecords: {
-          connect: educationalRecordsIds
-        }
-      }
-    });
-  }
-  throw new AuthenticationError();
-}
-
 async function createFather(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const orphansIds = args.orphans
@@ -1269,23 +1215,23 @@ async function updateHouse_property(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function createOrphanPhotos(_parent, args, { prisma, req }, _info) {
+async function createOrphanPhoto(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
-    const OrphanPhotosCreateInput = {
+    const OrphanPhotoCreateInput = {
       ...args,
       orphan: args.orphanId
         ? { connect: { id: parseInt(args.orphanId) } }
         : undefined
     };
-    delete OrphanPhotosCreateInput.orphanId;
-    return await prisma.orphanPhotos.create({
-      data: OrphanPhotosCreateInput
+    delete OrphanPhotoCreateInput.orphanId;
+    return await prisma.orphanPhoto.create({
+      data: OrphanPhotoCreateInput
     });
   }
   throw new AuthenticationError();
 }
 
-async function updateOrphanPhotos(_parent, args, { prisma, req }, _info) {
+async function updateOrphanPhoto(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
     delete args.id;
@@ -1296,21 +1242,21 @@ async function updateOrphanPhotos(_parent, args, { prisma, req }, _info) {
       id,
       args.photoPortraitUrl,
       `photoPortraitUrl`,
-      `orphanPhotos`
+      `orphanPhoto`
     );
     await updateImage(
       prisma,
       id,
       args.photoLongUrl,
       `photoLongUrl`,
-      `orphanPhotos`
+      `orphanPhoto`
     );
 
-    const previousOrphan = await prisma.orphanPhotos
+    const previousOrphan = await prisma.orphanPhoto
       .findUnique({ where: { id } })
       .orphan();
     const previousOrphanId = previousOrphan ? previousOrphan.id : undefined;
-    const OrphanPhotosUpdateInput = {
+    const OrphanPhotoUpdateInput = {
       ...args,
       updated_at: new Date(),
       orphan: args.orphanId
@@ -1319,10 +1265,10 @@ async function updateOrphanPhotos(_parent, args, { prisma, req }, _info) {
         ? { connect: { id: previousOrphanId } }
         : undefined
     };
-    delete OrphanPhotosUpdateInput.orphanId;
-    return await prisma.orphanPhotos.update({
+    delete OrphanPhotoUpdateInput.orphanId;
+    return await prisma.orphanPhoto.update({
       where: { id },
-      data: OrphanPhotosUpdateInput
+      data: OrphanPhotoUpdateInput
     });
   }
   throw new AuthenticationError();
@@ -1367,6 +1313,63 @@ async function updateSponsorshipStatus(_parent, args, { prisma, req }, _info) {
       where: { id },
       data: SponsorshipStatusUpdateInput
     });
+  }
+  throw new AuthenticationError();
+}
+
+async function createProject(_parent, args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    const supportPlansIds = args.supportPlans
+      ? [...args.supportPlans].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const coordinatorsIds = args.coordinators
+      ? [...args.coordinators].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const projectDocumentsIds = args.projectDocuments
+      ? [...args.projectDocuments].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const incomeGeneratingActivitiesIds = args.incomeGeneratingActivities
+      ? [...args.incomeGeneratingActivities].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const ProjectCreateInput = {
+      ...args,
+      supportPlans: { connect: supportPlansIds },
+      coordinators: { connect: coordinatorsIds },
+      projectDocuments: { connect: projectDocumentsIds },
+      incomeGeneratingActivities: { connect: incomeGeneratingActivitiesIds }
+    };
+    return await prisma.project.create({
+      data: ProjectCreateInput
+    })
+  }
+  throw new AuthenticationError();
+}
+
+async function updateProject(_parent, args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    const { id } = args;
+    const ProjectUpdateInput = {
+      ...args,
+    };
+    delete ProjectUpdateInput.id;
+    return await prisma.project.update({
+      where: {id: parseInt(id)},
+      data: ProjectUpdateInput
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function createProjectDocument(_parent, args, { prisma, req }, _info){
+  if (getUser(req).userId) {
+    const ProjectDocumentCreateInput = {
+      ...args,
+      project: { connect: { projectId: parseInt(args.projectId) } }
+    };
+    delete ProjectDocumentCreateInput.id;
+    return await prisma.projectDocument.update({
+      data: ProjectDocumentCreateInput
+    })
   }
   throw new AuthenticationError();
 }
@@ -1654,8 +1657,6 @@ async function updateAccountMaintainence(
 module.exports = {
   createDonor,
   updateDonor,
-  createEducation,
-  updateEducation,
   createFather,
   updateFather,
   createGuardian,
@@ -1684,10 +1685,13 @@ module.exports = {
   updateHealthRecord,
   createHouse_property,
   updateHouse_property,
-  createOrphanPhotos,
-  updateOrphanPhotos,
+  createOrphanPhoto,
+  updateOrphanPhoto,
   createSponsorshipStatus,
   updateSponsorshipStatus,
+  createProject,
+  updateProject,
+  createProjectDocument,
   createSupportPlan,
   updateSupportPlan,
   createHead,

@@ -16,13 +16,6 @@ async function donor(_parent, { id }, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function education(_parent, { id }, { prisma, req }, _info) {
-  if (getUser(req).userId) {
-    return await prisma.education.findUnique({ where: { id: parseInt(id) } });
-  }
-  throw new AuthenticationError();
-}
-
 async function father(_parent, { id }, { prisma, req }, _info) {
   if (getUser(req).userId) {
     return await prisma.father.findUnique({ where: { id: parseInt(id) } });
@@ -131,9 +124,9 @@ async function house_property(_parent, { id }, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function orphanPhotos(_parent, { id }, { prisma, req }, _info) {
+async function orphanPhoto(_parent, { id }, { prisma, req }, _info) {
   if (getUser(req).userId) {
-    return await prisma.orphanPhotos.findUnique({
+    return await prisma.orphanPhoto.findUnique({
       where: { id: parseInt(id) }
     });
   }
@@ -528,7 +521,6 @@ async function allAccountMaintainences(_parent, _args, { prisma, req }, _info) {
 
 module.exports = {
   orphan,
-  education,
   father,
   guardian,
   motherJob,
@@ -541,7 +533,7 @@ module.exports = {
   village,
   healthRecord,
   house_property,
-  orphanPhotos,
+  orphanPhoto,
   educationalRecord,
   financialRecord,
   healthRecord,

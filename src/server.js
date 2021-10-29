@@ -14,7 +14,6 @@ const moment = require("moment");
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
 const Donor = require("./resolvers/Donor");
-const Education = require("./resolvers/Education");
 const Father = require("./resolvers/Father");
 const Guardian = require("./resolvers/Guardian");
 const Mother = require("./resolvers/Mother");
@@ -29,14 +28,15 @@ const EducationalRecord = require("./resolvers/EducationalRecord");
 const FinancialRecord = require("./resolvers/FinancialRecord");
 const HealthRecord = require("./resolvers/HealthRecord");
 const House_property = require("./resolvers/House_property");
-const OrphanPhotos = require("./resolvers/OrphanPhotos");
+const OrphanPhoto = require("./resolvers/OrphanPhoto");
 const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
+const Project = require("./resolvers/Project");
 const SupportPlan = require("./resolvers/SupportPlan");
 const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
 const User = require("./resolvers/User");
 
-const { getUser, convertImage, automateSupportPlanExpiration } = require("./utils");
+const { getUser, convertImage } = require("./utils");
 const { GraphQLError } = require("graphql");
 
 const prisma = new PrismaClient({
@@ -47,7 +47,6 @@ const resolvers = {
   Query,
   Mutation,
   Donor,
-  Education,
   Father,
   Guardian,
   Mother,
@@ -62,8 +61,9 @@ const resolvers = {
   FinancialRecord,
   HealthRecord,
   House_property,
-  OrphanPhotos,
+  OrphanPhoto,
   SponsorshipStatus,
+  Project,
   SupportPlan,
   Head,
   Coordinator,
@@ -410,3 +410,7 @@ try {
 } catch (error) {
   console.error(error);
 }
+
+prisma.projectDocument.create({data: {
+  
+}})
