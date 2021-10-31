@@ -8,16 +8,16 @@ datasource db {
 }
 
 model Donor {
-  id            Int           @id @default(autoincrement())
-  created_at    DateTime?     @default(now())
-  updated_at    DateTime?
-  companyName   String        @default("")
-  nameInitials  String        @default("")
-  userId        Int           @unique
-  coordinatorId Int?
-  coordinator   Coordinator?  @relation(fields: [coordinatorId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
-  supportPlans  SupportPlan[] @relation("donorTosupportplan")
+  id           Int           @id @default(autoincrement())
+  created_at   DateTime?     @default(now())
+  updated_at   DateTime?
+  companyName  String        @default("")
+  nameInitials String        @default("")
+  userId       Int           @unique
+  user         User          @relation(fields: [userId], references: [id])
+  supportPlans SupportPlan[] @relation("donorTosupportplan")
+  coordinators Coordinator[] @relation("donorTocoordinator")
+  orphans      Orphan[]      @relation("donorToorphan")
 
   @@map("donor")
 }
@@ -206,6 +206,7 @@ model Orphan {
   healthStatuses         HealthStatus[]      @relation("healthstatusToorphan")
   photos                 OrphanPhoto[]       @relation("orphanToorphanphoto")
   letters                OrphanLetter[]      @relation("orphanLetterToorphan")
+  donors                 Donor[]             @relation("donorToorphan")
   siblings               Orphan[]            @relation("orphan_sibling")
   siblingOf              Orphan[]            @relation("orphan_sibling")
 
@@ -332,7 +333,7 @@ model Project {
   location                     String
   totalBudget                  Float
   administrativeCost           Float
-  status                       String @default("new")
+  status                       String                     @default("new")
   supportPlans                 SupportPlan[]              @relation("projectTosupportplan")
   coordinators                 Coordinator[]
   projectDocuments             ProjectDocument[]
@@ -450,7 +451,7 @@ model Coordinator {
   lastName   String    @default("")
   userId     Int       @unique
   user       User      @relation(fields: [userId], references: [id])
-  donors     Donor[]
+  donors     Donor[]   @relation("donorTocoordinator")
   projects   Project[]
 
   @@map("coordinator")

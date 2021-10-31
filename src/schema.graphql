@@ -32,7 +32,11 @@ type Query {
   allMothers(take: Int, filter: String, orderBy: MotherOrderByInput): [Mother]!
   allOrphans(take: Int, filter: String, orderBy: OrphanOrderByInput): [Orphan]!
   someOrphansByIds(orphansIds: [ID]!): [Orphan]!
-  someOrphansByDonorId(take: Int, donorId: ID!, orderBy: OrphanOrderByInput): [Orphan]!
+  someOrphansByDonorId(
+    take: Int
+    donorId: ID!
+    orderBy: OrphanOrderByInput
+  ): [Orphan]!
   allSocialWorkers(
     take: Int
     filter: String
@@ -63,14 +67,25 @@ type Query {
   ): [Coordinator]!
   allUsers(take: Int, filter: String, orderBy: UserOrderByInput): [User]!
   allAccountMaintainences: [AccountMaintainence]!
+
+  getDonorsByCoordinatorId(coordinatorId: ID!): [Donor]!
+  getOrphansByDonorId(donorId: ID!): [Orphan]!
+
+  getActiveProjects: [Project]!
+
+  getProjectDocumentsByProjectId(projectId: ID!): [ProjectDocument]!
+
+  getSupportPlansByProjectId(projectId: ID!): [SupportPlan]!
+
+  getOrphansByProjectId(projectId: ID!): [Orphan]!
 }
 
 type Mutation {
   createDonor(
     companyName: String!
     nameInitials: String!
-    coordinatorId: ID
     userId: ID!
+    coordinators: [ID]
     orphans: [ID]
     supportPlans: [ID]
   ): Donor!
@@ -79,8 +94,8 @@ type Mutation {
     id: ID!
     companyName: String
     nameInitials: String
-    coordinatorId: ID
     userId: ID
+    coordinators: [ID]
     orphans: [ID]
     supportPlans: [ID]
   ): Donor!
@@ -255,8 +270,33 @@ type Mutation {
     healthStatuses: [ID]
     photos: [ID]
     letters: [ID]
+    donors: [ID]
     siblings: [ID]
     siblingOf: [ID]
+  ): Orphan!
+
+  createOrphanWithBaselineData(
+    firstName: String!
+    gender: orphanGender!
+    placeOfBirth: String!
+    dateOfBirth: DateTime!
+    spokenLanguages: String
+    gradeAgeMismatchReason: String
+    hobbies: String
+    religion: orphanReligion
+    idCardUrl: String
+    passportUrl: String
+    birthCertificateUrl: String!
+    accountNumber: String
+    currentBalance: Float
+    father: FatherCreateInput!
+    mother: MotherCreateInput!
+    guardian: GuardianCreateInput!
+    house_property: House_propertyCreateInput!
+    firstHealthStatus: HealthStatusCreateInput!
+    firstPhotos: OrphanPhotoCreateInput!
+    villageId: ID!
+    socialWorkerId: ID!
   ): Orphan!
 
   updateOrphan(
@@ -288,6 +328,7 @@ type Mutation {
     healthStatuses: [ID]
     photos: [ID]
     letters: [ID]
+    donors: [ID]
     siblings: [ID]
     siblingOf: [ID]
   ): Orphan!
@@ -486,12 +527,12 @@ type Mutation {
     projectId: ID!
   ): ProjectDocument!
 
- # updateProjectDocument(
-#     id: ID!
-#     documentUrl: String
-#     documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
-#     projectId: ID
-#   ): ProjectDocument!
+  updateProjectDocument(
+    id: ID!
+    documentUrl: String
+    documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+    projectId: ID
+  ): ProjectDocument!
 
   createIncomeGeneratingActivity(
     beneficiaryType: String! # guardian or orphan
@@ -508,7 +549,7 @@ type Mutation {
     projectId: ID
     photos: [ID]
   ): IncomeGeneratingActivity!
-  
+
   updateIncomeGeneratingActivity(
     id: ID!
     beneficiaryType: String # guardian or orphan
@@ -544,7 +585,7 @@ type Mutation {
     adminFeeInDomesticCurrency: Float
     netPaymentInDomesticCurrency: Float
     paymentPeriodInMonths: Int
-    supportPlanId: ID
+    supportPlanId: ID!
   ): Payment!
 
   updatePayment(
@@ -578,8 +619,8 @@ type Mutation {
 
   updateSupportPlan(
     id: ID!
-    name: String!
-    adminFeePercentage: Float!
+    name: String
+    adminFeePercentage: Float
     paymentInterval: String # monlthly, quarterly, semi-annually, annually
     startDate: DateTime
     endDate: DateTime
@@ -609,8 +650,6 @@ type Mutation {
     middleName: String!
     lastName: String!
     userId: ID!
-    villages: [ID]
-    districts: [ID]
     donors: [ID]
   ): Coordinator!
 
@@ -620,8 +659,6 @@ type Mutation {
     middleName: String
     lastName: String
     userId: ID
-    villages: [ID]
-    districts: [ID]
     donors: [ID]
   ): Coordinator!
 
@@ -635,12 +672,7 @@ type Mutation {
     donor: ID
   ): User!
 
-  updateUser(
-    id: ID!
-    role: userRoles
-    email: String
-    password: String
-  ): User!
+  updateUser(id: ID!, role: userRoles, email: String, password: String): User!
 
   register(role: userRoles, email: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
@@ -655,27 +687,26 @@ type Mutation {
     lastName: String!
     email: String!
     mobileNumber: String!
-    ): AccountMaintainence!
+  ): AccountMaintainence!
 
-
-   updateAccountMaintainence(
-     id: ID!
-     status: accountMaintainenceStatus
-   ): AccountMaintainence!
+  updateAccountMaintainence(
+    id: ID!
+    status: accountMaintainenceStatus
+  ): AccountMaintainence!
 }
 
 type AuthPayload {
   user: User!
 }
 
-type Donor { 
+type Donor {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
   companyName: String!
   nameInitials: String!
-  coordinator: Coordinator
   user: User!
+  coordinators: [Coordinator]
   orphans: [Orphan]
   supportPlans: [SupportPlan]
 }
@@ -832,7 +863,8 @@ type Orphan {
   healthRecords: [HealthRecord]
   healthStatuses: [HealthStatus]
   photos: [OrphanPhoto]
-  letters: [OrphanLetter] 
+  letters: [OrphanLetter]
+  donors: [Donor]
   siblings: [Orphan]
   siblingOf: [Orphan]
 }
@@ -938,7 +970,6 @@ type Project {
   coordinators: [Coordinator]
   projectDocuments: [ProjectDocument]
   incomeGeneratingActivities: [IncomeGeneratingActivity]
-
 }
 
 type ProjectDocument {
@@ -1029,8 +1060,6 @@ type Coordinator {
   middleName: String!
   lastName: String!
   user: User!
-  villages: [Village]
-  districts: [District]
   donors: [Donor]
 }
 
@@ -1359,4 +1388,57 @@ input UserOrderByInput {
   updated_at: Sort
   role: Sort
   email: Sort
+}
+
+input FatherCreateInput {
+  firstName: String!
+  lastName: String!
+  dateOfDeath: DateTime!
+  causeOfDeath: String!
+  dateOfBirth: DateTime!
+  deathCertificateUrl: String!
+}
+
+input MotherCreateInput {
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  vitalStatus: motherVitalStatus!
+  dateOfBirth: DateTime!
+  dateOfDeath: DateTime
+  causeOfDeath: String
+  mobileNumber: String!
+  maritalStatus: motherMaritalStatus
+  monthlyExpense: Float!
+}
+
+input GuardianCreateInput {
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  gender: guardianGender!
+  dateOfBirth: DateTime!
+  relationToOrphan: guardianRelationToOrphan!
+  email: String!
+  mobileNumber: String!
+  telephoneNumber: String
+  nationality: guardianNationality!
+  idCardUrl: String!
+  confirmationLetterUrl: String!
+  legalConfirmationLetterUrl: String!
+}
+
+input House_propertyCreateInput {
+  housingSituation: String!
+  otherProperty: String
+}
+
+input HealthStatusCreateInput {
+  healthDescription: String!
+  psychologicalStatus: orphanPsychologicalStatus
+}
+
+input OrphanPhotoCreateInput {
+  photoPortraitUrl: String!
+  photoLongUrl: String
 }

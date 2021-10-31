@@ -1,5 +1,5 @@
-function coordinator({ id }, _args, { prisma }) {
-  return prisma.donor.findUnique({ where: { id } }).coordinator();
+function coordinators({ id }, _args, { prisma }) {
+  return prisma.donor.findUnique({ where: { id } }).coordinators();
 }
 
 function user({ id }, _args, { prisma }) {
@@ -15,7 +15,7 @@ function supportPlans({ id }, _args, { prisma }) {
 }
 
 module.exports = {
-  coordinator,
+  coordinators,
   user,
   orphans,
   supportPlans

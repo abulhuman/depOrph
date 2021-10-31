@@ -15,41 +15,29 @@ async function createDonor(_parent, args, { prisma, req }, _info) {
         }))
       : [];
 
-    const districtsIds = args.districts
-      ? [...args.districts].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-
-    const villagesIds = args.villages
-      ? [...args.villages].map((val) => ({
-          id: parseInt(val)
-        }))
-      : [];
-
     const supportPlansIds = args.supportPlans
       ? [...args.supportPlans].map((val) => ({
           id: parseInt(val)
         }))
       : [];
 
+    const coordinatorsIds = args.coordinators
+      ? [...args.coordinators].map((val) => ({
+          id: parseInt(val)
+        }))
+      : [];
+
     const DonorCreateInput = {
       ...args,
-      coordinator: args.coordinatorId
-        ? { connect: { id: parseInt(args.coordinatorId) } }
-        : undefined,
       user: args.userId
         ? { connect: { id: parseInt(args.userId) } }
         : undefined,
 
+      coordinators: {
+        connect: coordinatorsIds
+      },
       orphans: {
         connect: orphansIds
-      },
-      districts: {
-        connect: districtsIds
-      },
-      villages: {
-        connect: villagesIds
       },
       supportPlans: {
         connect: supportPlansIds
@@ -619,13 +607,6 @@ async function updateVillage(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-    const previousCoordinator = await prisma.village
-      .findUnique({ where: { id } })
-      .coordinator();
-    const previousCoordinatorId = previousCoordinator
-      ? previousCoordinator.id
-      : undefined;
-
     const previousSocialWorker = await prisma.village
       .findUnique({ where: { id } })
       .socialWorker();
@@ -640,11 +621,6 @@ async function updateVillage(_parent, args, { prisma, req }, _info) {
       ? previousDistrict.id
       : undefined;
 
-    const previousDonor = await prisma.village
-      .findUnique({ where: { id } })
-      .donor();
-    const previousDonorId = previousDonor ? previousDonor.id : undefined;
-
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({
           id: parseInt(val)
@@ -653,11 +629,6 @@ async function updateVillage(_parent, args, { prisma, req }, _info) {
     const VillageUpdateInput = {
       ...args,
       updated_at: new Date(),
-      coordinator: args.coordinatorId
-        ? { connect: { id: parseInt(args.coordinatorId) } }
-        : previousCoordinatorId
-        ? { connect: { id: previousCoordinatorId } }
-        : undefined,
       socialWorker: args.socialWorkerId
         ? { connect: { id: parseInt(args.socialWorkerId) } }
         : previousSocialWorkerId
@@ -668,17 +639,11 @@ async function updateVillage(_parent, args, { prisma, req }, _info) {
         : previousDistrictId
         ? { connect: { id: previousDistrictId } }
         : undefined,
-      donor: args.donorId
-        ? { connect: { id: parseInt(args.donorId) } }
-        : previousDonorId
-        ? { connect: { id: previousDonorId } }
-        : undefined,
       orphans: { connect: orphansIds }
     };
     delete VillageUpdateInput.districtId;
     delete VillageUpdateInput.socialWorkerId;
     delete VillageUpdateInput.donorId;
-    delete VillageUpdateInput.coordinatorId;
 
     return await prisma.village.update({
       where: { id },
@@ -771,6 +736,56 @@ async function createOrphan(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
+async function createOrphanWithBaselineData(
+  _parent,
+  args,
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+
+    const OrphanCreateInput = {
+      ...args,
+      father: {
+        create: { ...args.father }
+      },
+      mother: {
+        create: { ...args.mother }
+      },
+      guardian: {
+        create: { ...args.guardian }
+      },
+      house_property: {
+        create: { ...args.house_property }
+      },
+      healthStatuses: {
+        create: { ...args.firstHealthStatus }
+      },
+      photos: {
+        create: { ...args.firstPhotos }
+      },
+      sponsorshipStatuses: {
+        create: {
+          status: "new",
+          reason: "new registreation successful",
+          date: new Date()
+        }
+      },
+      village: { connect: { id: parseInt(args.villageId) } },
+      socialWorker: { connect: { id: parseInt(args.socialWorkerId) } }
+    };
+    delete OrphanCreateInput.firstHealthStatus;
+    delete OrphanCreateInput.firstPhotos;
+    delete OrphanCreateInput.villageId;
+    delete OrphanCreateInput.socialWorkerId;
+
+    return await prisma.orphan.create({
+      data: OrphanCreateInput
+    });
+  }
+  throw new AuthenticationError();
+}
+
 async function updateOrphan(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const id = parseInt(args.id);
@@ -801,11 +816,6 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
       `orphan`
     );
 
-    const previousDonor = await prisma.orphan
-      .findUnique({ where: { id } })
-      .donor();
-    const previousDonorId = previousDonor ? previousDonor.id : undefined;
-
     const previousGuardain = await prisma.orphan
       .findUnique({ where: { id } })
       .guardian();
@@ -830,11 +840,6 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
       .mother();
     const previousMotherId = previousMother ? previousMother.id : undefined;
 
-    const previousVillage = await prisma.orphan
-      .findUnique({ where: { id } })
-      .village();
-    const previousVillageId = previousVillage ? previousVillage.id : undefined;
-
     const previousSocialWorker = await prisma.orphan
       .findUnique({ where: { id } })
       .socialWorker();
@@ -842,25 +847,21 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
       ? previousSocialWorker.id
       : undefined;
 
-    const previousEducation = await prisma.orphan
-      .findUnique({ where: { id } })
-      .education();
-    const previousEducationId = previousEducation
-      ? previousEducation.id
-      : undefined;
-
-    const previousSupportPlan = await prisma.orphan
-      .findUnique({ where: { id } })
-      .supportPlan();
-    const previousSupportPlanId = previousSupportPlan
-      ? previousSupportPlan.id
-      : undefined;
-
     const photosIds = args.photos
       ? [...args.photos].map((val) => ({ id: parseInt(val) }))
       : [];
     const financialRecordsIds = args.financialRecords
       ? [...args.financialRecords].map((val) => ({
+          id: parseInt(val)
+        }))
+      : [];
+    const educationalRecordsIds = args.educationalRecords
+      ? [...args.educationalRecords].map((val) => ({
+          id: parseInt(val)
+        }))
+      : [];
+    const supportPlansIds = args.supportPlans
+      ? [...args.supportPlans].map((val) => ({
           id: parseInt(val)
         }))
       : [];
@@ -874,6 +875,11 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
           id: parseInt(val)
         }))
       : [];
+    const donorsIds = args.donors
+      ? [...args.donors].map((val) => ({
+          id: parseInt(val)
+        }))
+      : [];
     const siblingssIds = args.siblings
       ? [...args.siblings].map((val) => ({ id: parseInt(val) }))
       : [];
@@ -883,11 +889,6 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
     const OrphanUpdateInput = {
       ...args,
       updated_at: new Date(),
-      donor: args.donorId
-        ? { connect: { id: parseInt(args.donorId) } }
-        : previousDonorId
-        ? { connect: { id: previousDonorId } }
-        : undefined,
       father: args.fatherId
         ? { connect: { id: parseInt(args.fatherId) } }
         : previousFatherId
@@ -908,30 +909,18 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
         : previousMotherId
         ? { connect: { id: previousMotherId } }
         : undefined,
-      village: args.villageId
-        ? { connect: { id: parseInt(args.villageId) } }
-        : previousVillageId
-        ? { connect: { id: previousVillageId } }
-        : undefined,
       socialWorker: args.socialWorkerId
         ? { connect: { id: parseInt(args.socialWorkerId) } }
         : previousSocialWorkerId
         ? { connect: { id: previousSocialWorkerId } }
         : undefined,
-      supportPlan: args.supportPlanId
-        ? { connect: { id: parseInt(args.supportPlanId) } }
-        : previousSupportPlanId
-        ? { connect: { id: previousSupportPlanId } }
-        : undefined,
-      education: args.educationId
-        ? { connect: { id: parseInt(args.educationId) } }
-        : previousEducationId
-        ? { connect: { id: previousEducationId } }
-        : undefined,
       photos: { connect: photosIds },
       financialRecords: { connect: financialRecordsIds },
+      educationalRecords: { connect: educationalRecordsIds },
+      supportPlans: { connect: supportPlansIds },
       healthRecords: { connect: healthRecordsIds },
       sponsorshipStatuses: { connect: sponsorshipStatusesIds },
+      donors: { connect: donorsIds },
       siblings: {
         connect: siblingssIds
       },
@@ -939,15 +928,12 @@ async function updateOrphan(_parent, args, { prisma, req }, _info) {
         connect: siblingOfsIds
       }
     };
-    delete OrphanUpdateInput.donorId;
     delete OrphanUpdateInput.fatherId;
     delete OrphanUpdateInput.guardianId;
     delete OrphanUpdateInput.house_propertyId;
     delete OrphanUpdateInput.motherId;
-    delete OrphanUpdateInput.villageId;
     delete OrphanUpdateInput.socialWorkerId;
     delete OrphanUpdateInput.supportPlanId;
-    delete OrphanUpdateInput.educationId;
     return await prisma.orphan.update({
       where: { id },
       data: OrphanUpdateInput
@@ -1329,7 +1315,9 @@ async function createProject(_parent, args, { prisma, req }, _info) {
       ? [...args.projectDocuments].map((val) => ({ id: parseInt(val) }))
       : [];
     const incomeGeneratingActivitiesIds = args.incomeGeneratingActivities
-      ? [...args.incomeGeneratingActivities].map((val) => ({ id: parseInt(val) }))
+      ? [...args.incomeGeneratingActivities].map((val) => ({
+          id: parseInt(val)
+        }))
       : [];
     const ProjectCreateInput = {
       ...args,
@@ -1340,7 +1328,7 @@ async function createProject(_parent, args, { prisma, req }, _info) {
     };
     return await prisma.project.create({
       data: ProjectCreateInput
-    })
+    });
   }
   throw new AuthenticationError();
 }
@@ -1353,23 +1341,65 @@ async function updateProject(_parent, args, { prisma, req }, _info) {
     };
     delete ProjectUpdateInput.id;
     return await prisma.project.update({
-      where: {id: parseInt(id)},
+      where: { id: parseInt(id) },
       data: ProjectUpdateInput
     });
   }
   throw new AuthenticationError();
 }
 
-async function createProjectDocument(_parent, args, { prisma, req }, _info){
+async function createProjectDocument(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const ProjectDocumentCreateInput = {
       ...args,
-      project: { connect: { projectId: parseInt(args.projectId) } }
+      project: { connect: { id: parseInt(args.projectId) } }
     };
-    delete ProjectDocumentCreateInput.id;
-    return await prisma.projectDocument.update({
+    delete ProjectDocumentCreateInput.projectId;
+    return await prisma.projectDocument.create({
       data: ProjectDocumentCreateInput
-    })
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function updateProjectDocument(_parent, args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    const id = parseInt(args.id);
+    delete args.id;
+
+    const previousProject = await prisma.projectDocument
+      .findUnique({ where: { id } })
+      .project();
+    const previousProjectId = previousProject ? previousProject.id : undefined;
+    const ProjectDocumentUpdateInput = {
+      ...args,
+      project: args.projectId
+        ? { connect: { id: parseInt(args.projectId) } }
+        : previousProjectId
+        ? { connect: { id: previousProjectId } }
+        : undefined
+    };
+    delete ProjectDocumentUpdateInput.projectId;
+    console.log(ProjectDocumentUpdateInput);
+    return await prisma.projectDocument.update({
+      where: { id: parseInt(id) },
+      data: ProjectDocumentUpdateInput
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function createPayment(_parent, args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    const PaymentCreateInput = {
+      ...args,
+      supportPlan: { connect: { id: parseInt(args.supportPlanId) } }
+    };
+    delete PaymentCreateInput.supportPlanId;
+    console.log(PaymentCreateInput);
+    return await prisma.payment.create({
+      data: PaymentCreateInput
+    });
   }
   throw new AuthenticationError();
 }
@@ -1379,15 +1409,23 @@ async function createSupportPlan(_parent, args, { prisma, req }, _info) {
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
       : [];
+    const paymentsIds = args.payments
+      ? [...args.payments].map((val) => ({ id: parseInt(val) }))
+      : [];
 
     const SupportPlanCreateInput = {
       ...args,
       donor: args.donorId
         ? { connect: { id: parseInt(args.donorId) } }
         : undefined,
-      orphans: { connect: orphansIds }
+      project: args.projectId
+        ? { connect: { id: parseInt(args.projectId) } }
+        : undefined,
+      orphans: { connect: orphansIds },
+      payments: { connect: paymentsIds }
     };
     delete SupportPlanCreateInput.donorId;
+    delete SupportPlanCreateInput.projectId;
 
     return await prisma.supportPlan.create({
       data: SupportPlanCreateInput
@@ -1404,11 +1442,19 @@ async function updateSupportPlan(_parent, args, { prisma, req }, _info) {
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
       : [];
+    const paymentsIds = args.payments
+      ? [...args.payments].map((val) => ({ id: parseInt(val) }))
+      : [];
 
     const previousDonor = await prisma.supportPlan
       .findUnique({ where: { id } })
       .donor();
     const previousDonorId = previousDonor ? previousDonor.id : undefined;
+
+    const previousProject = await prisma.supportPlan
+      .findUnique({ where: { id } })
+      .project();
+    const previousProjectId = previousProject ? previousProject.id : undefined;
 
     const SupportPlanUpdateInput = {
       ...args,
@@ -1418,9 +1464,16 @@ async function updateSupportPlan(_parent, args, { prisma, req }, _info) {
         : previousDonorId
         ? { connect: { id: previousDonorId } }
         : undefined,
-      orphans: { connect: orphansIds }
+      project: args.projectId
+        ? { connect: { id: parseInt(args.projectId) } }
+        : previousProjectId
+        ? { connect: { id: previousProjectId } }
+        : undefined,
+      orphans: { connect: orphansIds },
+      payments: { connect: paymentsIds }
     };
     delete SupportPlanUpdateInput.donorId;
+    delete SupportPlanUpdateInput.projectId;
 
     return await prisma.supportPlan.update({
       where: { id },
@@ -1471,12 +1524,6 @@ async function updateHead(_parent, args, { prisma, req }, _info) {
 
 async function createCoordinator(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
-    const villagesIds = args.villages
-      ? [...args.villages].map((val) => ({ id: parseInt(val) }))
-      : [];
-    const districtsIds = args.district
-      ? [...args.districts].map((val) => ({ id: parseInt(val) }))
-      : [];
     const donorsIds = args.donors
       ? [...args.donors].map((val) => ({ id: parseInt(val) }))
       : [];
@@ -1485,8 +1532,6 @@ async function createCoordinator(_parent, args, { prisma, req }, _info) {
       user: args.userId
         ? { connect: { id: parseInt(args.userId) } }
         : undefined,
-      villages: { connect: villagesIds },
-      districts: { connect: districtsIds },
       donors: { connect: donorsIds }
     };
     delete CoordinatorCreateInput.userId;
@@ -1502,12 +1547,6 @@ async function updateCoordinator(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-    const villagesIds = args.villages
-      ? [...args.villages].map((val) => ({ id: parseInt(val) }))
-      : [];
-    const districtsIds = args.districts
-      ? [...args.districts].map((val) => ({ id: parseInt(val) }))
-      : [];
     const donorsIds = args.donors
       ? [...args.donors].map((val) => ({ id: parseInt(val) }))
       : [];
@@ -1674,6 +1713,9 @@ module.exports = {
   createVillage,
   updateVillage,
   createOrphan,
+
+  createOrphanWithBaselineData,
+
   updateOrphan,
   createSocialWorker,
   updateSocialWorker,
@@ -1689,9 +1731,13 @@ module.exports = {
   updateOrphanPhoto,
   createSponsorshipStatus,
   updateSponsorshipStatus,
+
   createProject,
   updateProject,
   createProjectDocument,
+  updateProjectDocument,
+  createPayment,
+
   createSupportPlan,
   updateSupportPlan,
   createHead,

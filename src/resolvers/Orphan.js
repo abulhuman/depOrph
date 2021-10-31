@@ -43,6 +43,10 @@ function sponsorshipStatuses({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).sponsorshipStatuses();
 }
 
+function donors({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).donors();
+}
+
 function siblings({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).siblings();
 }
@@ -63,6 +67,7 @@ module.exports = {
   financialRecords,
   healthRecords,
   sponsorshipStatuses,
+  donors,
   siblings,
   siblingOf
 };

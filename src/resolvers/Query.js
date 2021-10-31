@@ -519,6 +519,117 @@ async function allAccountMaintainences(_parent, _args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
+async function getDonorsByCoordinatorId(
+  _parent,
+  { coordinatorId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.donor.findMany({
+      where: {
+        coordinators: {
+          some: {
+            id: {
+              equals: parseInt(coordinatorId)
+            }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getOrphansByDonorId(
+  _parent,
+  { donorId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.orphan.findMany({
+      where: {
+        donors: {
+          some: {
+            id: {
+              equals: parseInt(donorId)
+            }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getActiveProjects(_parent, _args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    return await prisma.project.findMany({
+      where: {
+        status: { equals: "active" }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getProjectDocumentsByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.projectDocument.findMany({
+      where: {
+        projectId: {
+          equals: parseInt(projectId)
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getSupportPlansByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.supportPlan.findMany({
+      where: {
+        projectId: { equals: parseInt(projectId) }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getOrphansByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.orphan.findMany({
+      where: {
+        supportPlans: {
+          some: {
+            projectId: {
+                equals: parseInt(projectId)
+            }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   orphan,
   father,
@@ -558,5 +669,16 @@ module.exports = {
   allHeads,
   allCoordinators,
   allUsers,
-  allAccountMaintainences
+  allAccountMaintainences,
+
+  getDonorsByCoordinatorId,
+  getOrphansByDonorId,
+
+  getActiveProjects,
+
+  getProjectDocumentsByProjectId,
+
+  getSupportPlansByProjectId,
+
+  getOrphansByProjectId
 };

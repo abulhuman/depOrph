@@ -410,7 +410,3 @@ try {
 } catch (error) {
   console.error(error);
 }
-
-prisma.projectDocument.create({data: {
-  
-}})
