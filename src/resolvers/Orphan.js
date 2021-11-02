@@ -31,8 +31,12 @@ function financialRecords({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).financialRecords();
 }
 
-function healthRecords({ id }, _args, { prisma }) {
-  return prisma.orphan.findUnique({ where: { id } }).healthRecords();
+function documents({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).documents();
+}
+
+function healthStatuses({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).healthStatuses();
 }
 
 function photos({ id }, _args, { prisma }) {
@@ -65,7 +69,8 @@ module.exports = {
   socialWorker,
   supportPlans,
   financialRecords,
-  healthRecords,
+  documents,
+  healthStatuses,
   sponsorshipStatuses,
   donors,
   siblings,

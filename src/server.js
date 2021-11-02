@@ -26,11 +26,16 @@ const District = require("./resolvers/District");
 const Village = require("./resolvers/Village");
 const EducationalRecord = require("./resolvers/EducationalRecord");
 const FinancialRecord = require("./resolvers/FinancialRecord");
-const HealthRecord = require("./resolvers/HealthRecord");
+const OrphanDocument = require("./resolvers/OrphanDocument");
 const House_property = require("./resolvers/House_property");
 const OrphanPhoto = require("./resolvers/OrphanPhoto");
+const HealthStatus = require("./resolvers/HealthStatus");
 const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
 const Project = require("./resolvers/Project");
+const ProjectDocument = require("./resolvers/ProjectDocument");
+const IncomeGeneratingActivity = require("./resolvers/IncomeGeneratingActivity");
+const IncomeGeneratingActivityPhoto = require("./resolvers/IncomeGeneratingActivityPhoto");
+const Payment = require("./resolvers/Payment");
 const SupportPlan = require("./resolvers/SupportPlan");
 const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
@@ -59,11 +64,16 @@ const resolvers = {
   Village,
   EducationalRecord,
   FinancialRecord,
-  HealthRecord,
+  OrphanDocument,
   House_property,
   OrphanPhoto,
+  HealthStatus,
   SponsorshipStatus,
   Project,
+  ProjectDocument,
+  IncomeGeneratingActivity,
+  IncomeGeneratingActivityPhoto,
+  Payment,
   SupportPlan,
   Head,
   Coordinator,
@@ -410,3 +420,11 @@ try {
 } catch (error) {
   console.error(error);
 }
+// prisma.incomeGeneratingActivity.findMany({ where: { id: 2 } }).photos();
+
+(async () => {
+  const hm = await prisma.incomeGeneratingActivityPhoto
+    .findFirst()
+    .incomeGeneratingActivity();
+  console.log(hm);
+})();

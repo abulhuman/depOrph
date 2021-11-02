@@ -1,5 +1,5 @@
 function orphan({ id }, _args, { prisma }) {
-  return prisma.healthRecord.findUnique({ where: { id } }).orphan();
+  return prisma.orphanDocument.findUnique({ where: { id } }).orphan();
 }
 
 module.exports = {

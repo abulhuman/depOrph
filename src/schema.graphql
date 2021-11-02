@@ -14,7 +14,7 @@ type Query {
   village(id: ID!): Village!
   educationalRecord(id: ID!): EducationalRecord!
   financialRecord(id: ID!): FinancialRecord!
-  healthRecord(id: ID!): HealthRecord!
+  orphanDocument(id: ID!): OrphanDocument!
   house_property(id: ID!): House_property!
   orphanPhoto(id: ID!): OrphanPhoto!
   sponsorshipStatus(id: ID!): SponsorshipStatus!
@@ -204,20 +204,15 @@ type Mutation {
     motherId: ID
   ): MotherJob!
 
-  createRegion(name: String!, zones: [ID]): Region!
+  createRegion(name: String!): Region!
 
   updateRegion(id: ID!, name: String, zones: [ID]): Region!
 
-  createZone(name: String!, regionId: ID, districts: [ID]): Zone!
+  createZone(name: String!, regionId: ID!): Zone!
 
   updateZone(id: ID!, name: String, regionId: ID, districts: [ID]): Zone!
 
-  createDistrict(
-    name: String!
-    zoneId: ID
-    villages: [ID]
-    socialWorkers: [ID]
-  ): District!
+  createDistrict(name: String!, zoneId: ID!): District!
 
   updateDistrict(
     id: ID!
@@ -227,12 +222,7 @@ type Mutation {
     socialWorkers: [ID]
   ): District!
 
-  createVillage(
-    name: String
-    socialWorkerId: ID
-    districtId: ID
-    orphans: [ID]
-  ): Village!
+  createVillage(name: String, districtId: ID): Village!
 
   updateVillage(
     id: ID!
@@ -266,7 +256,7 @@ type Mutation {
     sponsorshipStatuses: [ID]
     financialRecords: [ID]
     educationalRecords: [ID]
-    healthRecords: [ID]
+    documents: [ID]
     healthStatuses: [ID]
     photos: [ID]
     letters: [ID]
@@ -324,7 +314,7 @@ type Mutation {
     sponsorshipStatuses: [ID]
     financialRecords: [ID]
     educationalRecords: [ID]
-    healthRecords: [ID]
+    documents: [ID]
     healthStatuses: [ID]
     photos: [ID]
     letters: [ID]
@@ -381,7 +371,7 @@ type Mutation {
     reportCardUrl: String
     semesterGPA: Float
     cumulativeGPA: Float
-    orphanId: ID
+    orphanId: ID!
   ): EducationalRecord!
 
   updateEducationalRecord(
@@ -411,7 +401,7 @@ type Mutation {
     amount: Float
     reason: FRReason
     specialCaseReason: String
-    orphanId: ID
+    orphanId: ID!
   ): FinancialRecord!
 
   updateFinancialRecord(
@@ -424,13 +414,18 @@ type Mutation {
     orphanId: ID
   ): FinancialRecord!
 
-  createHealthRecord(medicalCertificateUrl: String, orphanId: ID): HealthRecord!
+  createOrphanDocument(
+    documentUrl: String!
+    documentType: OrphanDocumentType!
+    orphanId: ID!
+  ): OrphanDocument!
 
-  updateHealthRecord(
+  updateOrphanDocument(
     id: ID!
-    medicalCertificateUrl: String
+    documentUrl: String
+    documentType: OrphanDocumentType
     orphanId: ID
-  ): HealthRecord!
+  ): OrphanDocument!
 
   createHouse_property(
     housingSituation: String!
@@ -461,7 +456,7 @@ type Mutation {
   createHealthStatus(
     healthDescription: String!
     psychologicalStatus: orphanPsychologicalStatus
-    orphanId: ID
+    orphanId: ID!
   ): HealthStatus!
 
   updateHealthStatus(
@@ -488,7 +483,7 @@ type Mutation {
     status: sponsorshipStatus
     date: DateTime!
     reason: String
-    orphanId: ID
+    orphanId: ID!
   ): SponsorshipStatus!
 
   updateSponsorshipStatus(
@@ -523,14 +518,14 @@ type Mutation {
 
   createProjectDocument(
     documentUrl: String!
-    documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+    documentType: projectDocumentType!
     projectId: ID!
   ): ProjectDocument!
 
   updateProjectDocument(
     id: ID!
     documentUrl: String
-    documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+    documentType: projectDocumentType
     projectId: ID
   ): ProjectDocument!
 
@@ -546,8 +541,8 @@ type Mutation {
     startDate: DateTime
     endDate: DateTime
     status: String! # active/ongoning, awaitngFunding ...
-    projectId: ID
-    photos: [ID]
+    projectId: ID!
+    photos: [IncomeGeneratingActivityPhotoInput]
   ): IncomeGeneratingActivity!
 
   updateIncomeGeneratingActivity(
@@ -569,7 +564,7 @@ type Mutation {
 
   createIncomeGeneratingActivityPhoto(
     photoUrl: String!
-    incomeGeneratingActivityId: ID
+    incomeGeneratingActivityId: ID!
   ): IncomeGeneratingActivityPhoto!
 
   createPayment(
@@ -650,7 +645,6 @@ type Mutation {
     middleName: String!
     lastName: String!
     userId: ID!
-    donors: [ID]
   ): Coordinator!
 
   updateCoordinator(
@@ -860,7 +854,7 @@ type Orphan {
   sponsorshipStatuses: [SponsorshipStatus]
   financialRecords: [FinancialRecord]
   educationalRecords: [EducationalRecord]
-  healthRecords: [HealthRecord]
+  documents: [OrphanDocument]
   healthStatuses: [HealthStatus]
   photos: [OrphanPhoto]
   letters: [OrphanLetter]
@@ -899,12 +893,18 @@ type FinancialRecord {
   orphan: Orphan
 }
 
-type HealthRecord {
+type OrphanDocument {
   id: ID!
   created_at: DateTime
   updated_at: DateTime
-  medicalCertificateUrl: String
+  documentUrl: String!
+  documentType: OrphanDocumentType!
   orphan: Orphan
+}
+
+enum OrphanDocumentType {
+  medicalCertificate
+  educationalCertificate
 }
 
 type House_property {
@@ -977,7 +977,7 @@ type ProjectDocument {
   created_at: DateTime
   updated_at: DateTime
   documentUrl: String!
-  documentType: String # proposal, amended-proposal, yearly-paln, amended-yearly-plan, mid-term-evaluation, amended-mid-term-evaluation, terminal-evaluation, amended-terminal-evaluation
+  documentType: projectDocumentType!
   project: Project
 }
 
@@ -1129,6 +1129,17 @@ enum sponsorshipStatus {
   pending
   active
   graduated
+}
+
+enum projectDocumentType {
+  proposal
+  amendedProposal
+  yearlyPaln
+  amendedYearlyPlan
+  midTermEvaluation
+  amendedMidTermEvaluation
+  terminalEvaluation
+  amendedTerminalEvaluation
 }
 
 enum socialWorkerGender {
@@ -1441,4 +1452,8 @@ input HealthStatusCreateInput {
 input OrphanPhotoCreateInput {
   photoPortraitUrl: String!
   photoLongUrl: String
+}
+
+input IncomeGeneratingActivityPhotoInput {
+  photoUrl: String!
 }

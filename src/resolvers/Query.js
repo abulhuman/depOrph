@@ -106,9 +106,9 @@ async function financialRecord(_parent, { id }, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function healthRecord(_parent, { id }, { prisma, req }, _info) {
+async function orphanDocument(_parent, { id }, { prisma, req }, _info) {
   if (getUser(req).userId) {
-    return await prisma.healthRecord.findUnique({
+    return await prisma.orphanDocument.findUnique({
       where: { id: parseInt(id) }
     });
   }
@@ -642,12 +642,11 @@ module.exports = {
   zone,
   district,
   village,
-  healthRecord,
   house_property,
   orphanPhoto,
   educationalRecord,
   financialRecord,
-  healthRecord,
+  orphanDocument,
   sponsorshipStatus,
   supportPlan,
   head,

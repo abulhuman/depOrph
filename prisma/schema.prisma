@@ -202,7 +202,7 @@ model Orphan {
   sponsorshipStatuses    SponsorshipStatus[] @relation("orphanTosponsorshipstatus")
   financialRecords       FinancialRecord[]   @relation("financialrecordToorphan")
   educationalRecords     EducationalRecord[] @relation("educationToorphan")
-  healthRecords          HealthRecord[]      @relation("healthrecordToorphan")
+  documents              OrphanDocument[]    @relation("orphanDocumentToorphan")
   healthStatuses         HealthStatus[]      @relation("healthstatusToorphan")
   photos                 OrphanPhoto[]       @relation("orphanToorphanphoto")
   letters                OrphanLetter[]      @relation("orphanLetterToorphan")
@@ -274,15 +274,16 @@ model FinancialRecord {
   @@map("financialrecord")
 }
 
-model HealthRecord {
-  id                    Int       @id @default(autoincrement())
-  created_at            DateTime? @default(now())
-  updated_at            DateTime?
-  medicalCertificateUrl String?
-  orphanId              Int?
-  orphan                Orphan?   @relation("healthrecordToorphan", fields: [orphanId], references: [id])
+model OrphanDocument {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime? @default(now())
+  updated_at   DateTime?
+  documentUrl  String
+  documentType String
+  orphanId     Int?
+  orphan       Orphan?   @relation("orphanDocumentToorphan", fields: [orphanId], references: [id])
 
-  @@map("healthrecord")
+  @@map("orphandocument")
 }
 
 model House_property {

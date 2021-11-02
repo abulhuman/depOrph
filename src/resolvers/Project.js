@@ -11,7 +11,9 @@ function projectDocuments({ id }, _args, { prisma }) {
 }
 
 function incomeGeneratingActivities({ id }, _args, { prisma }) {
-  return prisma.project.findUnique({ where: { id } }).incomeGeneratingActivities();
+  return prisma.project
+    .findUnique({ where: { id } })
+    .incomeGeneratingActivities();
 }
 
 module.exports = {
