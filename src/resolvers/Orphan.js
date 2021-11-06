@@ -23,6 +23,10 @@ function socialWorker({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).socialWorker();
 }
 
+function coordinator({ id }, _args, { prisma }) {
+  return prisma.orphan.findUnique({ where: { id } }).coordinator();
+}
+
 function supportPlans({ id }, _args, { prisma }) {
   return prisma.orphan.findUnique({ where: { id } }).supportPlans();
 }
@@ -67,6 +71,7 @@ module.exports = {
   mother,
   village,
   socialWorker,
+  coordinator,
   supportPlans,
   financialRecords,
   documents,

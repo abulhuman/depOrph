@@ -23,7 +23,7 @@ type Query {
   coordinator(id: ID!): Coordinator!
   user(id: ID!): User!
 
-  allDonors(take: Int, filter: String, orderBy: DonorOrderByInput): [Donor]!
+  getAllDonors(take: Int, filter: String, orderBy: DonorOrderByInput): [Donor]!
   allGuardians(
     take: Int
     filter: String
@@ -78,6 +78,12 @@ type Query {
   getSupportPlansByProjectId(projectId: ID!): [SupportPlan]!
 
   getOrphansByProjectId(projectId: ID!): [Orphan]!
+
+  getSupportPlansByCoordinatorId(coordinatorId: ID!): [SupportPlan]!
+  getVillagesByCoordinatorId(coordinatorId: ID!): [Village]!
+
+  getAllGuardiansByProjectId(projectId: ID!): [Guardian]!
+  getAllOrphansByProjectId(projectId: ID!): [Orphan]!
 }
 
 type Mutation {
@@ -825,6 +831,7 @@ type Village {
   socialWorker: SocialWorker
   district: District
   orphans: [Orphan]
+  projects: [Project]
 }
 
 type Orphan {
@@ -850,6 +857,7 @@ type Orphan {
   mother: Mother
   village: Village
   socialWorker: SocialWorker
+  coordinator: Coordinator
   supportPlans: [SupportPlan]
   sponsorshipStatuses: [SponsorshipStatus]
   financialRecords: [FinancialRecord]
@@ -970,6 +978,7 @@ type Project {
   coordinators: [Coordinator]
   projectDocuments: [ProjectDocument]
   incomeGeneratingActivities: [IncomeGeneratingActivity]
+  villages: [Village]
 }
 
 type ProjectDocument {
@@ -1061,6 +1070,7 @@ type Coordinator {
   lastName: String!
   user: User!
   donors: [Donor]
+  orphans: [Orphan]
 }
 
 type User {

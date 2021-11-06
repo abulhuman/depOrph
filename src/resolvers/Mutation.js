@@ -519,7 +519,7 @@ async function createVillage(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const VillageCreateInput = {
       ...args,
-      district: { connect: { id: parseInt(args.districtId) } }
+      district: args.districtId ? { connect: { id: parseInt(args.districtId) } } : {}
     };
     delete VillageCreateInput.districtId;
 
@@ -906,10 +906,10 @@ async function updateSocialWorker(_parent, args, { prisma, req }, _info) {
     const id = parseInt(args.id);
     delete args.id;
 
-    const previousUser = await prisma.socialWorker
-      .findUnique({ where: { id } })
-      .user();
-    const previousUserId = previousUser ? previousUser.id : undefined;
+    // const previousUser = await prisma.socialWorker
+    //   .findUnique({ where: { id } })
+    //   .user();
+    // const previousUserId = previousUser ? previousUser.id : undefined;
 
     const orphansIds = args.orphans
       ? [...args.orphans].map((val) => ({ id: parseInt(val) }))
@@ -926,11 +926,11 @@ async function updateSocialWorker(_parent, args, { prisma, req }, _info) {
     const SocialWorkerUpdateInput = {
       ...args,
       updated_at: new Date(),
-      user: args.userId
-        ? { connect: { id: parseInt(args.userId) } }
-        : previousUserId
-        ? { connect: { id: previousUserId } }
-        : undefined,
+      // user: args.userId
+      //   ? { connect: { id: parseInt(args.userId) } }
+      //   : previousUserId
+      //   ? { connect: { id: previousUserId } }
+      //   : undefined,
       districts: { connect: districtsIds },
       villages: { connect: villagesIds },
       orphans: { connect: orphansIds }
