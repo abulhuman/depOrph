@@ -420,11 +420,4 @@ try {
 } catch (error) {
   console.error(error);
 }
-// prisma.incomeGeneratingActivity.findMany({ where: { id: 2 } }).photos();
 
-(async () => {
-  const hm = await prisma.incomeGeneratingActivityPhoto
-    .findFirst()
-    .incomeGeneratingActivity();
-  console.log(hm);
-})();

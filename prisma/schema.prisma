@@ -163,6 +163,7 @@ model Village {
   socialWorkerId Int?
   socialWorker   SocialWorker? @relation("villageTosocialworker", fields: [socialWorkerId], references: [id])
   district       District?     @relation(fields: [districtId], references: [id])
+  projects       Project[]     @relation("projectTovillage")
   orphans        Orphan[]      @relation("orphanTovillage")
 
   @@map("village")
@@ -191,6 +192,7 @@ model Orphan {
   educationId            Int?
   villageId              Int?
   socialWorkerId         Int?
+  coordinatorId          Int?
   house_propertyId       Int?
   father                 Father?             @relation("fatherToorphan", fields: [fatherId], references: [id])
   guardian               Guardian?           @relation("guardianToorphan", fields: [guardianId], references: [id])
@@ -198,6 +200,7 @@ model Orphan {
   mother                 Mother?             @relation("motherToorphan", fields: [motherId], references: [id])
   village                Village?            @relation("orphanTovillage", fields: [villageId], references: [id])
   socialWorker           SocialWorker?       @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
+  coordinator            Coordinator?        @relation("orphanTocoordinator", fields: [coordinatorId], references: [id])
   supportPlans           SupportPlan[]       @relation("orphanTosupportplan")
   sponsorshipStatuses    SponsorshipStatus[] @relation("orphanTosponsorshipstatus")
   financialRecords       FinancialRecord[]   @relation("financialrecordToorphan")
@@ -339,6 +342,7 @@ model Project {
   coordinators                 Coordinator[]
   projectDocuments             ProjectDocument[]
   incomeGeneratingActivities   IncomeGeneratingActivity[]
+  villages                     Village[]                  @relation("projectTovillage")
 
   @@map("project")
 }
@@ -454,6 +458,7 @@ model Coordinator {
   user       User      @relation(fields: [userId], references: [id])
   donors     Donor[]   @relation("donorTocoordinator")
   projects   Project[]
+  orphans    Orphan[]  @relation("orphanTocoordinator")
 
   @@map("coordinator")
 }

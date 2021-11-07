@@ -16,9 +16,16 @@ function incomeGeneratingActivities({ id }, _args, { prisma }) {
     .incomeGeneratingActivities();
 }
 
+function villages({ id }, _args, { prisma }) {
+  return prisma.project
+    .findUnique({ where: { id } })
+    .villages();
+}
+
 module.exports = {
   supportPlans,
   coordinators,
   projectDocuments,
-  incomeGeneratingActivities
+  incomeGeneratingActivities,
+  villages
 };

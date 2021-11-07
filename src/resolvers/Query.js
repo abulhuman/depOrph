@@ -169,7 +169,7 @@ async function user(_parent, { id }, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
-async function allDonors(
+async function getAllDonors(
   _parent,
   { take, filter, orderBy },
   { prisma, req },
@@ -480,21 +480,10 @@ async function allUsers(
   { prisma, req },
   _info
 ) {
-  const roleFilter =
-    filter == "Admin"
-      ? userRoles_enum.Admin
-      : filter == "SocialWorker"
-      ? userRoles_enum.SocialWorker
-      : filter == "Head"
-      ? userRoles_enum.Head
-      : filter == "Donor"
-      ? userRoles_enum.Donor
-      : userRoles_enum.Guest;
-
   const where = filter
     ? {
         OR: [
-          { role: { equals: roleFilter } },
+          { role: { equals: filter } },
           { email: { contains: filter, mode: "insensitive" } }
         ]
       }
@@ -618,10 +607,92 @@ async function getOrphansByProjectId(
     return await prisma.orphan.findMany({
       where: {
         supportPlans: {
-          some: {
+          every: {
             projectId: {
-                equals: parseInt(projectId)
+              equals: parseInt(projectId)
             }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getSupportPlansByCoordinatorId(
+  _parent,
+  { coordinatorId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.supportPlan.findMany({
+      where: {
+        project: {
+          coordinators: { every: { id: { equals: parseInt(coordinatorId) } } }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getVillagesByCoordinatorId(
+  _parent,
+  { coordinatorId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.village.findMany({
+      where: {
+        projects: {
+          every: {
+            coordinators: { every: { id: { equals: parseInt(coordinatorId) } } }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getAllGuardiansByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.guardian.findMany({
+      where: {
+        orphans: {
+          some: {
+            village: {
+              projects: {
+                every: { id: { equals: parseInt(projectId) } }
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getAllOrphansByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.orphan.findMany({
+      where: {
+        village: {
+          projects: {
+            every: { id: { equals: parseInt(projectId) } }
           }
         }
       }
@@ -653,7 +724,7 @@ module.exports = {
   coordinator,
   user,
 
-  allDonors,
+  getAllDonors,
   allOrphans,
   someOrphansByIds,
   someOrphansByIds,
@@ -679,5 +750,11 @@ module.exports = {
 
   getSupportPlansByProjectId,
 
-  getOrphansByProjectId
+  getOrphansByProjectId,
+
+  getSupportPlansByCoordinatorId,
+  getVillagesByCoordinatorId,
+
+  getAllGuardiansByProjectId,
+  getAllOrphansByProjectId
 };
