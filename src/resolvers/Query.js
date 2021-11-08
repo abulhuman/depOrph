@@ -701,6 +701,26 @@ async function getAllOrphansByProjectId(
   throw new AuthenticationError();
 }
 
+async function getProjectsByCoordinatorId(
+  _parent,
+  { coordinatorId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.project.findMany({
+      where: {
+        coordinators: {
+          every: {
+            id: { equals: parseInt(coordinatorId) }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   orphan,
   father,
@@ -756,5 +776,7 @@ module.exports = {
   getVillagesByCoordinatorId,
 
   getAllGuardiansByProjectId,
-  getAllOrphansByProjectId
+  getAllOrphansByProjectId,
+
+  getProjectsByCoordinatorId
 };

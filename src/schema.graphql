@@ -84,6 +84,8 @@ type Query {
 
   getAllGuardiansByProjectId(projectId: ID!): [Guardian]!
   getAllOrphansByProjectId(projectId: ID!): [Orphan]!
+
+  getProjectsByCoordinatorId(coordinatorId: ID!): [Project]!
 }
 
 type Mutation {
