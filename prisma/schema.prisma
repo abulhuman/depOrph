@@ -334,7 +334,7 @@ model Project {
   endDate                      DateTime?
   maximumNumberOfBeneficiaries Int
   durationInYears              Int
-  location                     String
+  location                     Village[]                  @relation("projectTovillage")
   totalBudget                  Float
   administrativeCost           Float
   status                       String                     @default("new")
@@ -342,7 +342,6 @@ model Project {
   coordinators                 Coordinator[]
   projectDocuments             ProjectDocument[]
   incomeGeneratingActivities   IncomeGeneratingActivity[]
-  villages                     Village[]                  @relation("projectTovillage")
 
   @@map("project")
 }

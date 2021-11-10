@@ -16,10 +16,10 @@ function incomeGeneratingActivities({ id }, _args, { prisma }) {
     .incomeGeneratingActivities();
 }
 
-function villages({ id }, _args, { prisma }) {
+function location({ id }, _args, { prisma }) {
   return prisma.project
     .findUnique({ where: { id } })
-    .villages();
+    .location();
 }
 
 module.exports = {
@@ -27,5 +27,5 @@ module.exports = {
   coordinators,
   projectDocuments,
   incomeGeneratingActivities,
-  villages
+  location
 };

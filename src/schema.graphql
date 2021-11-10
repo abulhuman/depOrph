@@ -86,6 +86,8 @@ type Query {
   getAllOrphansByProjectId(projectId: ID!): [Orphan]!
 
   getProjectsByCoordinatorId(coordinatorId: ID!): [Project]!
+
+  getFinancialRecordsByOrphanId(orphanId: ID!): [FinancialRecord]!
 }
 
 type Mutation {
@@ -230,13 +232,14 @@ type Mutation {
     socialWorkers: [ID]
   ): District!
 
-  createVillage(name: String, districtId: ID): Village!
+  createVillage(name: String, districtId: ID, projects: [ID]): Village!
 
   updateVillage(
     id: ID!
     name: String
     socialWorkerId: ID
     districtId: ID
+    projects: [ID]
     orphans: [ID]
   ): Village!
 
@@ -477,7 +480,7 @@ type Mutation {
   createOrphanLetter(
     originalThankyouLetterUrl: String
     translatedThankyouLetterUrl: String
-    orphanId: ID
+    orphanId: ID!
   ): OrphanLetter!
 
   updateOrphanLetter(
@@ -508,7 +511,7 @@ type Mutation {
     endDate: DateTime
     maximumNumberOfBeneficiaries: Int!
     durationInYears: Int!
-    location: String!
+    location: [ID]
     totalBudget: Float!
     administrativeCost: Float!
     supportPlans: [ID]
@@ -522,6 +525,7 @@ type Mutation {
     number: String
     maximumNumberOfBenficiaries: Int
     status: String
+    location: [ID]
   ): Project!
 
   createProjectDocument(
@@ -972,7 +976,7 @@ type Project {
   endDate: DateTime
   maximumNumberOfBeneficiaries: Int!
   durationInYears: Int!
-  location: String!
+  location: [Village]!
   totalBudget: Float!
   administrativeCost: Float!
   status: String
@@ -980,7 +984,6 @@ type Project {
   coordinators: [Coordinator]
   projectDocuments: [ProjectDocument]
   incomeGeneratingActivities: [IncomeGeneratingActivity]
-  villages: [Village]
 }
 
 type ProjectDocument {
