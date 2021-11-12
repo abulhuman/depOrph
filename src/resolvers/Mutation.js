@@ -1455,6 +1455,22 @@ async function createPayment(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
+async function createIndividualPayment(_parent, args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    const IndividualPaymentCreateInput = {
+      ...args,
+      orphan: { connect: { id: parseInt(args.orphanId) } },
+      payment: { connect: { id: parseInt(args.paymentId) } }
+    };
+    delete IndividualPaymentCreateInput.orphanId;
+    delete IndividualPaymentCreateInput.paymentId;
+    return await prisma.individualPayment.create({
+      data: IndividualPaymentCreateInput
+    });
+  }
+  throw new AuthenticationError();
+}
+
 async function createSupportPlan(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const orphansIds = args.orphans
@@ -1788,6 +1804,7 @@ module.exports = {
   createIncomeGeneratingActivity,
   createIncomeGeneratingActivityPhoto,
   createPayment,
+  createIndividualPayment,
 
   createSupportPlan,
   updateSupportPlan,

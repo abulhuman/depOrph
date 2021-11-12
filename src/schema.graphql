@@ -628,6 +628,16 @@ type Mutation {
     supportPlanId: ID
   ): Payment!
 
+  createIndividualPayment(
+    depositInPrimaryForeignCurrency: Float
+    depositInSecondaryForeignCurrency: Float
+    grossDepositInDomesticCurrency: Float!
+    adminFeeInDomesticCurrency: Float!
+    netDepositInDomesticCurrency: Float!
+    orphanId: ID!
+    paymentId: ID!
+  ): IndividualPayment!
+
   createSupportPlan(
     name: String!
     adminFeePercentage: Float!
@@ -881,6 +891,7 @@ type Orphan {
   socialWorker: SocialWorker
   coordinator: Coordinator
   supportPlans: [SupportPlan]
+  individualPayments: [IndividualPayment]
   sponsorshipStatuses: [SponsorshipStatus]
   financialRecords: [FinancialRecord]
   educationalRecords: [EducationalRecord]
@@ -1055,6 +1066,20 @@ type Payment {
   netPaymentInDomesticCurrency: Float
   paymentPeriodInMonths: Int
   supportPlan: SupportPlan
+  individualPayments: [IndividualPayment]
+}
+
+type IndividualPayment {
+  id: ID!
+  created_at: DateTime
+  updated_at: DateTime
+  depositInPrimaryForeignCurrency: Float
+  depositInSecondaryForeignCurrency: Float
+  grossDepositInDomesticCurrency: Float
+  adminFeeInDomesticCurrency: Float
+  netDepositInDomesticCurrency: Float
+  orphan: Orphan
+  payment: Payment
 }
 
 type SupportPlan {
