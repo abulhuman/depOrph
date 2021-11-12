@@ -739,6 +739,13 @@ async function getFinancialRecordsByOrphanId(
   throw new AuthenticationError();
 }
 
+async function getAllProjects(_parent, _args, { prisma, req }, _info) {
+  if (getUser(req).userId) {
+    return await prisma.project.findMany();
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   orphan,
   father,
@@ -798,5 +805,7 @@ module.exports = {
 
   getProjectsByCoordinatorId,
 
-  getFinancialRecordsByOrphanId
+  getFinancialRecordsByOrphanId,
+
+  getAllProjects
 };

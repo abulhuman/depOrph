@@ -1294,6 +1294,45 @@ async function createProject(_parent, args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
+async function createProjectWithProposal(
+  _parent,
+  args,
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    /*
+    const supportPlansIds = args.supportPlans
+      ? [...args.supportPlans].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const coordinatorsIds = args.coordinators
+      ? [...args.coordinators].map((val) => ({ id: parseInt(val) }))
+      : [];
+    */
+
+    const locationIds = args.location
+      ? [...args.location].map((val) => ({ id: parseInt(val) }))
+      : [];
+    const ProjectCreateInput = {
+      ...args,
+      // supportPlans: { connect: supportPlansIds },
+      // coordinators: { connect: coordinatorsIds },
+      projectDocuments: {
+        create: {
+          documentType: "proposal",
+          documentUrl: args.proposalUrl
+        }
+      },
+      location: { connect: locationIds }
+    };
+    delete ProjectCreateInput.proposalUrl;
+    return await prisma.project.create({
+      data: ProjectCreateInput
+    });
+  }
+  throw new AuthenticationError();
+}
+
 async function updateProject(_parent, args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     const { id } = args;
@@ -1742,6 +1781,7 @@ module.exports = {
   createOrphanLetter,
 
   createProject,
+  createProjectWithProposal,
   updateProject,
   createProjectDocument,
   updateProjectDocument,

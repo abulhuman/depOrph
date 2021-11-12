@@ -88,6 +88,8 @@ type Query {
   getProjectsByCoordinatorId(coordinatorId: ID!): [Project]!
 
   getFinancialRecordsByOrphanId(orphanId: ID!): [FinancialRecord]!
+
+  getAllProjects: [Project]!
 }
 
 type Mutation {
@@ -518,6 +520,20 @@ type Mutation {
     coordinators: [ID]
     projectDocuments: [ID]
     incomeGeneratingActivities: [ID]
+  ): Project!
+
+  createProjectWithProposal(
+    number: String!
+    startDate: DateTime
+    endDate: DateTime
+    maximumNumberOfBeneficiaries: Int!
+    durationInYears: Int!
+    location: [ID]
+    totalBudget: Float!
+    administrativeCost: Float!
+    # supportPlans: [ID]
+    # coordinators: [ID]
+    proposalUrl: String!
   ): Project!
 
   updateProject(
