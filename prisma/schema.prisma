@@ -336,7 +336,7 @@ model Project {
   maximumNumberOfBeneficiaries Int
   durationInYears              Int
   location                     Village[]                  @relation("projectTovillage")
-  totalBudget                  Float
+  grandTotalBudget             Float                      @default(0)
   administrativeCost           Float
   status                       String                     @default("new")
   supportPlans                 SupportPlan[]              @relation("projectTosupportplan")
@@ -400,6 +400,7 @@ model SupportPlan {
   name               String
   adminFeePercentage Float
   paymentInterval    String
+  totalFund          Float     @default(0)
   startDate          DateTime?
   endDate            DateTime?
   donorId            Int?
