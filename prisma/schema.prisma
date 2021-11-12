@@ -202,6 +202,7 @@ model Orphan {
   socialWorker           SocialWorker?       @relation("orphanTosocialworker", fields: [socialWorkerId], references: [id])
   coordinator            Coordinator?        @relation("orphanTocoordinator", fields: [coordinatorId], references: [id])
   supportPlans           SupportPlan[]       @relation("orphanTosupportplan")
+  individualPayments     IndividualPayment[]
   sponsorshipStatuses    SponsorshipStatus[] @relation("orphanTosponsorshipstatus")
   financialRecords       FinancialRecord[]   @relation("financialrecordToorphan")
   educationalRecords     EducationalRecord[] @relation("educationToorphan")
@@ -412,8 +413,8 @@ model SupportPlan {
 }
 
 model Payment {
-  id                                Int          @id @default(autoincrement())
-  created_at                        DateTime?    @default(now())
+  id                                Int                 @id @default(autoincrement())
+  created_at                        DateTime?           @default(now())
   updated_at                        DateTime?
   startDate                         DateTime?
   endDate                           DateTime?
@@ -428,9 +429,28 @@ model Payment {
   netPaymentInDomesticCurrency      Float
   paymentPeriodInMonths             Int
   supportPlanId                     Int?
-  supportPlan                       SupportPlan? @relation("supportplanTopayment", fields: [supportPlanId], references: [id])
+  supportPlan                       SupportPlan?        @relation("supportplanTopayment", fields: [supportPlanId], references: [id])
+  individualPayments                IndividualPayment[]
 
   @@map("payment")
+}
+
+model IndividualPayment {
+  id                                Int       @id @default(autoincrement())
+  created_at                        DateTime? @default(now())
+  updated_at                        DateTime?
+  depositInPrimaryForeignCurrency   Float
+  depositInSecondaryForeignCurrency Float
+  grossDepositInDomesticCurrency    Float
+  adminFeeInDomesticCurrency        Float
+  netDepositInDomesticCurrency      Float
+  orphanId                          Int?
+  paymentId                         Int?
+  orphan                            Orphan?   @relation(fields: [orphanId], references: [id])
+  payment                           Payment?  @relation(fields: [paymentId], references: [id])
+
+
+  @@map("individualPayment")
 }
 
 model Head {
