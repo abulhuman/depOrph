@@ -746,6 +746,42 @@ async function getAllProjects(_parent, _args, { prisma, req }, _info) {
   throw new AuthenticationError();
 }
 
+async function getIndividualPaymentsByPaymentId(
+  _parent,
+  { paymentId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.individualPayment.findMany({
+      where: {
+        payment: {
+          id: { equals: parseInt(paymentId) }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
+async function getPaymentsBySupportPlanId(
+  _parent,
+  { supportPlanId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.payment.findMany({
+      where: {
+        supportPlan: {
+          id: { equals: parseInt(supportPlanId) }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   orphan,
   father,
@@ -807,5 +843,7 @@ module.exports = {
 
   getFinancialRecordsByOrphanId,
 
-  getAllProjects
+  getAllProjects,
+  getIndividualPaymentsByPaymentId,
+  getPaymentsBySupportPlanId
 };

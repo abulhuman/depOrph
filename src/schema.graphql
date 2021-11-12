@@ -90,6 +90,9 @@ type Query {
   getFinancialRecordsByOrphanId(orphanId: ID!): [FinancialRecord]!
 
   getAllProjects: [Project]!
+
+  getIndividualPaymentsByPaymentId(paymentId: ID!): [IndividualPayment]!
+  getPaymentsBySupportPlanId(supportPlanId: ID!): [Payment]!
 }
 
 type Mutation {
