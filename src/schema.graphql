@@ -90,6 +90,9 @@ type Query {
   getFinancialRecordsByOrphanId(orphanId: ID!): [FinancialRecord]!
 
   getAllProjects: [Project]!
+
+  getIndividualPaymentsByPaymentId(paymentId: ID!): [IndividualPayment]!
+  getPaymentsBySupportPlanId(supportPlanId: ID!): [Payment]!
 }
 
 type Mutation {
@@ -514,7 +517,7 @@ type Mutation {
     maximumNumberOfBeneficiaries: Int!
     durationInYears: Int!
     location: [ID]
-    totalBudget: Float!
+    grandTotalBudget: Float!
     administrativeCost: Float!
     supportPlans: [ID]
     coordinators: [ID]
@@ -529,10 +532,10 @@ type Mutation {
     maximumNumberOfBeneficiaries: Int!
     durationInYears: Int!
     location: [ID]
-    totalBudget: Float!
+    grandTotalBudget: Float!
     administrativeCost: Float!
     # supportPlans: [ID]
-    # coordinators: [ID]
+    coordinators: [ID]
     proposalUrl: String!
   ): Project!
 
@@ -642,6 +645,7 @@ type Mutation {
     name: String!
     adminFeePercentage: Float!
     paymentInterval: String! # monlthly, quarterly, semi-annually, annually
+    totalFund: Float
     startDate: DateTime
     endDate: DateTime
     donorId: ID
@@ -655,6 +659,7 @@ type Mutation {
     name: String
     adminFeePercentage: Float
     paymentInterval: String # monlthly, quarterly, semi-annually, annually
+    totalFund: Float
     startDate: DateTime
     endDate: DateTime
     donorId: ID
@@ -1004,7 +1009,7 @@ type Project {
   maximumNumberOfBeneficiaries: Int!
   durationInYears: Int!
   location: [Village]!
-  totalBudget: Float!
+  grandTotalBudget: Float!
   administrativeCost: Float!
   status: String
   supportPlans: [SupportPlan]
@@ -1089,6 +1094,7 @@ type SupportPlan {
   name: String!
   adminFeePercentage: Float!
   paymentInterval: String! # monlthly, quarterly, semi-annually, annually
+  totalFund: Float!
   startDate: DateTime
   endDate: DateTime
   donor: Donor

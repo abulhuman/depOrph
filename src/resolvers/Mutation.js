@@ -1305,10 +1305,10 @@ async function createProjectWithProposal(
     const supportPlansIds = args.supportPlans
       ? [...args.supportPlans].map((val) => ({ id: parseInt(val) }))
       : [];
-    const coordinatorsIds = args.coordinators
+        */
+const coordinatorsIds = args.coordinators
       ? [...args.coordinators].map((val) => ({ id: parseInt(val) }))
       : [];
-    */
 
     const locationIds = args.location
       ? [...args.location].map((val) => ({ id: parseInt(val) }))
@@ -1316,7 +1316,7 @@ async function createProjectWithProposal(
     const ProjectCreateInput = {
       ...args,
       // supportPlans: { connect: supportPlansIds },
-      // coordinators: { connect: coordinatorsIds },
+      coordinators: { connect: coordinatorsIds },
       projectDocuments: {
         create: {
           documentType: "proposal",

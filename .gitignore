@@ -3,6 +3,3 @@
 .env*
 .vscode
 debug.log
-
-# /public/*/*/*
-public/images/*/
