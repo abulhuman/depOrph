@@ -401,6 +401,51 @@ try {
     );
 
     app.post(
+      "/public/images/educationalCertificate/",
+      cors(corsOptions),
+      upload.single("educationalCertificate"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/IGAPhoto/",
+      cors(corsOptions),
+      upload.single("IGAPhoto"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
+      "/public/images/projectDocument/",
+      cors(corsOptions),
+      upload.single("projectDocument"),
+      (req, res) => {
+        if (req.file) {
+          if (req.file.mimetype === "application/pdf") {
+            convertImage(req.file.path, req.file.destination).then((data) =>
+              res.send(data)
+            );
+          } else res.send(req.file.path);
+        } else return res.send("Image not attached");
+      }
+    );
+
+    app.post(
       "/public/images/educationalRecordReportCard/",
       cors(corsOptions),
       upload.single("educationalRecordReportCard"),
