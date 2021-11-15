@@ -419,12 +419,12 @@ model Payment {
   updated_at                        DateTime?
   startDate                         DateTime?
   endDate                           DateTime?
-  paymentInPrimaryForeignCurrency   Float
-  primaryForeignCurrency            String
-  primaryExchangeRate               Float
-  paymentInSecondaryForeignCurrency Float
-  secondaryForeignCurrency          String
-  secondaryExchangeRate             Float
+  paymentInPrimaryForeignCurrency   Float?
+  primaryForeignCurrency            String?
+  primaryExchangeRate               Float?
+  paymentInSecondaryForeignCurrency Float?
+  secondaryForeignCurrency          String?
+  secondaryExchangeRate             Float?
   grossPaymentInDomesticCurrency    Float
   adminFeeInDomesticCurrency        Float
   netPaymentInDomesticCurrency      Float
@@ -440,8 +440,8 @@ model IndividualPayment {
   id                                Int       @id @default(autoincrement())
   created_at                        DateTime? @default(now())
   updated_at                        DateTime?
-  depositInPrimaryForeignCurrency   Float
-  depositInSecondaryForeignCurrency Float
+  depositInPrimaryForeignCurrency   Float?
+  depositInSecondaryForeignCurrency Float?
   grossDepositInDomesticCurrency    Float
   adminFeeInDomesticCurrency        Float
   netDepositInDomesticCurrency      Float
