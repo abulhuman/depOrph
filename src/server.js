@@ -36,6 +36,7 @@ const ProjectDocument = require("./resolvers/ProjectDocument");
 const IncomeGeneratingActivity = require("./resolvers/IncomeGeneratingActivity");
 const IncomeGeneratingActivityPhoto = require("./resolvers/IncomeGeneratingActivityPhoto");
 const Payment = require("./resolvers/Payment");
+const IndividualPayment = require("./resolvers/IndividualPayment");
 const SupportPlan = require("./resolvers/SupportPlan");
 const Head = require("./resolvers/Head");
 const Coordinator = require("./resolvers/Coordinator");
@@ -74,6 +75,7 @@ const resolvers = {
   IncomeGeneratingActivity,
   IncomeGeneratingActivityPhoto,
   Payment,
+  IndividualPayment,
   SupportPlan,
   Head,
   Coordinator,
