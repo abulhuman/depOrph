@@ -1,52 +1,52 @@
-const { PrismaClient } = require("@prisma/client");
-const { ApolloServer, ApolloError } = require("apollo-server-express");
+const { PrismaClient } = require('@prisma/client');
+const { ApolloServer, ApolloError } = require('apollo-server-express');
 const {
   ApolloServerPluginLandingPageGraphQLPlayground
-} = require("apollo-server-core");
-const express = require("express");
-const session = require("express-session");
-const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
-const history = require("connect-history-api-fallback");
-const multer = require("multer");
-const moment = require("moment");
-const Query = require("./resolvers/Query");
-const Mutation = require("./resolvers/Mutation");
-const Donor = require("./resolvers/Donor");
-const Father = require("./resolvers/Father");
-const Guardian = require("./resolvers/Guardian");
-const Mother = require("./resolvers/Mother");
-const MotherJob = require("./resolvers/MotherJob");
-const Orphan = require("./resolvers/Orphan");
-const SocialWorker = require("./resolvers/SocialWorker");
-const Region = require("./resolvers/Region");
-const Zone = require("./resolvers/Zone");
-const District = require("./resolvers/District");
-const Village = require("./resolvers/Village");
-const EducationalRecord = require("./resolvers/EducationalRecord");
-const FinancialRecord = require("./resolvers/FinancialRecord");
-const OrphanDocument = require("./resolvers/OrphanDocument");
-const House_property = require("./resolvers/House_property");
-const OrphanPhoto = require("./resolvers/OrphanPhoto");
-const HealthStatus = require("./resolvers/HealthStatus");
-const SponsorshipStatus = require("./resolvers/SponsorshipStatus");
-const Project = require("./resolvers/Project");
-const ProjectDocument = require("./resolvers/ProjectDocument");
-const IncomeGeneratingActivity = require("./resolvers/IncomeGeneratingActivity");
-const IncomeGeneratingActivityPhoto = require("./resolvers/IncomeGeneratingActivityPhoto");
-const Payment = require("./resolvers/Payment");
-const IndividualPayment = require("./resolvers/IndividualPayment");
-const SupportPlan = require("./resolvers/SupportPlan");
-const Head = require("./resolvers/Head");
-const Coordinator = require("./resolvers/Coordinator");
-const User = require("./resolvers/User");
+} = require('apollo-server-core');
+const express = require('express');
+const session = require('express-session');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const history = require('connect-history-api-fallback');
+const multer = require('multer');
+const moment = require('moment');
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const Donor = require('./resolvers/Donor');
+const Father = require('./resolvers/Father');
+const Guardian = require('./resolvers/Guardian');
+const Mother = require('./resolvers/Mother');
+const MotherJob = require('./resolvers/MotherJob');
+const Orphan = require('./resolvers/Orphan');
+const SocialWorker = require('./resolvers/SocialWorker');
+const Region = require('./resolvers/Region');
+const Zone = require('./resolvers/Zone');
+const District = require('./resolvers/District');
+const Village = require('./resolvers/Village');
+const EducationalRecord = require('./resolvers/EducationalRecord');
+const FinancialRecord = require('./resolvers/FinancialRecord');
+const OrphanDocument = require('./resolvers/OrphanDocument');
+const House_property = require('./resolvers/House_property');
+const OrphanPhoto = require('./resolvers/OrphanPhoto');
+const HealthStatus = require('./resolvers/HealthStatus');
+const SponsorshipStatus = require('./resolvers/SponsorshipStatus');
+const Project = require('./resolvers/Project');
+const ProjectDocument = require('./resolvers/ProjectDocument');
+const IncomeGeneratingActivity = require('./resolvers/IncomeGeneratingActivity');
+const IncomeGeneratingActivityPhoto = require('./resolvers/IncomeGeneratingActivityPhoto');
+const Payment = require('./resolvers/Payment');
+const IndividualPayment = require('./resolvers/IndividualPayment');
+const SupportPlan = require('./resolvers/SupportPlan');
+const Head = require('./resolvers/Head');
+const Coordinator = require('./resolvers/Coordinator');
+const User = require('./resolvers/User');
 
-const { getUser, convertImage } = require("./utils");
-const { GraphQLError } = require("graphql");
+const { getUser, convertImage } = require('./utils');
+const { GraphQLError } = require('graphql');
 
 const prisma = new PrismaClient({
-  errorFormat: "minimal"
+  errorFormat: 'minimal'
 });
 
 const resolvers = {
@@ -89,14 +89,14 @@ const corsOptions = {
     `http://${process.env.HOSTNAME}:${process.env.PORT}`, // main node-express application server origin address
     `http://127.0.0.1:3000/`, // dev server origin address
     `http://localhost:3000/`, // dev server origin address
-    "http://localhost:8080" // front-end dev server origin address
+    'http://localhost:8080' // front-end dev server origin address
   ]
 };
 
 async function startApolloServer() {
   const app = express();
 
-  const SESSION_SECRET = process.env.SESSION_SECRET || "r4Hxza9y3CrfYkH";
+  const SESSION_SECRET = process.env.SESSION_SECRET || 'r4Hxza9y3CrfYkH';
 
   /** use a session with a rondom string as a session
    *  secret for authentication with a cookie that
@@ -105,13 +105,13 @@ async function startApolloServer() {
    */
   app.use(
     session({
-      name: "sessionId",
+      name: 'sessionId',
       secret: SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
         httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 4.32e7 // 12 hours
       }
     })
@@ -119,7 +119,7 @@ async function startApolloServer() {
 
   /** create an ApolloServer instance to handle the graphql server */
   const server = new ApolloServer({
-    typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8"),
+    typeDefs: fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8'),
     resolvers,
     context: ({ req, res }) => {
       return {
@@ -133,7 +133,7 @@ async function startApolloServer() {
       return new GraphQLError(error);
     },
     plugins: [
-      process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === 'production'
         ? ApolloServerPluginLandingPageDisabled()
         : ApolloServerPluginLandingPageGraphQLPlayground()
     ]
@@ -198,7 +198,7 @@ try {
           ) {
             cb(null, true);
           } else {
-            throw new ApolloError("Unsupported image type");
+            throw new ApolloError('Unsupported image type');
           }
         } else cb(null, false);
       } catch (error) {
@@ -214,7 +214,7 @@ try {
       fileFilter
     });
 
-    app.use(express.static("public"));
+    app.use(express.static('public'));
 
     /** handle all routing by the front-end
      * Single Page Application (SPA, vue.js in our case)
@@ -223,242 +223,242 @@ try {
 
     /** post end points for image/pdf upload */
     app.post(
-      "/public/images/orphanBirthCertificate/",
+      '/public/images/orphanBirthCertificate/',
       cors(corsOptions),
-      upload.single("orphanBirthCertificate"),
+      upload.single('orphanBirthCertificate'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanIdCard/",
+      '/public/images/orphanIdCard/',
       cors(corsOptions),
-      upload.single("orphanIdCard"),
+      upload.single('orphanIdCard'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanPassport/",
+      '/public/images/orphanPassport/',
       cors(corsOptions),
-      upload.single("orphanPassport"),
+      upload.single('orphanPassport'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanOriginalThankyouLetter/",
+      '/public/images/orphanOriginalThankyouLetter/',
       cors(corsOptions),
-      upload.single("orphanOriginalThankyouLetter"),
+      upload.single('orphanOriginalThankyouLetter'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanTranslatedThankyouLetter/",
+      '/public/images/orphanTranslatedThankyouLetter/',
       cors(corsOptions),
-      upload.single("orphanTranslatedThankyouLetter"),
+      upload.single('orphanTranslatedThankyouLetter'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanPhotosPhotoPortrait/",
+      '/public/images/orphanPhotosPhotoPortrait/',
       cors(corsOptions),
-      upload.single("orphanPhotosPhotoPortrait"),
+      upload.single('orphanPhotosPhotoPortrait'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/orphanPhotosPhotoLong/",
+      '/public/images/orphanPhotosPhotoLong/',
       cors(corsOptions),
-      upload.single("orphanPhotosPhotoLong"),
+      upload.single('orphanPhotosPhotoLong'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/fatherDeathCertificate/",
+      '/public/images/fatherDeathCertificate/',
       cors(corsOptions),
-      upload.single("fatherDeathCertificate"),
+      upload.single('fatherDeathCertificate'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/guardianConfirmationLetter/",
+      '/public/images/guardianConfirmationLetter/',
       cors(corsOptions),
-      upload.single("guardianConfirmationLetter"),
+      upload.single('guardianConfirmationLetter'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/guardianLegalConfirmationLetter/",
+      '/public/images/guardianLegalConfirmationLetter/',
       cors(corsOptions),
-      upload.single("guardianLegalConfirmationLetter"),
+      upload.single('guardianLegalConfirmationLetter'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/guardianIDCard/",
+      '/public/images/guardianIDCard/',
       cors(corsOptions),
-      upload.single("guardianIDCard"),
+      upload.single('guardianIDCard'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/healthRecordMedicalCertificate/",
+      '/public/images/healthRecordMedicalCertificate/',
       cors(corsOptions),
-      upload.single("healthRecordMedicalCertificate"),
+      upload.single('healthRecordMedicalCertificate'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/educationalCertificate/",
+      '/public/images/educationalCertificate/',
       cors(corsOptions),
-      upload.single("educationalCertificate"),
+      upload.single('educationalCertificate'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/IGAPhoto/",
+      '/public/images/IGAPhoto/',
       cors(corsOptions),
-      upload.single("IGAPhoto"),
+      upload.single('IGAPhoto'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/projectDocument/",
+      '/public/images/projectDocument/',
       cors(corsOptions),
-      upload.single("projectDocument"),
+      upload.single('projectDocument'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
 
     app.post(
-      "/public/images/educationalRecordReportCard/",
+      '/public/images/educationalRecordReportCard/',
       cors(corsOptions),
-      upload.single("educationalRecordReportCard"),
+      upload.single('educationalRecordReportCard'),
       (req, res) => {
         if (req.file) {
-          if (req.file.mimetype === "application/pdf") {
+          if (req.file.mimetype === 'application/pdf') {
             convertImage(req.file.path, req.file.destination).then((data) =>
               res.send(data)
             );
           } else res.send(req.file.path);
-        } else return res.send("Image not attached");
+        } else return res.send('Image not attached');
       }
     );
   }).catch((err) => {

@@ -705,6 +705,9 @@ async function createOrphanWithBaselineData(
       photos: {
         create: { ...args.firstPhotos }
       },
+      educationalRecords: {
+        create: { ...args.firstEducationalRecord }
+      },
       sponsorshipStatuses: {
         create: {
           status: "new",
@@ -717,6 +720,7 @@ async function createOrphanWithBaselineData(
     };
     delete OrphanCreateInput.firstHealthStatus;
     delete OrphanCreateInput.firstPhotos;
+    delete OrphanCreateInput.firstEducationalRecord;
     delete OrphanCreateInput.villageId;
     delete OrphanCreateInput.socialWorkerId;
 
@@ -1741,7 +1745,7 @@ async function updateAccountMaintainence(
   _info
 ) {
   if (getUser(req).userId) {
-    if (getUser(req).userRole === userRoles_enum.Head) {
+    if (getUser(req).userRole === "Head") {
       const id = parseInt(args.id);
       delete args.id;
       return await prisma.accountMaintainence.update({
