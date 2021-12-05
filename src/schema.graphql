@@ -93,6 +93,8 @@ type Query {
 
   getIndividualPaymentsByPaymentId(paymentId: ID!): [IndividualPayment]!
   getPaymentsBySupportPlanId(supportPlanId: ID!): [Payment]!
+
+  getVillagesByProjectId(projectId: ID!): [Village!]!
 }
 
 type Mutation {
@@ -301,6 +303,7 @@ type Mutation {
     house_property: House_propertyCreateInput!
     firstHealthStatus: HealthStatusCreateInput!
     firstPhotos: OrphanPhotoCreateInput!
+    firstEducationalRecord: EducationalRecordCreateInput!
     villageId: ID!
     socialWorkerId: ID!
   ): Orphan!
@@ -1514,6 +1517,25 @@ input HealthStatusCreateInput {
 input OrphanPhotoCreateInput {
   photoPortraitUrl: String!
   photoLongUrl: String
+}
+
+input EducationalRecordCreateInput {
+  enrollmentStatus: educationEnrollmentStatus!
+  schoolName: String
+  typeOfSchool: educationTypeOfSchool
+  year: String
+  level: educationLevel
+  reason: String
+  yearDivision: ERYearDivision
+  quarter: ERQuarter
+  semester: ERSemester
+  totalMark: Float
+  numberOfSubjects: Int
+  average: Float
+  rank: Int
+  reportCardUrl: String
+  semesterGPA: Float
+  cumulativeGPA: Float
 }
 
 input IncomeGeneratingActivityPhotoInput {

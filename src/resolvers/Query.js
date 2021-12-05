@@ -1,13 +1,13 @@
+// Todo //! change all references of prisma enums to strings
 const {
-  userRoles_enum,
   orphan_gender_enum,
   sponsorshipstatus_enum
-} = require("@prisma/client");
+} = require('@prisma/client');
 const {
   getUser,
   AuthenticationError,
   AuthorizationError
-} = require("../utils");
+} = require('../utils');
 
 async function donor(_parent, { id }, { prisma, req }, _info) {
   if (getUser(req).userId) {
@@ -177,8 +177,8 @@ async function getAllDonors(
 ) {
   const where = filter
     ? {
-        companyName: { contains: filter, mode: "insensitive" },
-        nameInitials: { contains: filter, mode: "insensitive" }
+        companyName: { contains: filter, mode: 'insensitive' },
+        nameInitials: { contains: filter, mode: 'insensitive' }
       }
     : {};
   if (getUser(req).userId) {
@@ -196,9 +196,9 @@ async function allGuardians(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
-          { middleName: { contains: filter, mode: "insensitive" } },
-          { lastName: { contains: filter, mode: "insensitive" } }
+          { firstName: { contains: filter, mode: 'insensitive' } },
+          { middleName: { contains: filter, mode: 'insensitive' } },
+          { lastName: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -217,9 +217,9 @@ async function allMothers(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
-          { middleName: { contains: filter, mode: "insensitive" } },
-          { lastName: { contains: filter, mode: "insensitive" } }
+          { firstName: { contains: filter, mode: 'insensitive' } },
+          { middleName: { contains: filter, mode: 'insensitive' } },
+          { lastName: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -236,30 +236,30 @@ async function allOrphans(
   _info
 ) {
   const genderFilter =
-    String(filter).toUpperCase() === "M"
+    String(filter).toUpperCase() === 'M'
       ? orphan_gender_enum.M
       : orphan_gender_enum.F;
 
   const sponsorshipstatusFilter =
-    String(filter).toLowerCase() === "new"
+    String(filter).toLowerCase() === 'new'
       ? sponsorshipstatus_enum.new
-      : String(filter).toLowerCase() === "processing"
+      : String(filter).toLowerCase() === 'processing'
       ? sponsorshipstatus_enum.processing
-      : String(filter).toLowerCase() === "active"
+      : String(filter).toLowerCase() === 'active'
       ? sponsorshipstatus_enum.active
-      : String(filter).toLowerCase() === "pending"
+      : String(filter).toLowerCase() === 'pending'
       ? sponsorshipstatus_enum.pending
       : sponsorshipstatus_enum.graduated;
 
   const where = filter
     ? {
         OR: [
-          { firstName: { equals: filter, mode: "insensitive" } },
+          { firstName: { equals: filter, mode: 'insensitive' } },
           {
             father: {
               OR: [
-                { firstName: { equals: filter, mode: "insensitive" } },
-                { lastName: { equals: filter, mode: "insensitive" } }
+                { firstName: { equals: filter, mode: 'insensitive' } },
+                { lastName: { equals: filter, mode: 'insensitive' } }
               ]
             }
           },
@@ -301,24 +301,6 @@ async function someOrphansByIds(
   throw new AuthenticationError();
 }
 
-async function someOrphansByDonorId(
-  _parent,
-  { take, donorId, orderBy },
-  { prisma, req },
-  _info
-) {
-  if (getUser(req).userId) {
-    return prisma.orphan.findMany({
-      take,
-      where: {
-        donorId: parseInt(donorId)
-      },
-      orderBy
-    });
-  }
-  throw new AuthenticationError();
-}
-
 async function allSocialWorkers(
   _parent,
   { take, filter, orderBy },
@@ -328,12 +310,12 @@ async function allSocialWorkers(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
-          { middleName: { contains: filter, mode: "insensitive" } },
-          { lastName: { contains: filter, mode: "insensitive" } },
-          { gender: { contains: filter, mode: "insensitive" } },
-          { mobileNumber: { contains: filter, mode: "insensitive" } },
-          { email: { contains: filter, mode: "insensitive" } }
+          { firstName: { contains: filter, mode: 'insensitive' } },
+          { middleName: { contains: filter, mode: 'insensitive' } },
+          { lastName: { contains: filter, mode: 'insensitive' } },
+          { gender: { contains: filter, mode: 'insensitive' } },
+          { mobileNumber: { contains: filter, mode: 'insensitive' } },
+          { email: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -351,7 +333,7 @@ async function allRegions(
 ) {
   const where = filter
     ? {
-        name: { contains: filter, mode: "insensitive" }
+        name: { contains: filter, mode: 'insensitive' }
       }
     : {};
   if (getUser(req).userId) {
@@ -368,7 +350,7 @@ async function allZones(
 ) {
   const where = filter
     ? {
-        name: { contains: filter, mode: "insensitive" }
+        name: { contains: filter, mode: 'insensitive' }
       }
     : {};
   if (getUser(req).userId) {
@@ -385,7 +367,7 @@ async function allDistricts(
 ) {
   const where = filter
     ? {
-        name: { contains: filter, mode: "insensitive" }
+        name: { contains: filter, mode: 'insensitive' }
       }
     : {};
   if (getUser(req).userId) {
@@ -402,7 +384,7 @@ async function allVillages(
 ) {
   const where = filter
     ? {
-        name: { contains: filter, mode: "insensitive" }
+        name: { contains: filter, mode: 'insensitive' }
       }
     : {};
   if (getUser(req).userId) {
@@ -420,9 +402,9 @@ async function allSupportPlans(
   const where = filter
     ? {
         OR: [
-          { foreignCurrency: { contains: filter, mode: "insensitive" } },
-          { collectiveFund_fc: { equals: filter, mode: "insensitive" } },
-          { individualFund_fc: { equals: filter, mode: "insensitive" } }
+          { foreignCurrency: { contains: filter, mode: 'insensitive' } },
+          { collectiveFund_fc: { equals: filter, mode: 'insensitive' } },
+          { individualFund_fc: { equals: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -441,9 +423,9 @@ async function allHeads(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
-          { middleName: { contains: filter, mode: "insensitive" } },
-          { lastName: { contains: filter, mode: "insensitive" } }
+          { firstName: { contains: filter, mode: 'insensitive' } },
+          { middleName: { contains: filter, mode: 'insensitive' } },
+          { lastName: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -462,9 +444,9 @@ async function allCoordinators(
   const where = filter
     ? {
         OR: [
-          { firstName: { contains: filter, mode: "insensitive" } },
-          { middleName: { contains: filter, mode: "insensitive" } },
-          { lastName: { contains: filter, mode: "insensitive" } }
+          { firstName: { contains: filter, mode: 'insensitive' } },
+          { middleName: { contains: filter, mode: 'insensitive' } },
+          { lastName: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -484,7 +466,7 @@ async function allUsers(
     ? {
         OR: [
           { role: { equals: filter } },
-          { email: { contains: filter, mode: "insensitive" } }
+          { email: { contains: filter, mode: 'insensitive' } }
         ]
       }
     : {};
@@ -500,7 +482,7 @@ async function allUsers(
 
 async function allAccountMaintainences(_parent, _args, { prisma, req }, _info) {
   if (getUser(req).userId) {
-    if (getUser(req).userRole === userRoles_enum.Head) {
+    if (getUser(req).userRole === 'Head') {
       return await prisma.accountMaintainence.findMany();
     }
     throw new AuthorizationError();
@@ -556,7 +538,7 @@ async function getActiveProjects(_parent, _args, { prisma, req }, _info) {
   if (getUser(req).userId) {
     return await prisma.project.findMany({
       where: {
-        status: { equals: "active" }
+        status: { equals: 'active' }
       }
     });
   }
@@ -782,6 +764,26 @@ async function getPaymentsBySupportPlanId(
   throw new AuthenticationError();
 }
 
+async function getVillagesByProjectId(
+  _parent,
+  { projectId },
+  { prisma, req },
+  _info
+) {
+  if (getUser(req).userId) {
+    return await prisma.village.findMany({
+      where: {
+        projects: {
+          some: {
+            id: { equals: parseInt(projectId) }
+          }
+        }
+      }
+    });
+  }
+  throw new AuthenticationError();
+}
+
 module.exports = {
   orphan,
   father,
@@ -845,5 +847,7 @@ module.exports = {
 
   getAllProjects,
   getIndividualPaymentsByPaymentId,
-  getPaymentsBySupportPlanId
+  getPaymentsBySupportPlanId,
+
+  getVillagesByProjectId
 };
