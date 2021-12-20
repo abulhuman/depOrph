@@ -716,13 +716,11 @@ async function createOrphanWithBaselineData(
         }
       },
       village: { connect: { id: parseInt(args.villageId) } },
-      socialWorker: { connect: { id: parseInt(args.socialWorkerId) } }
     };
     delete OrphanCreateInput.firstHealthStatus;
     delete OrphanCreateInput.firstPhotos;
     delete OrphanCreateInput.firstEducationalRecord;
     delete OrphanCreateInput.villageId;
-    delete OrphanCreateInput.socialWorkerId;
 
     return await prisma.orphan.create({
       data: OrphanCreateInput

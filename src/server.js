@@ -214,12 +214,12 @@ try {
       fileFilter
     });
 
-    app.use(express.static('public'));
-
-    /** handle all routing by the front-end
+     /** handle all routing by the front-end
      * Single Page Application (SPA, vue.js in our case)
      */
     app.use(history());
+
+    app.use(express.static('public'));
 
     /** post end points for image/pdf upload */
     app.post(
