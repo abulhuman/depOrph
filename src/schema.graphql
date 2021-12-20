@@ -305,7 +305,6 @@ type Mutation {
     firstPhotos: OrphanPhotoCreateInput!
     firstEducationalRecord: EducationalRecordCreateInput!
     villageId: ID!
-    socialWorkerId: ID!
   ): Orphan!
 
   updateOrphan(
