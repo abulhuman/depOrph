@@ -1525,16 +1525,6 @@ input EducationalRecordCreateInput {
   year: String
   level: educationLevel
   reason: String
-  yearDivision: ERYearDivision
-  quarter: ERQuarter
-  semester: ERSemester
-  totalMark: Float
-  numberOfSubjects: Int
-  average: Float
-  rank: Int
-  reportCardUrl: String
-  semesterGPA: Float
-  cumulativeGPA: Float
 }
 
 input IncomeGeneratingActivityPhotoInput {
