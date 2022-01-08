@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.53f80e215acf77a48d69623fad754dc0.js"
+  "/precache-manifest.d00b192c9aa789548f2ab1369e1bef47.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "deporph_client"});
