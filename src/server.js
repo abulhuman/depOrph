@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { ApolloServer, ApolloError } = require('apollo-server-express');
 const {
+  ApolloServerPluginLandingPageDisabled,
   ApolloServerPluginLandingPageGraphQLPlayground
 } = require('apollo-server-core');
 const express = require('express');
@@ -214,7 +215,7 @@ try {
       fileFilter
     });
 
-     /** handle all routing by the front-end
+    /** handle all routing by the front-end
      * Single Page Application (SPA, vue.js in our case)
      */
     app.use(history());
@@ -467,4 +468,3 @@ try {
 } catch (error) {
   console.error(error);
 }
-
