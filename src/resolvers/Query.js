@@ -231,52 +231,56 @@ async function allMothers(
 
 async function allOrphans(
   _parent,
-  { take, filter, orderBy },
+  // { take, filter, orderBy }
+  _args,
   { prisma, req },
   _info
 ) {
-  const genderFilter =
-    String(filter).toUpperCase() === 'M'
-      ? orphan_gender_enum.M
-      : orphan_gender_enum.F;
+  // const genderFilter =
+  //   String(filter).toUpperCase() === 'M'
+  //     ? orphan_gender_enum.M
+  //     : orphan_gender_enum.F;
 
-  const sponsorshipstatusFilter =
-    String(filter).toLowerCase() === 'new'
-      ? sponsorshipstatus_enum.new
-      : String(filter).toLowerCase() === 'processing'
-      ? sponsorshipstatus_enum.processing
-      : String(filter).toLowerCase() === 'active'
-      ? sponsorshipstatus_enum.active
-      : String(filter).toLowerCase() === 'pending'
-      ? sponsorshipstatus_enum.pending
-      : sponsorshipstatus_enum.graduated;
+  // const sponsorshipstatusFilter =
+  //   String(filter).toLowerCase() === 'new'
+  //     ? sponsorshipstatus_enum.new
+  //     : String(filter).toLowerCase() === 'processing'
+  //     ? sponsorshipstatus_enum.processing
+  //     : String(filter).toLowerCase() === 'active'
+  //     ? sponsorshipstatus_enum.active
+  //     : String(filter).toLowerCase() === 'pending'
+  //     ? sponsorshipstatus_enum.pending
+  //     : sponsorshipstatus_enum.graduated;
 
-  const where = filter
-    ? {
-        OR: [
-          { firstName: { equals: filter, mode: 'insensitive' } },
-          {
-            father: {
-              OR: [
-                { firstName: { equals: filter, mode: 'insensitive' } },
-                { lastName: { equals: filter, mode: 'insensitive' } }
-              ]
-            }
-          },
-          // { age: { equals: parseInt(filter) } },
-          { gender: { equals: genderFilter } },
-          {
-            sponsorshipStatuses: {
-              some: {
-                status: { equals: sponsorshipstatusFilter }
-              }
-            }
-          }
-        ]
-      }
-    : {};
+  // const where = filter
+  //   ? {
+  //       OR: [
+  //         { firstName: { equals: filter, mode: 'insensitive' } },
+  //         {
+  //           father: {
+  //             OR: [
+  //               { firstName: { equals: filter, mode: 'insensitive' } },
+  //               { lastName: { equals: filter, mode: 'insensitive' } }
+  //             ]
+  //           }
+  //         },
+  //         // { age: { equals: parseInt(filter) } },
+  //         { gender: { equals: genderFilter } },
+  //         {
+  //           sponsorshipStatuses: {
+  //             some: {
+  //               status: { equals: sponsorshipstatusFilter }
+  //             }
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   : {};
   if (getUser(req).userId) {
-    return await prisma.orphan.findMany({ take, where, orderBy });
+    return await prisma.orphan
+      .findMany
+      // { take, where, orderBy }
+      ();
   }
   throw new AuthenticationError();
 }

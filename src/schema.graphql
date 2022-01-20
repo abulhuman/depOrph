@@ -30,7 +30,8 @@ type Query {
     orderBy: GuardianOrderByInput
   ): [Guardian]!
   allMothers(take: Int, filter: String, orderBy: MotherOrderByInput): [Mother]!
-  allOrphans(take: Int, filter: String, orderBy: OrphanOrderByInput): [Orphan]!
+  allOrphans: [Orphan]!
+  #  take: Int, filter: String, orderBy: OrphanOrderByInput
   someOrphansByIds(orphansIds: [ID]!): [Orphan]!
   someOrphansByDonorId(
     take: Int

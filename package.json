@@ -15,10 +15,10 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "latest",
-    "prisma": "^2.27.0"
+    "prisma": "^3.8.1"
   },
   "dependencies": {
-    "@prisma/client": "^2.27.0",
+    "@prisma/client": "^3.8.1",
     "apollo-server-express": "^3.0.1",
     "aws-lambda": "latest",
     "bcryptjs": "latest",
